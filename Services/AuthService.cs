@@ -22,7 +22,7 @@ public class AuthService
         _configuration = configuration;
     }
 
-    public async Task<bool> RegisterUserAsync(UserRegisterDTO userDto)
+    public async Task<bool> RegisterUserAsync(CreateUserDTO userDto)
     {
         // 1. Lógica de Validação: Verifica se o e-mail já existe
         if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))

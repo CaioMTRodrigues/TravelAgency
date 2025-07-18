@@ -3,7 +3,7 @@ using WebApplication1.DTOs;
 
 namespace WebApplication1.Validators
 {
-    public class UserRegisterDtoValidator : AbstractValidator<UserRegisterDTO>
+    public class UserRegisterDtoValidator : AbstractValidator<CreateUserDTO>
     {
         public UserRegisterDtoValidator()
         {

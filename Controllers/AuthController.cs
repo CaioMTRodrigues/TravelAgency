@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
-using WebApplication1.Services;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -14,7 +13,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] UserRegisterDTO userDto)
+    public async Task<IActionResult> Register([FromBody] CreateUserDTO userDto)
     {
         var success = await _authService.RegisterUserAsync(userDto);
 
