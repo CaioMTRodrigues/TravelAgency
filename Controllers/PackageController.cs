@@ -54,7 +54,7 @@ namespace WebApplication1.Controllers
         // POST: api/package
         // Cria um novo pacote
         [HttpPost]
-        public async Task<ActionResult> Create(PackageDto dto)
+        public async Task<ActionResult> Create(CreatePackageDto dto)
         {
             var package = _mapper.Map<Package>(dto);
             await _repository.AddAsync(package);
@@ -66,7 +66,7 @@ namespace WebApplication1.Controllers
         // PUT: api/package/{id}
         // Atualiza um pacote existente
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, PackageDto dto)
+        public async Task<ActionResult> Update(int id, CreatePackageDto dto)
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
