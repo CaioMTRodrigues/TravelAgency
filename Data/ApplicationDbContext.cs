@@ -11,5 +11,8 @@ namespace WebApplication1.Data
         }
 
         public DbSet<User> Users { get; set; }
+
+        //Criação da tabela PACKAGE
+        public DbSet<Package> Packages { get; set; }
     }
 }
