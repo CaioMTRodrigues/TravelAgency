@@ -14,5 +14,6 @@ namespace WebApplication1.Data
 
         //Criação da tabela PACKAGE
         public DbSet<Package> Packages { get; set; }
+        public DbSet<Evaluation> Evaluations { get; set; }
     }
 }
