@@ -1,6 +1,6 @@
 ﻿// -----------------------------------------------------------------------------
 // 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 14/07/2025
+// 📅 Criado em: 17/07/2025
 // 📁 Arquivo: AutoMapperProfile
 // 📦 Projeto: TravelAgency
 // 🚀 Descrição: Classe Responsável por Conversão Entidade p DTO, vice-versa

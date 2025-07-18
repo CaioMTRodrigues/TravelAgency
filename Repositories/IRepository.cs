@@ -3,7 +3,7 @@
 // 📅 Criado em: 18/07/2025
 // 📁 Arquivo: IRepository
 // 📦 Projeto: TravelAgency
-// 🚀 Descrição: Interface genérica para operações básicas de repositório
+// 🚀 Descrição: Interface genérica para operações básicas de repositório (CRUD)
 // -----------------------------------------------------------------------------
 
 namespace WebApplication1.Repositories
