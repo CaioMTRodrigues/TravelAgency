@@ -1,4 +1,12 @@
-﻿namespace WebApplication1.Entities
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Data de Criação: 17/07/2025
+// 📁 Arquivo: Package
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: Classe Package e seus atributos
+// -----------------------------------------------------------------------------
+
+namespace WebApplication1.Entities
 {
     public class Package
     {

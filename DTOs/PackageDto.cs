@@ -1,9 +1,9 @@
 ﻿// -----------------------------------------------------------------------------
-// Autor: Ericson Sérgio Costa Soares
-// Data de Criação: 17/07/2025
-// Arquivo: PacoteDto
-// Projeto: TravelAgency
-// Descrição: Pega a Entidade Package e converte em PackageDto
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Data de Criação: 17/07/2025
+// 📁 Arquivo: PackageDto
+// 📦 Projeto: TravelAgency
+// 🚀  Descrição: Pega a Entidade Package e converte em PackageDto
 // -----------------------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;

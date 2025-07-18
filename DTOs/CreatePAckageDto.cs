@@ -1,8 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Data de Criação: 17/07/2025
+// 📁 Arquivo: CreatePackageDto
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: Pega a Entidade PackageDto e converte em Package e Validações
+// -----------------------------------------------------------------------------
+
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.DTOs
 {
-    public class CreatePAckageDto
+    public class CreatePackageDto
 
     {
         [Required(ErrorMessage = "O título é obrigatório.")]
