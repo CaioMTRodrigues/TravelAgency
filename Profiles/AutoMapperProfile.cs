@@ -21,7 +21,13 @@ namespace WebApplication1.Profiles
             CreateMap<Package, PackageDto>();
 
             // Mapeia de DTO para entidade (entrada da API)
-            CreateMap<PackageDto, Package>();
+            CreateMap<CreatePackageDto, Package>();
+
+            // Mapeia de entidade para DTO (resposta da API)
+            CreateMap<Evaluation, EvaluationDto>();
+
+            // Mapeia de DTO para entidade (entrada da API)
+            CreateMap<CreateEvaluationDto, Evaluation>();
         }
     }
 }
