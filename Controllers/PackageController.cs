@@ -1,0 +1,95 @@
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Criado em: 18/07/2025
+// 📁 Arquivo: PackageController
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: Controller responsável por gerenciar pacotes turísticos
+// -----------------------------------------------------------------------------
+
+using Microsoft.AspNetCore.Mvc;
+using WebApplication1.DTOs;
+using WebApplication1.Entities;
+using WebApplication1.Repositories;
+using AutoMapper;
+
+namespace WebApplication1.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")] // Define a rota como: api/package
+    public class PackageController : ControllerBase
+    {
+        private readonly IRepository<Package, int> _repository;
+        private readonly IMapper _mapper;
+
+        // Construtor com injeção de dependência do repositório e do AutoMapper
+        public PackageController(IRepository<Package, int> repository, IMapper mapper)
+        {
+            _repository = repository;
+            _mapper = mapper;
+        }
+
+        // GET: api/package
+        // Retorna todos os pacotes cadastrados
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<PackageDto>>> GetAll()
+        {
+            var packages = await _repository.GetAllAsync();
+            var result = _mapper.Map<IEnumerable<PackageDto>>(packages);
+            return Ok(result);
+        }
+
+        // GET: api/package/{id}
+        // Retorna um pacote específico pelo ID
+        [HttpGet("{id}")]
+        public async Task<ActionResult<PackageDto>> GetById(int id)
+        {
+            var package = await _repository.GetByIdAsync(id);
+            if (package == null)
+                return NotFound();
+
+            var dto = _mapper.Map<PackageDto>(package);
+            return Ok(dto);
+        }
+
+        // POST: api/package
+        // Cria um novo pacote
+        [HttpPost]
+        public async Task<ActionResult> Create(PackageDto dto)
+        {
+            var package = _mapper.Map<Package>(dto);
+            await _repository.AddAsync(package);
+
+            // Retorna 201 Created com a rota para consultar o novo pacote
+            return CreatedAtAction(nameof(GetById), new { id = package.Id }, dto);
+        }
+
+        // PUT: api/package/{id}
+        // Atualiza um pacote existente
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, PackageDto dto)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            // Atualiza os dados do pacote com base no DTO recebido
+            _mapper.Map(dto, existing);
+            await _repository.UpdateAsync(existing);
+
+            return NoContent(); // 204 - Atualização bem-sucedida
+        }
+
+        // DELETE: api/package/{id}
+        // Remove um pacote pelo ID
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                return NotFound();
+
+            await _repository.DeleteAsync(id);
+            return NoContent(); // 204 - Exclusão bem-sucedida
+        }
+    }
+}
