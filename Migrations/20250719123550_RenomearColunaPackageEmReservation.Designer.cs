@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -11,9 +12,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250719123550_RenomearColunaPackageEmReservation")]
+    partial class RenomearColunaPackageEmReservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,11 +27,11 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
-                    b.Property<int>("Id_Avaliacao")
+                    b.Property<int>("Id_Evaluation")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Avaliacao"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Evaluation"));
 
                     b.Property<string>("Comentario")
                         .IsRequired()
@@ -37,32 +40,32 @@ namespace WebApplication1.Migrations
                     b.Property<DateTime>("Data")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id_Pacote")
+                    b.Property<int>("IdPacote")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id_Usuario")
+                    b.Property<int>("IdUsuario")
                         .HasColumnType("int");
 
                     b.Property<double>("Nota")
                         .HasColumnType("float");
 
-                    b.Property<int?>("PackageId_Pacote")
+                    b.Property<int?>("PackageId_Package")
                         .HasColumnType("int");
 
-                    b.HasKey("Id_Avaliacao");
+                    b.HasKey("Id_Evaluation");
 
-                    b.HasIndex("PackageId_Pacote");
+                    b.HasIndex("PackageId_Package");
 
                     b.ToTable("Evaluations");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Package", b =>
                 {
-                    b.Property<int>("Id_Pacote")
+                    b.Property<int>("Id_Package")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Pacote"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Package"));
 
                     b.Property<DateTime>("DataFim")
                         .HasColumnType("datetime2");
@@ -93,45 +96,46 @@ namespace WebApplication1.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("Id_Pacote");
+                    b.HasKey("Id_Package");
 
                     b.ToTable("Packages");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
                 {
-                    b.Property<int>("Id_Reserva")
+                    b.Property<int>("ID_Reserva")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Reserva"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID_Reserva"));
 
                     b.Property<DateTime>("Data_Reserva")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id_Pacote")
+                    b.Property<int>("ID_Usuario")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id_Usuario")
+                    b.Property<int>("Id_Package")
                         .HasColumnType("int");
 
                     b.Property<string>("Numero_Reserva")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PackageId_Pacote")
+                    b.Property<int>("PacoteId_Package")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.HasKey("Id_Reserva");
+                    b.Property<int>("UsuarioId_User")
+                        .HasColumnType("int");
 
-                    b.HasIndex("Id_Pacote");
+                    b.HasKey("ID_Reserva");
 
-                    b.HasIndex("Id_Usuario");
+                    b.HasIndex("PacoteId_Package");
 
-                    b.HasIndex("PackageId_Pacote");
+                    b.HasIndex("UsuarioId_User");
 
                     b.ToTable("Reservations");
                 });
@@ -180,28 +184,22 @@ namespace WebApplication1.Migrations
                 {
                     b.HasOne("WebApplication1.Entities.Package", null)
                         .WithMany("Avaliacoes")
-                        .HasForeignKey("PackageId_Pacote");
+                        .HasForeignKey("PackageId_Package");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
                 {
                     b.HasOne("WebApplication1.Entities.Package", "Pacote")
-                        .WithMany()
-                        .HasForeignKey("Id_Pacote")
+                        .WithMany("Reservas")
+                        .HasForeignKey("PacoteId_Package")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Reservations_Packages_Id_Pacote");
+                        .IsRequired();
 
                     b.HasOne("WebApplication1.Entities.User", "Usuario")
                         .WithMany()
-                        .HasForeignKey("Id_Usuario")
+                        .HasForeignKey("UsuarioId_User")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Reservations_Users_Id_Usuario");
-
-                    b.HasOne("WebApplication1.Entities.Package", null)
-                        .WithMany("Reservas")
-                        .HasForeignKey("PackageId_Pacote");
+                        .IsRequired();
 
                     b.Navigation("Pacote");
 

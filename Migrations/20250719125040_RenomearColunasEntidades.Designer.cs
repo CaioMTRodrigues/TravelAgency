@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -11,9 +12,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250719125040_RenomearColunasEntidades")]
+    partial class RenomearColunasEntidades
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,19 +122,20 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PackageId_Pacote")
+                    b.Property<int>("PacoteId_Pacote")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<int>("UsuarioId_User")
+                        .HasColumnType("int");
+
                     b.HasKey("Id_Reserva");
 
-                    b.HasIndex("Id_Pacote");
+                    b.HasIndex("PacoteId_Pacote");
 
-                    b.HasIndex("Id_Usuario");
-
-                    b.HasIndex("PackageId_Pacote");
+                    b.HasIndex("UsuarioId_User");
 
                     b.ToTable("Reservations");
                 });
@@ -186,22 +190,16 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
                 {
                     b.HasOne("WebApplication1.Entities.Package", "Pacote")
-                        .WithMany()
-                        .HasForeignKey("Id_Pacote")
+                        .WithMany("Reservas")
+                        .HasForeignKey("PacoteId_Pacote")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Reservations_Packages_Id_Pacote");
+                        .IsRequired();
 
                     b.HasOne("WebApplication1.Entities.User", "Usuario")
                         .WithMany()
-                        .HasForeignKey("Id_Usuario")
+                        .HasForeignKey("UsuarioId_User")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_Reservations_Users_Id_Usuario");
-
-                    b.HasOne("WebApplication1.Entities.Package", null)
-                        .WithMany("Reservas")
-                        .HasForeignKey("PackageId_Pacote");
+                        .IsRequired();
 
                     b.Navigation("Pacote");
 

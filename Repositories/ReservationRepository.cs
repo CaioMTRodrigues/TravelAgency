@@ -39,7 +39,7 @@ namespace WebApplication1.Repositories
                 .Include(r => r.Pacote)
                 //.Include(r => r.ReservaViajantes)
                 //.Include(r => r.Pagamento)
-                .FirstOrDefaultAsync(r => r.ID_Reserva == id);
+                .FirstOrDefaultAsync(r => r.Id_Reserva == id);
         }
 
         public async Task AddAsync(Reservation entity)

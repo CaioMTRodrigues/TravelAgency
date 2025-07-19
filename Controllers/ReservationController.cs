@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
             var reservation = _mapper.Map<Reservation>(dto);
             await _repository.AddAsync(reservation);
 
-            return CreatedAtAction(nameof(GetById), new { id = reservation.ID_Reserva }, dto);
+            return CreatedAtAction(nameof(GetById), new { id = reservation.Id_Reserva }, dto);
         }
 
         // PUT: api/reservation/{id}

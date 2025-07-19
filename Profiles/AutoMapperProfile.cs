@@ -29,9 +29,9 @@ namespace WebApplication1.Profiles
             // Mapeia de DTO para entidade (entrada da API)
             CreateMap<CreateEvaluationDto, Evaluation>();
 
-            CreateProjection<Reservation, ReservationDto>();
+            CreateMap<Reservation, ReservationDto>();
 
-            CreateMap<CreateReservationDto, ReservationDto>();
+            CreateMap<CreateReservationDto, Reservation>();
 
            
         }

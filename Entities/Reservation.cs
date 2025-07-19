@@ -21,16 +21,16 @@ namespace WebApplication1.Entities
     public class Reservation
     {
         [Key]
-        public int ID_Reserva { get; set; }
+        public int Id_Reserva { get; set; }
         public DateTime Data_Reserva { get; set; }
         public StatusReserva Status { get; set; }
         public string Numero_Reserva { get; set; }
 
         // Relacionamentos
-        public int ID_Usuario { get; set; }
+        public int Id_Usuario { get; set; }
         public User Usuario { get; set; }
 
-        public int ID_Pacote { get; set; }
+        public int Id_Pacote { get; set; }
         public Package Pacote { get; set; }
 
         /*

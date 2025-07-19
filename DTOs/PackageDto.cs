@@ -13,7 +13,7 @@ namespace WebApplication1.DTOs
     public class PackageDto
 
     {
-        public int Id_Package { get; set; }
+        public int Id_Pacote { get; set; }
 
         public string Titulo { get; set; }
 

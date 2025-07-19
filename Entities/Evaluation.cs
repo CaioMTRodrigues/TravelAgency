@@ -13,14 +13,14 @@ namespace WebApplication1.Entities
     public class Evaluation
     {
         [Key]
-        public int Id_Evaluation { get; set; }
+        public int Id_Avaliacao { get; set; }
         public double Nota { get; set; }
         public string Comentario { get; set; }
         public DateTime Data { get; set; }
 
         // Chaves estrangeiras
-        public int IdUsuario { get; set; }
-        public int IdPacote { get; set; }
+        public int Id_Usuario { get; set; }
+        public int Id_Pacote { get; set; }
 
     }
 }
