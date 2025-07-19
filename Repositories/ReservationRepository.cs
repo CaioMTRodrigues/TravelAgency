@@ -6,6 +6,7 @@
 // 🚀 Descrição: Repositório para operações CRUD da entidade Reserva
 // -----------------------------------------------------------------------------
 
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Entities;
 
