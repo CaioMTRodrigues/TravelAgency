@@ -10,7 +10,7 @@ namespace WebApplication1.Entities
 {
     public class Package
     {
-        public int Id { get; set; }
+        public int Id_Package { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
         public string Destino { get; set; }
