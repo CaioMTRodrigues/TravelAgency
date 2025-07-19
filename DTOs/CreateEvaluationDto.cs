@@ -25,9 +25,9 @@ namespace WebApplication1.DTOs
         public DateTime Data { get; set; }
 
         [Required(ErrorMessage = "O ID do usuário é obrigatório.")]
-        public int IdUsuario { get; set; }
+        public int Id_Usuario { get; set; }
 
         [Required(ErrorMessage = "O ID do pacote é obrigatório.")]
-        public int IdPacote { get; set; }
+        public int Id_Pacote { get; set; }
     }
 }

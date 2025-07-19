@@ -33,9 +33,10 @@ namespace WebApplication1.Data
             // Relacionamento Reservation -> Package
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Pacote)
-                .WithMany()
+                .WithMany(p => p.Reservas)
                 .HasForeignKey(r => r.Id_Pacote)
                 .HasConstraintName("FK_Reservations_Packages_Id_Pacote");
+
         }
     }
 }

@@ -11,11 +11,11 @@ namespace WebApplication1.DTOs
     public class ReservationDto
 
     {
-        public int ID_Reserva { get; set; }
+        public int Id_Reserva { get; set; }
         public DateTime Data_Reserva { get; set; }
         public StatusReserva Status { get; set; }
         public string Numero_Reserva { get; set; }
-        public int ID_Usuario { get; set; }
-        public int ID_Pacote { get; set; }
+        public int Id_Usuario { get; set; }
+        public int Id_Pacote { get; set; }
     }
 }

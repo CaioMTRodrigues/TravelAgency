@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Entities
 {
@@ -31,6 +32,7 @@ namespace WebApplication1.Entities
         public User Usuario { get; set; }
 
         public int Id_Pacote { get; set; }
+
         public Package Pacote { get; set; }
 
         /*

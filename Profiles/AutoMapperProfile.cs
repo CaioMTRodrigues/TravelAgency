@@ -31,9 +31,13 @@ namespace WebApplication1.Profiles
 
             CreateMap<Reservation, ReservationDto>();
 
-            CreateMap<CreateReservationDto, Reservation>();
 
-           
+            CreateMap<CreateReservationDto, Reservation>()
+                .ForMember(dest => dest.Id_Usuario, opt => opt.MapFrom(src => src.Id_Usuario))
+                .ForMember(dest => dest.Id_Pacote, opt => opt.MapFrom(src => src.Id_Pacote));
+
+
+
         }
     }
 }

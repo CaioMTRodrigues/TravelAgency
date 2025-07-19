@@ -50,7 +50,7 @@ namespace WebApplication1.Controllers
 
         // POST: api/reservation
         [HttpPost]
-        public async Task<ActionResult> Create(CreateReservationDto dto)
+        public async Task<ActionResult> Create([FromBody] CreateReservationDto dto)
         {
             var reservation = _mapper.Map<Reservation>(dto);
             await _repository.AddAsync(reservation);

@@ -1,5 +1,6 @@
 ﻿using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using WebApplication1.Data;
 using WebApplication1.Entities;
 using WebApplication1.Repositories;
@@ -26,6 +27,13 @@ builder.Services.AddScoped<IRepository<Reservation, int>, ReservationRepository>
 builder.Services.AddAutoMapper(typeof(Program));
 
 
+
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 
 builder.Services.AddControllers()
