@@ -6,6 +6,8 @@
 // 🚀 Descrição: Classe Reservation e seus atributos
 // -----------------------------------------------------------------------------
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WebApplication1.Entities
 {
     public enum StatusReserva
@@ -18,7 +20,7 @@ namespace WebApplication1.Entities
 
     public class Reservation
     {
-
+        [Key]
         public int ID_Reserva { get; set; }
         public DateTime Data_Reserva { get; set; }
         public StatusReserva Status { get; set; }

@@ -6,10 +6,13 @@
 // 🚀  Descrição: Entidade AVALIACAO, atributos e relacionamentos
 // -----------------------------------------------------------------------------
 
+using System.ComponentModel.DataAnnotations;
+
 namespace WebApplication1.Entities
 {
     public class Evaluation
     {
+        [Key]
         public int Id_Evaluation { get; set; }
         public double Nota { get; set; }
         public string Comentario { get; set; }

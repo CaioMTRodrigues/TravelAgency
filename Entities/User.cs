@@ -1,7 +1,10 @@
-﻿namespace WebApplication1.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace WebApplication1.Entities
 {
     public class User
     {
+        [Key]
         public int Id_User { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }

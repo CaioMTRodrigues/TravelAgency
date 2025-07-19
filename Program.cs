@@ -1,4 +1,4 @@
-using FluentValidation.AspNetCore;
+﻿using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.Data;
 using WebApplication1.Entities;
@@ -12,11 +12,16 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 
-// Registro do reposit�rio espec�fico para Package
+// Registro do repositório específico para Package
 builder.Services.AddScoped<IRepository<Package, int>, PackageRepository>();
 
-// Registro do reposit�rio espec�fico para Evaluation
+// Registro do repositório específico para Evaluation
 builder.Services.AddScoped<IRepository<Evaluation, int>, EvaluationRepository>();
+
+// Registro do repositório específico para Reservation ✅
+builder.Services.AddScoped<IRepository<Reservation, int>, ReservationRepository>();
+
+
 
 builder.Services.AddAutoMapper(typeof(Program));
 

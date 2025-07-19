@@ -6,10 +6,14 @@
 // 🚀 Descrição: Classe Package e seus atributos
 // -----------------------------------------------------------------------------
 
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
+
 namespace WebApplication1.Entities
 {
     public class Package
     {
+        [Key]
         public int Id_Package { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
@@ -17,6 +21,7 @@ namespace WebApplication1.Entities
         public int DuracaoDias { get; set; }
         public DateTime DataInicio { get; set; }
         public DateTime DataFim { get; set; }
+        [Precision(10, 2)]
         public decimal Valor { get; set; }
         public string ImagemUrl { get; set; }
 
