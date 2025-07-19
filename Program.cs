@@ -14,7 +14,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Registro do repositório específico para Package
 builder.Services.AddScoped<IRepository<Package, int>, PackageRepository>();
+
+// Registro do repositório específico para Evaluation
+builder.Services.AddScoped<IRepository<Evaluation, int>, EvaluationRepository>();
+
 builder.Services.AddAutoMapper(typeof(Program));
+
 
 
 
