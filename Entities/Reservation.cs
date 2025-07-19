@@ -37,8 +37,9 @@ namespace WebApplication1.Entities
 
         /*
         public ICollection<ReservaViajante> ReservaViajantes { get; set; }
-        public Pagamento Pagamento { get; set; }
-        */
+         */
+        public Payment Pagamento { get; set; }
+       
 
     }
 }
