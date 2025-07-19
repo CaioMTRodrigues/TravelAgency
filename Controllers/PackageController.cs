@@ -60,7 +60,7 @@ namespace WebApplication1.Controllers
             await _repository.AddAsync(package);
 
             // Retorna 201 Created com a rota para consultar o novo pacote
-            return CreatedAtAction(nameof(GetById), new { id = package.Id }, dto);
+            return CreatedAtAction(nameof(GetById), new { id = package.Id_Package }, dto);
         }
 
         // PUT: api/package/{id}

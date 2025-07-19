@@ -27,8 +27,8 @@ namespace WebApplication1.Repositories
             return await _appDbContext.Reservations
                 .Include(r => r.Usuario)
                 .Include(r => r.Pacote)
-                .Include(r => r.ReservaViajantes)
-                .Include(r => r.Pagamento)
+               // .Include(r => r.ReservaViajantes)
+               // .Include(r => r.Pagamento)
                 .ToListAsync();
         }
 
@@ -37,8 +37,8 @@ namespace WebApplication1.Repositories
             return await _appDbContext.Reservations
                 .Include(r => r.Usuario)
                 .Include(r => r.Pacote)
-                .Include(r => r.ReservaViajantes)
-                .Include(r => r.Pagamento)
+                //.Include(r => r.ReservaViajantes)
+                //.Include(r => r.Pagamento)
                 .FirstOrDefaultAsync(r => r.ID_Reserva == id);
         }
 

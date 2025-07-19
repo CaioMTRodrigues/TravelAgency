@@ -20,10 +20,10 @@ namespace WebApplication1.Entities
         public decimal Valor { get; set; }
         public string ImagemUrl { get; set; }
 
-        /*
-             public ICollection<Reserva> Reservas { get; set; }
-             public ICollection<Avaliacao> Avaliacoes { get; set; }
-        */
+        
+             public ICollection<Reservation> Reservas { get; set; }
+             public ICollection<Evaluation> Avaliacoes { get; set; }
+        
     }
 
 }

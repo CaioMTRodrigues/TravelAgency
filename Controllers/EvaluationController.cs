@@ -55,7 +55,7 @@ namespace WebApplication1.Controllers
             var evaluation = _mapper.Map<Evaluation>(dto);
             await _repository.AddAsync(evaluation);
 
-            return CreatedAtAction(nameof(GetById), new { id = evaluation.Id }, _mapper.Map<EvaluationDto>(evaluation));
+            return CreatedAtAction(nameof(GetById), new { id = evaluation.Id_Evaluation }, _mapper.Map<EvaluationDto>(evaluation));
         }
 
         // PUT: api/evaluation/{id}

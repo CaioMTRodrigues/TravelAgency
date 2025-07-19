@@ -80,7 +80,7 @@ public class AuthService
         // Claims são as "informações" 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()), // Sujeito do token, geralmente o ID do usuário
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id_User.ToString()), // Sujeito do token, geralmente o ID do usuário
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
             new Claim("role", user.Role), // Claim customizada para o perfil do usuário
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // ID único para o token

@@ -31,8 +31,10 @@ namespace WebApplication1.Entities
         public int ID_Pacote { get; set; }
         public Package Pacote { get; set; }
 
+        /*
         public ICollection<ReservaViajante> ReservaViajantes { get; set; }
         public Pagamento Pagamento { get; set; }
+        */
 
     }
 }
