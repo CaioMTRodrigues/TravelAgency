@@ -29,13 +29,20 @@ namespace WebApplication1.Profiles
             // Mapeia de DTO para entidade (entrada da API)
             CreateMap<CreateEvaluationDto, Evaluation>();
 
+            // Mapeia Reservation para DTO
             CreateMap<Reservation, ReservationDto>();
 
-
+            // Mapeia DTO para Reservation
             CreateMap<CreateReservationDto, Reservation>()
                 .ForMember(dest => dest.Id_Usuario, opt => opt.MapFrom(src => src.Id_Usuario))
                 .ForMember(dest => dest.Id_Pacote, opt => opt.MapFrom(src => src.Id_Pacote));
 
+
+            // Mapeia Payment para DTO
+            CreateMap<Payment, PaymentDto>();
+
+            // Mapeia DTO para Payment
+            CreateMap<CreatePaymentDto, Payment>();
 
 
         }

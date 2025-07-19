@@ -4,56 +4,52 @@ using System.Text.Json.Serialization;
 using WebApplication1.Data;
 using WebApplication1.Entities;
 using WebApplication1.Repositories;
+using WebApplication1.Profiles; // Importa o perfil do AutoMapper
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 🔗 String de conexão com o banco de dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-
-// Registro do repositório específico para Package
+// 🧩 Registro dos repositórios
 builder.Services.AddScoped<IRepository<Package, int>, PackageRepository>();
-
-// Registro do repositório específico para Evaluation
 builder.Services.AddScoped<IRepository<Evaluation, int>, EvaluationRepository>();
-
-// Registro do repositório específico para Reservation ✅
 builder.Services.AddScoped<IRepository<Reservation, int>, ReservationRepository>();
+builder.Services.AddScoped<IRepository<Payment, int>, PaymentRepository>();
 
+// 🔄 Registro do AutoMapper com o perfil correto
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-
-builder.Services.AddAutoMapper(typeof(Program));
-
-
-
-
+// ✅ Configurações dos controllers
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+        // Serializa enums como strings no JSON
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    })
+    .AddFluentValidation(fv =>
+    {
+        // Registra validadores do FluentValidation
+        fv.RegisterValidatorsFromAssemblyContaining<Program>();
     });
 
-
-builder.Services.AddControllers()
-       .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Program>());
-
-
+// 🔍 Swagger para documentação da API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// 🔐 Serviços adicionais (ex: autenticação)
 builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// 🌐 Configuração do pipeline HTTP
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
-
     app.UseSwagger();
     app.UseSwaggerUI();
-
 }
 
 app.UseHttpsRedirection();
