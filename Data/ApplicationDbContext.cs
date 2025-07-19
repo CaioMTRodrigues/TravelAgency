@@ -19,6 +19,10 @@ namespace WebApplication1.Data
         public DbSet<Reservation> Reservations { get; set; }
 
 
+        // Criação da tabela PAYMENT
+        public DbSet<Payment> Payments { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -51,6 +55,15 @@ namespace WebApplication1.Data
                 .WithMany(p => p.Avaliacoes)
                 .HasForeignKey(e => e.Id_Pacote)
                 .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
+
+
+            // Relacionamento Payment -> Reservation
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Reserva)
+                .WithMany()
+                .HasForeignKey(p => p.Id_Reserva)
+                .HasConstraintName("FK_Payments_Reservations_Id_Reserva");
+
 
 
         }
