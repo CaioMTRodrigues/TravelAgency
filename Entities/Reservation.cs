@@ -1,4 +1,12 @@
-﻿namespace WebApplication1.Entities
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Data de Criação: 19/07/2025
+// 📁 Arquivo: Reservation
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: Classe Reservation e seus atributos
+// -----------------------------------------------------------------------------
+
+namespace WebApplication1.Entities
 {
     public enum StatusReserva
     {
