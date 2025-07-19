@@ -46,12 +46,11 @@ namespace WebApplication1.Migrations
                     b.Property<double>("Nota")
                         .HasColumnType("float");
 
-                    b.Property<int?>("PackageId_Pacote")
-                        .HasColumnType("int");
-
                     b.HasKey("Id_Avaliacao");
 
-                    b.HasIndex("PackageId_Pacote");
+                    b.HasIndex("Id_Pacote");
+
+                    b.HasIndex("Id_Usuario");
 
                     b.ToTable("Evaluations");
                 });
@@ -173,9 +172,23 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
-                    b.HasOne("WebApplication1.Entities.Package", null)
+                    b.HasOne("WebApplication1.Entities.Package", "Pacote")
                         .WithMany("Avaliacoes")
-                        .HasForeignKey("PackageId_Pacote");
+                        .HasForeignKey("Id_Pacote")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
+
+                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Id_Usuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Evaluations_Users_Id_Usuario");
+
+                    b.Navigation("Pacote");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>

@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250719183856_CorrigirRelacionamentoPacote")]
-    partial class CorrigirRelacionamentoPacote
+    [Migration("20250719210205_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,10 @@ namespace WebApplication1.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id_Avaliacao");
+
+                    b.HasIndex("Id_Pacote");
+
+                    b.HasIndex("Id_Usuario");
 
                     b.HasIndex("PackageId_Pacote");
 
@@ -176,9 +180,27 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
+                    b.HasOne("WebApplication1.Entities.Package", "Pacote")
+                        .WithMany()
+                        .HasForeignKey("Id_Pacote")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
+
+                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Id_Usuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Evaluations_Users_Id_Usuario");
+
                     b.HasOne("WebApplication1.Entities.Package", null)
                         .WithMany("Avaliacoes")
                         .HasForeignKey("PackageId_Pacote");
+
+                    b.Navigation("Pacote");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>

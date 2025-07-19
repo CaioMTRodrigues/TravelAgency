@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250719183614_InicialCorrigida")]
-    partial class InicialCorrigida
+    [Migration("20250719210514_AjusteEvaluationFK")]
+    partial class AjusteEvaluationFK
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,10 @@ namespace WebApplication1.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id_Avaliacao");
+
+                    b.HasIndex("Id_Pacote");
+
+                    b.HasIndex("Id_Usuario");
 
                     b.HasIndex("PackageId_Pacote");
 
@@ -122,9 +126,6 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PackageId_Pacote")
-                        .HasColumnType("int");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -133,8 +134,6 @@ namespace WebApplication1.Migrations
                     b.HasIndex("Id_Pacote");
 
                     b.HasIndex("Id_Usuario");
-
-                    b.HasIndex("PackageId_Pacote");
 
                     b.ToTable("Reservations");
                 });
@@ -181,15 +180,33 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
+                    b.HasOne("WebApplication1.Entities.Package", "Pacote")
+                        .WithMany()
+                        .HasForeignKey("Id_Pacote")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
+
+                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Id_Usuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Evaluations_Users_Id_Usuario");
+
                     b.HasOne("WebApplication1.Entities.Package", null)
                         .WithMany("Avaliacoes")
                         .HasForeignKey("PackageId_Pacote");
+
+                    b.Navigation("Pacote");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
                 {
                     b.HasOne("WebApplication1.Entities.Package", "Pacote")
-                        .WithMany()
+                        .WithMany("Reservas")
                         .HasForeignKey("Id_Pacote")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -201,10 +218,6 @@ namespace WebApplication1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Reservations_Users_Id_Usuario");
-
-                    b.HasOne("WebApplication1.Entities.Package", null)
-                        .WithMany("Reservas")
-                        .HasForeignKey("PackageId_Pacote");
 
                     b.Navigation("Pacote");
 

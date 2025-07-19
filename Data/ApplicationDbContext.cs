@@ -37,6 +37,22 @@ namespace WebApplication1.Data
                 .HasForeignKey(r => r.Id_Pacote)
                 .HasConstraintName("FK_Reservations_Packages_Id_Pacote");
 
+            // Relacionaemnto Evaluation -> User
+            modelBuilder.Entity<Evaluation>()
+                .HasOne(e => e.Usuario)
+                .WithMany()
+                .HasForeignKey(e => e.Id_Usuario)
+                .HasConstraintName("FK_Evaluations_Users_Id_Usuario");
+
+
+            // Relacionamento Evaluation -> Package
+            modelBuilder.Entity<Evaluation>()
+                .HasOne(e => e.Pacote)
+                .WithMany(p => p.Avaliacoes)
+                .HasForeignKey(e => e.Id_Pacote)
+                .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
+
+
         }
     }
 }

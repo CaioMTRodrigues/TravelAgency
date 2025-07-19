@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Entities
 {
@@ -21,6 +22,17 @@ namespace WebApplication1.Entities
         // Chaves estrangeiras
         public int Id_Usuario { get; set; }
         public int Id_Pacote { get; set; }
+
+
+        // Propriedades de navegação
+
+        [ForeignKey("Id_Usuario")]
+        public User Usuario { get; set; }
+
+        [ForeignKey("Id_Pacote")]
+        public Package Pacote { get; set; }
+
+
 
     }
 }
