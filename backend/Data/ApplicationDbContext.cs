@@ -1,4 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Criado em: 17/07/2025
+// 📁 Arquivo: ApplicationDbContext
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: Classe de contexto do Entity Framework para acesso ao banco de dados
+// -----------------------------------------------------------------------------
+
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.Entities;
 
 namespace WebApplication1.Data
@@ -15,6 +23,7 @@ namespace WebApplication1.Data
         public DbSet<Evaluation> Evaluations { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Traveler> Travelers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,6 +63,21 @@ namespace WebApplication1.Data
                 .WithOne(p => p.Reserva)
                 .HasForeignKey<Payment>(p => p.Id_Reserva)
                 .HasConstraintName("FK_Payments_Reservations_Id_Reserva");
+
+            // Relacionamento Traveler -> User (muitos viajantes para um usuário)
+            modelBuilder.Entity<Traveler>()
+                .HasOne(t => t.Usuario)
+                .WithMany()
+                .HasForeignKey(t => t.Id_Usuario)
+                .HasConstraintName("FK_Travelers_Users_Id_Usuario");
+
+            // Relacionamento Traveler -> ReservaViajante (um para muitos)
+            modelBuilder.Entity<Traveler>()
+                .HasMany(t => t.ReservaViajantes)
+                .WithOne(rv => rv.Viajante)
+                .HasForeignKey(rv => rv.Id_Viajante)
+                .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante");
+
         }
     }
 }
