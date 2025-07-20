@@ -8,6 +8,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApplication1.backend.Entities;
 
 namespace WebApplication1.Entities
 {
@@ -35,9 +36,9 @@ namespace WebApplication1.Entities
 
         public Package Pacote { get; set; }
 
-        /*
-        public ICollection<ReservaViajante> ReservaViajantes { get; set; }
-         */
+        // Relacionamento com a tabela de associação ReservaViajante
+        public ICollection<ReservationTraveler> ReservaViajantes { get; set; }
+        
         public Payment Pagamento { get; set; }
        
 

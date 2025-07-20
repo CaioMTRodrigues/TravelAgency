@@ -8,6 +8,7 @@
 
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebApplication1.backend.Entities;
 
 namespace WebApplication1.Entities
 {
@@ -27,6 +28,6 @@ namespace WebApplication1.Entities
         public User Usuario { get; set; }
 
         // Relacionamento com a tabela de associação ReservaViajante
-        //public ICollection<ReservaViajante> ReservaViajantes { get; set; }
+        public ICollection<ReservationTraveler> ReservaViajantes { get; set; }
     }
 }

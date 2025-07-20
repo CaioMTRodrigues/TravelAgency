@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.backend.Entities;
 using WebApplication1.Entities;
 
 namespace WebApplication1.Data
@@ -24,6 +25,7 @@ namespace WebApplication1.Data
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Traveler> Travelers { get; set; }
+        public DbSet<ReservationTraveler> ReservaViajantes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,14 +73,24 @@ namespace WebApplication1.Data
                 .HasForeignKey(t => t.Id_Usuario)
                 .HasConstraintName("FK_Travelers_Users_Id_Usuario");
 
-            /*
+            
             // Relacionamento Traveler -> ReservaViajante (um para muitos)
             modelBuilder.Entity<Traveler>()
                 .HasMany(t => t.ReservaViajantes)
                 .WithOne(rv => rv.Viajante)
                 .HasForeignKey(rv => rv.Id_Viajante)
                 .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante");
-            */
+
+            // Reservation -> ReservaViajante
+            modelBuilder.Entity<Reservation>()
+                .HasMany(r => r.ReservaViajantes)
+                .WithOne(rv => rv.Reserva)
+                .HasForeignKey(rv => rv.Id_Reserva)
+                .HasConstraintName("FK_ReservaViajante_Reservation_Id_Reserva");
+
+            // Chave composta para a tabela de junção
+            modelBuilder.Entity<ReservationTraveler>()
+                .HasKey(rv => new { rv.Id_Reserva, rv.Id_Viajante });
 
         }
     }
