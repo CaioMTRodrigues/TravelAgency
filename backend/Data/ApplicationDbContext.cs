@@ -71,12 +71,14 @@ namespace WebApplication1.Data
                 .HasForeignKey(t => t.Id_Usuario)
                 .HasConstraintName("FK_Travelers_Users_Id_Usuario");
 
+            /*
             // Relacionamento Traveler -> ReservaViajante (um para muitos)
             modelBuilder.Entity<Traveler>()
                 .HasMany(t => t.ReservaViajantes)
                 .WithOne(rv => rv.Viajante)
                 .HasForeignKey(rv => rv.Id_Viajante)
                 .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante");
+            */
 
         }
     }

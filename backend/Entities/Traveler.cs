@@ -27,6 +27,6 @@ namespace WebApplication1.Entities
         public User Usuario { get; set; }
 
         // Relacionamento com a tabela de associação ReservaViajante
-        public ICollection<ReservaViajante> ReservaViajantes { get; set; }
+        //public ICollection<ReservaViajante> ReservaViajantes { get; set; }
     }
 }
