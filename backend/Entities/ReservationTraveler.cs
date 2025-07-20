@@ -1,4 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Data de Criação: 20/07/2025
+// 📁 Arquivo: ReservationTraveler
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: Entidade de junção entre Reserva e Viajante (N:N)
+// -----------------------------------------------------------------------------
+
+using System.ComponentModel.DataAnnotations.Schema;
 using WebApplication1.Entities;
 
 namespace WebApplication1.backend.Entities
