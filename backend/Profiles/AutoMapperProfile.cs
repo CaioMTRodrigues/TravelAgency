@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using AutoMapper; // Biblioteca para mapeamento automático entre objetos
+using WebApplication1.backend.DTOs;
 using WebApplication1.DTOs; // Contém os DTOs usados para entrada/saída na API
 using WebApplication1.Entities; // Contém as entidades do domínio (modelo de dados)
 
@@ -43,6 +44,12 @@ namespace WebApplication1.Profiles
 
             // Mapeia DTO para Payment
             CreateMap<CreatePaymentDto, Payment>();
+
+            // Mapeia Traveler para DTO       
+            CreateMap<Traveler, TravelerDto>();
+
+            // Mapeia DTO para Traveler
+            CreateMap<CreateTravelerDto, Traveler>();
 
 
         }
