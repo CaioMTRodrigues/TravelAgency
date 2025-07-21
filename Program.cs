@@ -20,6 +20,8 @@ builder.Services.AddScoped<IRepository<Evaluation, int>, EvaluationRepository>()
 builder.Services.AddScoped<IRepository<Reservation, int>, ReservationRepository>();
 builder.Services.AddScoped<IRepository<Payment, int>, PaymentRepository>();
 builder.Services.AddScoped<IRepository<Traveler, int>, TravelerRepository>();
+builder.Services.AddScoped<ReservationTravelerRepository>();
+
 
 
 // 🔄 Registro do AutoMapper com o perfil correto
