@@ -74,22 +74,24 @@ namespace WebApplication1.Data
                 .HasOne(t => t.Usuario)
                 .WithMany()
                 .HasForeignKey(t => t.Id_Usuario)
-                .HasConstraintName("FK_Travelers_Users_Id_Usuario");
+                .HasConstraintName("FK_Travelers_Users_Id_Usuario")
+                .OnDelete(DeleteBehavior.NoAction);
 
-            
             // Relacionamento Traveler -> ReservaViajante (um para muitos)
             modelBuilder.Entity<Traveler>()
                 .HasMany(t => t.ReservaViajantes)
                 .WithOne(rv => rv.Viajante)
                 .HasForeignKey(rv => rv.Id_Viajante)
-                .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante");
+                .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante")
+                .OnDelete(DeleteBehavior.NoAction); // 👈 Adicionado
 
             // Reservation -> ReservaViajante
             modelBuilder.Entity<Reservation>()
                 .HasMany(r => r.ReservaViajantes)
                 .WithOne(rv => rv.Reserva)
                 .HasForeignKey(rv => rv.Id_Reserva)
-                .HasConstraintName("FK_ReservaViajante_Reservation_Id_Reserva");
+                .HasConstraintName("FK_ReservaViajante_Reservation_Id_Reserva")
+                .OnDelete(DeleteBehavior.NoAction); // 👈 Mantido
 
             // Chave composta para a tabela de junção
             modelBuilder.Entity<ReservationTraveler>()

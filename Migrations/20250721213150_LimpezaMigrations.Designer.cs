@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250719210514_AjusteEvaluationFK")]
-    partial class AjusteEvaluationFK
+    [Migration("20250721213150_LimpezaMigrations")]
+    partial class LimpezaMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,16 +49,11 @@ namespace WebApplication1.Migrations
                     b.Property<double>("Nota")
                         .HasColumnType("float");
 
-                    b.Property<int?>("PackageId_Pacote")
-                        .HasColumnType("int");
-
                     b.HasKey("Id_Avaliacao");
 
                     b.HasIndex("Id_Pacote");
 
                     b.HasIndex("Id_Usuario");
-
-                    b.HasIndex("PackageId_Pacote");
 
                     b.ToTable("Evaluations");
                 });
@@ -105,6 +100,37 @@ namespace WebApplication1.Migrations
                     b.ToTable("Packages");
                 });
 
+            modelBuilder.Entity("WebApplication1.Entities.Payment", b =>
+                {
+                    b.Property<int>("Id_Pagamento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Pagamento"));
+
+                    b.Property<DateTime>("Data_Pagamento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id_Reserva")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Valor")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id_Pagamento");
+
+                    b.HasIndex("Id_Reserva")
+                        .IsUnique();
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
                 {
                     b.Property<int>("Id_Reserva")
@@ -136,6 +162,35 @@ namespace WebApplication1.Migrations
                     b.HasIndex("Id_Usuario");
 
                     b.ToTable("Reservations");
+                });
+
+            modelBuilder.Entity("WebApplication1.Entities.Traveler", b =>
+                {
+                    b.Property<int>("Id_Viajante")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_Viajante"));
+
+                    b.Property<DateTime>("Data_Nascimento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Documento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id_Usuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id_Viajante");
+
+                    b.HasIndex("Id_Usuario");
+
+                    b.ToTable("Travelers");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.User", b =>
@@ -178,10 +233,25 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("WebApplication1.backend.Entities.ReservationTraveler", b =>
+                {
+                    b.Property<int>("Id_Reserva")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id_Viajante")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id_Reserva", "Id_Viajante");
+
+                    b.HasIndex("Id_Viajante");
+
+                    b.ToTable("ReservationTravelers");
+                });
+
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
                     b.HasOne("WebApplication1.Entities.Package", "Pacote")
-                        .WithMany()
+                        .WithMany("Avaliacoes")
                         .HasForeignKey("Id_Pacote")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -194,13 +264,21 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Evaluations_Users_Id_Usuario");
 
-                    b.HasOne("WebApplication1.Entities.Package", null)
-                        .WithMany("Avaliacoes")
-                        .HasForeignKey("PackageId_Pacote");
-
                     b.Navigation("Pacote");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("WebApplication1.Entities.Payment", b =>
+                {
+                    b.HasOne("WebApplication1.Entities.Reservation", "Reserva")
+                        .WithOne("Pagamento")
+                        .HasForeignKey("WebApplication1.Entities.Payment", "Id_Reserva")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Payments_Reservations_Id_Reserva");
+
+                    b.Navigation("Reserva");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
@@ -224,11 +302,57 @@ namespace WebApplication1.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("WebApplication1.Entities.Traveler", b =>
+                {
+                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("Id_Usuario")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_Travelers_Users_Id_Usuario");
+
+                    b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("WebApplication1.backend.Entities.ReservationTraveler", b =>
+                {
+                    b.HasOne("WebApplication1.Entities.Reservation", "Reserva")
+                        .WithMany("ReservaViajantes")
+                        .HasForeignKey("Id_Reserva")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_ReservaViajante_Reservation_Id_Reserva");
+
+                    b.HasOne("WebApplication1.Entities.Traveler", "Viajante")
+                        .WithMany("ReservaViajantes")
+                        .HasForeignKey("Id_Viajante")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante");
+
+                    b.Navigation("Reserva");
+
+                    b.Navigation("Viajante");
+                });
+
             modelBuilder.Entity("WebApplication1.Entities.Package", b =>
                 {
                     b.Navigation("Avaliacoes");
 
                     b.Navigation("Reservas");
+                });
+
+            modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
+                {
+                    b.Navigation("Pagamento")
+                        .IsRequired();
+
+                    b.Navigation("ReservaViajantes");
+                });
+
+            modelBuilder.Entity("WebApplication1.Entities.Traveler", b =>
+                {
+                    b.Navigation("ReservaViajantes");
                 });
 #pragma warning restore 612, 618
         }

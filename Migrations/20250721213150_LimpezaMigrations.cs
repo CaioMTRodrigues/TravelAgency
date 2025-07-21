@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class LimpezaMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -60,8 +60,7 @@ namespace WebApplication1.Migrations
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Data = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Id_Usuario = table.Column<int>(type: "int", nullable: false),
-                    Id_Pacote = table.Column<int>(type: "int", nullable: false),
-                    PackageId_Pacote = table.Column<int>(type: "int", nullable: true)
+                    Id_Pacote = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -72,11 +71,6 @@ namespace WebApplication1.Migrations
                         principalTable: "Packages",
                         principalColumn: "Id_Pacote",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Evaluations_Packages_PackageId_Pacote",
-                        column: x => x.PackageId_Pacote,
-                        principalTable: "Packages",
-                        principalColumn: "Id_Pacote");
                     table.ForeignKey(
                         name: "FK_Evaluations_Users_Id_Usuario",
                         column: x => x.Id_Usuario,
@@ -114,6 +108,72 @@ namespace WebApplication1.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Travelers",
+                columns: table => new
+                {
+                    Id_Viajante = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Documento = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Data_Nascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Id_Usuario = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Travelers", x => x.Id_Viajante);
+                    table.ForeignKey(
+                        name: "FK_Travelers_Users_Id_Usuario",
+                        column: x => x.Id_Usuario,
+                        principalTable: "Users",
+                        principalColumn: "Id_User");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id_Pagamento = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tipo = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Data_Pagamento = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Id_Reserva = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id_Pagamento);
+                    table.ForeignKey(
+                        name: "FK_Payments_Reservations_Id_Reserva",
+                        column: x => x.Id_Reserva,
+                        principalTable: "Reservations",
+                        principalColumn: "Id_Reserva",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ReservationTravelers",
+                columns: table => new
+                {
+                    Id_Reserva = table.Column<int>(type: "int", nullable: false),
+                    Id_Viajante = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReservationTravelers", x => new { x.Id_Reserva, x.Id_Viajante });
+                    table.ForeignKey(
+                        name: "FK_ReservaViajante_Reservation_Id_Reserva",
+                        column: x => x.Id_Reserva,
+                        principalTable: "Reservations",
+                        principalColumn: "Id_Reserva");
+                    table.ForeignKey(
+                        name: "FK_ReservaViajante_Traveler_Id_Viajante",
+                        column: x => x.Id_Viajante,
+                        principalTable: "Travelers",
+                        principalColumn: "Id_Viajante");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Evaluations_Id_Pacote",
                 table: "Evaluations",
@@ -125,9 +185,10 @@ namespace WebApplication1.Migrations
                 column: "Id_Usuario");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Evaluations_PackageId_Pacote",
-                table: "Evaluations",
-                column: "PackageId_Pacote");
+                name: "IX_Payments_Id_Reserva",
+                table: "Payments",
+                column: "Id_Reserva",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_Id_Pacote",
@@ -138,6 +199,16 @@ namespace WebApplication1.Migrations
                 name: "IX_Reservations_Id_Usuario",
                 table: "Reservations",
                 column: "Id_Usuario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ReservationTravelers_Id_Viajante",
+                table: "ReservationTravelers",
+                column: "Id_Viajante");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Travelers_Id_Usuario",
+                table: "Travelers",
+                column: "Id_Usuario");
         }
 
         /// <inheritdoc />
@@ -147,7 +218,16 @@ namespace WebApplication1.Migrations
                 name: "Evaluations");
 
             migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
+                name: "ReservationTravelers");
+
+            migrationBuilder.DropTable(
                 name: "Reservations");
+
+            migrationBuilder.DropTable(
+                name: "Travelers");
 
             migrationBuilder.DropTable(
                 name: "Packages");

@@ -230,6 +230,21 @@ namespace WebApplication1.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("WebApplication1.backend.Entities.ReservationTraveler", b =>
+                {
+                    b.Property<int>("Id_Reserva")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id_Viajante")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id_Reserva", "Id_Viajante");
+
+                    b.HasIndex("Id_Viajante");
+
+                    b.ToTable("ReservationTravelers");
+                });
+
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
                     b.HasOne("WebApplication1.Entities.Package", "Pacote")
@@ -289,11 +304,32 @@ namespace WebApplication1.Migrations
                     b.HasOne("WebApplication1.Entities.User", "Usuario")
                         .WithMany()
                         .HasForeignKey("Id_Usuario")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired()
                         .HasConstraintName("FK_Travelers_Users_Id_Usuario");
 
                     b.Navigation("Usuario");
+                });
+
+            modelBuilder.Entity("WebApplication1.backend.Entities.ReservationTraveler", b =>
+                {
+                    b.HasOne("WebApplication1.Entities.Reservation", "Reserva")
+                        .WithMany("ReservaViajantes")
+                        .HasForeignKey("Id_Reserva")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_ReservaViajante_Reservation_Id_Reserva");
+
+                    b.HasOne("WebApplication1.Entities.Traveler", "Viajante")
+                        .WithMany("ReservaViajantes")
+                        .HasForeignKey("Id_Viajante")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired()
+                        .HasConstraintName("FK_ReservaViajante_Traveler_Id_Viajante");
+
+                    b.Navigation("Reserva");
+
+                    b.Navigation("Viajante");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Package", b =>
@@ -307,6 +343,13 @@ namespace WebApplication1.Migrations
                 {
                     b.Navigation("Pagamento")
                         .IsRequired();
+
+                    b.Navigation("ReservaViajantes");
+                });
+
+            modelBuilder.Entity("WebApplication1.Entities.Traveler", b =>
+                {
+                    b.Navigation("ReservaViajantes");
                 });
 #pragma warning restore 612, 618
         }
