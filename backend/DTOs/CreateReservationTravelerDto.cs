@@ -13,7 +13,7 @@ namespace WebApplication1.backend.DTOs
     public class CreateReservationTravelerDto
     {
         
-{
+
         [Required(ErrorMessage = "O ID da reserva é obrigatório.")]
         public int Id_Reserva { get; set; }
 
@@ -21,5 +21,4 @@ namespace WebApplication1.backend.DTOs
         public int Id_Viajante { get; set; }
     }
 
-}
 }

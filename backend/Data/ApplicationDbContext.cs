@@ -25,7 +25,10 @@ namespace WebApplication1.Data
         public DbSet<Reservation> Reservations { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Traveler> Travelers { get; set; }
-        public DbSet<ReservationTraveler> ReservaViajantes { get; set; }
+        public DbSet<ReservationTraveler> ReservationTravelers { get; set; }
+
+
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
