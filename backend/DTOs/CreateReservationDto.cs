@@ -12,13 +12,12 @@ namespace WebApplication1.DTOs
 {
     public class CreateReservationDto
     {
-        
         [Required(ErrorMessage = "A data da reserva é obrigatória.")]
         public DateTime Data_Reserva { get; set; }
 
         [Required(ErrorMessage = "O status da reserva é obrigatório.")]
         [EnumDataType(typeof(StatusReserva), ErrorMessage = "Status inválido.")]
-        public StatusReserva Status { get; set; }
+        public StatusReserva Status { get; set; } = StatusReserva.Pendente;
 
         [Required(ErrorMessage = "O número da reserva é obrigatório.")]
         [StringLength(50, ErrorMessage = "O número da reserva deve ter no máximo 50 caracteres.")]
