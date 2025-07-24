@@ -17,7 +17,7 @@ public class CreateTravelerDto
         public string Nome { get; set; }
 
         [Required(ErrorMessage = "O documento é obrigatório.")]
-        [StringLength(20, ErrorMessage = "O documento deve ter no máximo 20 caracteres.")]
+        [CpfOuPassaporte]
         public string Documento { get; set; }
 
         [Required(ErrorMessage = "A data de nascimento é obrigatória.")]

@@ -27,12 +27,14 @@ namespace WebApplication1.Data
         public DbSet<Traveler> Travelers { get; set; }
         public DbSet<ReservationTraveler> ReservationTravelers { get; set; }
 
-
-
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // 🔒 Restrição de unicidade para o campo Document (CPF ou Passaporte)
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Document)
+                .IsUnique();
 
             // Relacionamento Reservation -> User (muitos para um)
             modelBuilder.Entity<Reservation>()
@@ -96,7 +98,6 @@ namespace WebApplication1.Data
             // Chave composta para a tabela de junção
             modelBuilder.Entity<ReservationTraveler>()
                 .HasKey(rv => new { rv.Id_Reserva, rv.Id_Viajante });
-
         }
     }
 }

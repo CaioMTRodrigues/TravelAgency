@@ -22,7 +22,7 @@ namespace WebApplication1.DTOs
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "O documento é obrigatório.")]
-        [RegularExpression(@"^\d{11}$", ErrorMessage = "O documento deve conter exatamente 11 dígitos.")]
+        [CpfOuPassaporte]        
         public string Document { get; set; }
     }
 }

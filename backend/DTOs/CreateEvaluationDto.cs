@@ -6,7 +6,6 @@
 // 🚀 Descrição: Pega os dados da avaliação e converte em entidade Evaluation com validações
 // -----------------------------------------------------------------------------
 
-
 using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication1.DTOs
@@ -17,7 +16,7 @@ namespace WebApplication1.DTOs
         [Required(ErrorMessage = "A nota é obrigatória.")]
         [Range(0, 5, ErrorMessage = "A nota deve estar entre 0 e 5.")]
         public double Nota { get; set; }
-
+        [Required(ErrorMessage = "O comentàrio é obirgatório.")]
         [StringLength(1000, ErrorMessage = "O comentário deve ter no máximo 1000 caracteres.")]
         public string? Comentario { get; set; }
 

@@ -24,5 +24,6 @@ namespace WebApplication1.Repositories
 
         // Remove um registro pelo ID
         Task DeleteAsync(TId id);
+        
     }
 }

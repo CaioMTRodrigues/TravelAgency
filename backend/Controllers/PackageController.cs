@@ -6,11 +6,12 @@
 // 🚀 Descrição: Controller responsável por gerenciar pacotes turísticos
 // -----------------------------------------------------------------------------
 
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
+using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
-using AutoMapper;
 
 namespace WebApplication1.Controllers
 {
@@ -45,7 +46,7 @@ namespace WebApplication1.Controllers
         {
             var package = await _repository.GetByIdAsync(id);
             if (package == null)
-                return NotFound();
+                throw new NotFoundException("Pacote", id);
 
             var dto = _mapper.Map<PackageDto>(package);
             return Ok(dto);
@@ -70,7 +71,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                return NotFound();
+                throw new NotFoundException("Pacote", id);
 
             // Atualiza os dados do pacote com base no DTO recebido
             _mapper.Map(dto, existing);
@@ -86,7 +87,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                return NotFound();
+                throw new NotFoundException("Pacote", id);
 
             await _repository.DeleteAsync(id);
             return NoContent(); // 204 - Exclusão bem-sucedida
