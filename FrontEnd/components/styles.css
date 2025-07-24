@@ -1,0 +1,617 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+.menu {
+  background-color: #004aad;
+  padding: 10px 20px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.menu nav a {
+  margin: 0 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.banner {
+  background: url('/imagens/banner.jpg') no-repeat center/cover;
+  height: 300px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.pacotes {
+  padding: 20px;
+  text-align: center;
+}
+
+.cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  width: 200px;
+  box-shadow: 0 0 5px gray;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.rodape {
+  background: #f2f2f2;
+  padding: 20px;
+  text-align: center;
+}
+
+.social img, .pagamentos img {
+  width: 30px;
+  margin: 5px;
+}
+
+.ajuda-botao {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #004aad;
+  color: white;
+  font-size: 24px;
+  padding: 12px;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.login-container {
+  max-width: 350px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #004aad;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.login-container h2 {
+  text-align: center;
+  color: #004aad;
+}
+
+.login-container label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.login-container input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+.erro {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.login-container button {
+  margin-top: 20px;
+  width: 100%;
+  background-color: #004aad;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: #003080;
+}
+
+
+
+.cadastro-container {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid #004aad;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.cadastro-container h2 {
+  text-align: center;
+  color: #004aad;
+}
+
+.cadastro-container label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+
+.cadastro-container input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+.erro {
+  color: red;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.sucesso {
+  color: green;
+  margin-top: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.cadastro-container button {
+  margin-top: 20px;
+  width: 100%;
+  background-color: #004aad;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cadastro-container button:hover {
+  background-color: #003080;
+}
+
+
+.pacotes-listagem {
+  padding: 20px;
+  text-align: center;
+}
+
+.pacotes-listagem .cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pacotes-listagem .card {
+  width: 250px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 1px 1px 6px #ccc;
+  overflow: hidden;
+  padding-bottom: 10px;
+  background: white;
+}
+
+.pacotes-listagem .card img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-bottom: 1px solid #ddd;
+}
+
+.pacotes-listagem .card h3 {
+  margin: 10px 0 5px 0;
+  color: #004aad;
+}
+
+.pacotes-listagem .card p {
+  padding: 0 10px;
+  font-size: 14px;
+}
+
+.pacotes-listagem .card button {
+  background-color: #004aad;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pacotes-listagem .card button:hover {
+  background-color: #003080;
+}
+
+
+
+.detalhes-container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid #004aad;
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+}
+
+.detalhes-container img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  margin-bottom: 20px;
+}
+
+.detalhes-container h2 {
+  color: #004aad;
+}
+
+.detalhes-container button {
+  background-color: #004aad;
+  color: white;
+  padding: 10px 20px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.detalhes-container button:hover {
+  background-color: #003080;
+}
+
+
+
+.central-ajuda {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f9f9ff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 100, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.central-ajuda h2 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 30px;
+}
+
+.central-ajuda .faq h3 {
+  color: #004aad;
+  margin-top: 20px;
+}
+
+.central-ajuda .faq p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.central-ajuda .contato-ajuda {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid #ccc;
+}
+
+.central-ajuda .contato-ajuda h3 {
+  color: #004aad;
+}
+
+
+
+.minhas-reservas {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f5f7ff;
+  border-radius: 10px;
+}
+
+.minhas-reservas h2 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 30px;
+}
+
+.minhas-reservas ul {
+  list-style: none;
+  padding: 0;
+}
+
+.minhas-reservas li {
+  display: flex;
+  gap: 20px;
+  background: white;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.minhas-reservas li img {
+  width: 160px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.minhas-reservas li h3 {
+  margin: 0 0 10px;
+  color: #004aad;
+}
+
+
+.avaliacoes {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f0f8ff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.avaliacoes h2 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 30px;
+}
+
+.lista-avaliacoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.card-avaliacao {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #004aad;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card-avaliacao h3 {
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.card-avaliacao .estrelas {
+  color: gold;
+  margin-bottom: 10px;
+}
+
+.card-avaliacao .destino,
+.card-avaliacao .data {
+  font-size: 0.9em;
+  color: #666;
+}
+
+
+.admin-dashboard {
+  padding: 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.admin-dashboard h2 {
+  margin-bottom: 10px;
+}
+
+section {
+  margin-top: 30px;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+section h3 {
+  margin-bottom: 10px;
+  color: #0b3d91;
+}
+
+.tabela-admin {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela-admin th, .tabela-admin td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+button {
+  padding: 5px 10px;
+  background-color: #e63946;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #c82333;
+}
+
+
+
+.admin-pacotes {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 12px;
+}
+
+.admin-pacotes h2 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 30px;
+}
+
+.admin-pacotes table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.admin-pacotes th,
+.admin-pacotes td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-pacotes th {
+  background-color: #004aad;
+  color: white;
+}
+
+.admin-pacotes button {
+  background-color: #ff4444;
+  border: none;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.admin-pacotes button:hover {
+  background-color: #d93636;
+}
+
+
+
+.admin-reservas {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f8f9fb;
+  border-radius: 12px;
+}
+
+.admin-reservas h2 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 30px;
+}
+
+.admin-reservas table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.admin-reservas th,
+.admin-reservas td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-reservas th {
+  background-color: #004aad;
+  color: white;
+  text-align: left;
+}
+
+
+.admin-avaliacoes {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 12px;
+}
+
+.admin-avaliacoes h2 {
+  text-align: center;
+  color: #004aad;
+  margin-bottom: 30px;
+}
+
+.admin-avaliacoes table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.admin-avaliacoes th,
+.admin-avaliacoes td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.admin-avaliacoes th {
+  background-color: #004aad;
+  color: white;
+}
+
+.admin-avaliacoes button {
+  background-color: #d33;
+  border: none;
+  padding: 6px 10px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+
+.formas-pagamento {
+  padding: 2rem;
+}
+
+.formas-pagamento h2 {
+  color: #0077cc;
+}
+
+.pagamento-tipos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.pagamento-tipos div {
+  background: #f3f3f3;
+  padding: 1rem;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.seguranca {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #e0f7fa;
+  border-radius: 12px;
+  text-align: center;
+}
+
+
+
+
+
+
+
+
+        

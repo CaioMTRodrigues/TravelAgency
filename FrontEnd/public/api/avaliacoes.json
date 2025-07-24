@@ -1,0 +1,23 @@
+[
+  {
+    "nome": "Ana Paula",
+    "estrelas": 5,
+    "comentario": "Viagem maravilhosa! Atendimento excelente!",
+    "destino": "Maceió",
+    "data": "12/06/2025"
+  },
+  {
+    "nome": "Carlos Silva",
+    "estrelas": 4,
+    "comentario": "Gostei muito da experiência, só achei o hotel um pouco longe da praia.",
+    "destino": "Natal",
+    "data": "03/07/2025"
+  },
+  {
+    "nome": "Juliana Torres",
+    "estrelas": 5,
+    "comentario": "Tudo perfeito! Recomendo muito a Travel Agency!",
+    "destino": "Foz do Iguaçu",
+    "data": "22/04/2025"
+  }
+]

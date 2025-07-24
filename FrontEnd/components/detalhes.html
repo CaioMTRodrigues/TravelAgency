@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalhes do Pacote - Travel Agency</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<style>
+    /* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f2f2f2;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Cabeçalho */
+header {
+  background-color: #008cba;
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+}
+
+nav {
+  margin-top: 0.5rem;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 10px;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Conteúdo principal */
+main {
+  padding: 2rem;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  color: #008cba;
+}
+
+/* Estilo dos pacotes */
+.pacotes-lista {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.pacote {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.pacote img {
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.pacote h3 {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: #333;
+}
+
+.pacote p {
+  margin: 0.5rem 0;
+}
+
+.botao {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.7rem 1.5rem;
+  background-color: #008cba;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.botao:hover {
+  background-color: #005f7f;
+}
+
+/* Rodapé */
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #008cba;
+  color: white;
+  margin-top: 3rem;
+}
+</style>
+<body>
+
+  <header>
+    <h1>Travel Agency</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="pacotes.html">Pacotes</a>
+      <a href="reservas.html">Reservas</a>
+      <a href="pagamento.html">Pagamentos</a>
+      <a href="avaliacoes.html">Avaliações</a>
+      <a href="login.html">Login</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Detalhes do Pacote</h2>
+
+    <section class="pacotes-lista">
+      <div class="pacote">
+        <img src="https://source.unsplash.com/featured/?beach" alt="Praia dos Sonhos">
+        <h3>Praia dos Sonhos - 7 Dias</h3>
+        <p><strong>Descrição:</strong> Aproveite uma semana incrível em um resort à beira-mar com tudo incluso.</p>
+        <p><strong>Inclui:</strong> Passagem aérea, hotel, refeições e passeios guiados.</p>
+        <p><strong>Data de Saída:</strong> 15/08/2025</p>
+        <p><strong>Preço:</strong> R$ 2.799,00 por pessoa</p>
+        <a class="botao" href="reservas.html">Reservar Agora</a>
+      </div>
+    </section>
+
+
+
+
+   <section class="pacotes-lista">
+      <div class="pacote">
+        <img src="https://source.unsplash.com/featured/?beach" alt="Campos de Montanha">
+        <h3>Campos de Montanhas - 3 Dias</h3>
+        <p><strong>Descrição:</strong> Aproveite as trilhas e passeios incluídos.</p>
+        <p><strong>Inclui:</strong> hotel, refeições e passeios guiados.</p>
+        <p><strong>Data de Saída:</strong> 15/10/2025</p>
+        <p><strong>Preço:</strong> R$ 1.899,00 por pessoa</p>
+        <a class="botao" href="reservas.html">Reservar Agora</a>
+      </div>
+    </section>
+
+
+
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Travel Agency - Todos os direitos reservados</p>
+  </footer>
+
+</body>
+</html>

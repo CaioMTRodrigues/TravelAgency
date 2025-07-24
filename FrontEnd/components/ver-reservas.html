@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservas - Admin | Travel Agency</title>
+  <link rel="stylesheet" href="style-reservas-admin.css" />
+</head>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f3f3f3;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #2c5282;
+  margin-bottom: 30px;
+}
+
+.reserva-card {
+  background-color: #edf2f7;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+}
+
+.reserva-card h3 {
+  margin: 0 0 10px;
+  color: #2d3748;
+}
+
+.reserva-card p {
+  margin: 5px 0;
+  color: #4a5568;
+}
+
+.reserva-card button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.reserva-card button:hover {
+  background-color: #2b6cb0;
+}
+</style>
+<body>
+  <div class="admin-container">
+    <h2>Reservas dos Clientes</h2>
+
+    <div class="reserva-card">
+      <h3>Gabriel Santolaja</h3>
+      <p><strong>Destino:</strong> Salvador</p>
+      <p><strong>Data:</strong> 10/08/2025</p>
+      <p><strong>Status:</strong> Confirmada</p>
+      <button>Ver Detalhes</button>
+    </div>
+
+    <div class="reserva-card">
+      <h3>Ana Lima</h3>
+      <p><strong>Destino:</strong> Gramado</p>
+      <p><strong>Data:</strong> 18/09/2025</p>
+      <p><strong>Status:</strong> Pendente</p>
+      <button>Ver Detalhes</button>
+    </div>
+  </div>
+</body>
+</html>

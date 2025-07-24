@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1,
+    "titulo": "Rio de Janeiro",
+    "descricao": "Conheça as praias e a cidade maravilhosa.",
+    "preco": 999,
+    "imagem": "/imagens/rio.jpg"
+  },
+  {
+    "id": 2,
+    "titulo": "Gramado",
+    "descricao": "Curta o charme e a gastronomia da serra gaúcha.",
+    "preco": 1299,
+    "imagem": "/imagens/gramado.jpg"
+  },
+  {
+    "id": 3,
+    "titulo": "Paris",
+    "descricao": "Explore a capital do romance e cultura.",
+    "preco": 4999,
+    "imagem": "/imagens/paris.jpg"
+  }
+]
+
+

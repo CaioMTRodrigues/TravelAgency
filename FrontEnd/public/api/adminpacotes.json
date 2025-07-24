@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "destino": "Natal - RN",
+    "preco": 1799.90,
+    "duracao": "5 dias"
+  },
+  {
+    "id": 2,
+    "destino": "Foz do Iguaçu - PR",
+    "preco": 1420.00,
+    "duracao": "4 dias"
+  }
+]

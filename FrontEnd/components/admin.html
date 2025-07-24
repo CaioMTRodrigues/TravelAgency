@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel do Administrador - Travel Agency</title>
+  <link rel="stylesheet" href="style-admin.css" />
+</head>
+<style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  margin: 0;
+  padding: 0;
+}
+
+.admin-dashboard {
+  max-width: 900px;
+  margin: 50px auto;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.admin-dashboard h2 {
+  color: #2b6cb0;
+  margin-bottom: 10px;
+}
+
+.cards-admin {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 30px;
+  gap: 20px;
+}
+
+.card {
+  flex: 1;
+  min-width: 250px;
+  background-color: #eaf4ff;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.3s, background-color 0.3s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+  background-color: #d0eaff;
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  color: #1a202c;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #555;
+}
+</style>
+<body>
+  <div class="admin-dashboard">
+    <h2>Painel do Administrador</h2>
+    <p>Bem-vindo, administrador! Escolha uma das opções abaixo:</p>
+
+    <div class="cards-admin">
+      <div class="card" onclick="window.location.href='gerenciar-pacotes.html'">
+        <h3>Gerenciar Pacotes</h3>
+        <p>Visualize, edite e exclua pacotes de viagens cadastrados.</p>
+      </div>
+      <div class="card" onclick="window.location.href='ver-reservas.html'">
+        <h3>Ver Reservas</h3>
+        <p>Acompanhe todas as reservas feitas pelos clientes.</p>
+      </div>
+      <div class="card" onclick="window.location.href='avaliacoes.html'">
+        <h3>Avaliações</h3>
+        <p>Consulte e modere comentários deixados pelos clientes.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

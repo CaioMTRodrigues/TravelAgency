@@ -1,0 +1,14 @@
+[
+  {
+    "cliente": "João Silva",
+    "destino": "Natal - RN",
+    "data": "2025-08-10",
+    "status": "Confirmada"
+  },
+  {
+    "cliente": "Maria Oliveira",
+    "destino": "Foz do Iguaçu - PR",
+    "data": "2025-09-05",
+    "status": "Pendente"
+  }
+]

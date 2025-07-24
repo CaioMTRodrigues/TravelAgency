@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Avaliações dos Clientes - Travel Agency</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<style>
+    body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9fafb;
+  color: #222;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background-color: #0077cc;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+h2 {
+  color: #0077cc;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.avaliacoes-lista {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+.avaliacao {
+  background-color: white;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 119, 204, 0.15);
+  border-left: 6px solid #0077cc;
+  transition: transform 0.3s ease;
+}
+
+.avaliacao:hover {
+  transform: translateY(-5px);
+}
+
+.avaliacao h3 {
+  margin-bottom: 5px;
+  color: #005fa3;
+}
+
+.avaliacao p {
+  margin-top: 8px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.avaliacao p strong {
+  color: #0077cc;
+  font-size: 1.1rem;
+}
+
+/* Footer */
+
+footer {
+  background-color: #0077cc;
+  color: white;
+  text-align: center;
+  padding: 18px 0;
+  margin-top: 50px;
+  font-size: 0.9rem;
+}
+</style>
+<body>
+  <header>
+    <h1>Travel Agency</h1>
+    <nav>
+      <a href="index.html">Início</a>
+      <a href="pacotes.html">Pacotes</a>
+      <a href="reservas.html">Minhas Reservas</a>
+      <a href="pagamento.html">Pagamento</a>
+      <a href="avaliacoes.html">Avaliações</a>
+    </nav>
+  </header>
+
+  <main>
+    <h2>Avaliações dos Clientes</h2>
+
+    <section class="avaliacoes-lista">
+      <article class="avaliacao">
+        <h3>Maria Silva</h3>
+        <p><strong>5 estrelas</strong></p>
+        <p>"A viagem foi incrível! Atendimento excelente e pacotes com ótimo custo-benefício."</p>
+      </article>
+
+      <article class="avaliacao">
+        <h3>João Pereira</h3>
+        <p><strong>4 estrelas</strong></p>
+        <p>"Gostei muito da organização, só faltou mais opções de restaurantes."</p>
+      </article>
+
+      <article class="avaliacao">
+        <h3>Ana Costa</h3>
+        <p><strong>5 estrelas</strong></p>
+        <p>"Recomendo a Travel Agency para quem quer tranquilidade e segurança nas viagens."</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Travel Agency. Todos os direitos reservados.</p>
+  </footer>
+</body>
+</html>
