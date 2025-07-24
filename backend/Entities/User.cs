@@ -15,6 +15,10 @@ namespace WebApplication1.Entities
         public string Role { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        // Novos campos para confirmação de e-mail 
+        public bool EmailConfirmed { get; set; } = false;
+        public string? EmailConfirmationToken { get; set; }
+        public DateTime? TokenExpiration { get; set; }
 
     }
 }

@@ -39,4 +39,18 @@ public class AuthController : ControllerBase
 
         return Ok(new { token });
     }
+
+
+    // GET: api/auth/confirmar-email
+    // Confirma o e-mail do usuário com base no token
+    [HttpGet("confirmar-email")]
+    public async Task<IActionResult> ConfirmarEmail([FromQuery] string email, [FromQuery] string token)
+    {
+        var sucesso = await _authService.ConfirmarEmailAsync(email, token);
+
+        if (!sucesso)
+            return BadRequest(new { message = "Token inválido ou expirado." });
+
+        return Ok(new { message = "E-mail confirmado com sucesso. Você já pode fazer login!" });
+    }
 }

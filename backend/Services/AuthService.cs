@@ -1,40 +1,46 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System; 
-using System.Collections.Generic; 
-using System.IdentityModel.Tokens.Jwt; 
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text; 
-using System.Threading.Tasks; 
+using System.Text;
+using System.Threading.Tasks;
 using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
+using WebApplication1.Services;
 
 public class AuthService
 {
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly EmailService _emailService;
 
-    public AuthService(ApplicationDbContext context, IConfiguration configuration)
+    // Construtor com injeção de dependências
+    public AuthService(ApplicationDbContext context, IConfiguration configuration, EmailService emailService)
     {
         _context = context;
         _configuration = configuration;
+        _emailService = emailService;
     }
 
+    // Registra um novo usuário e envia e-mail de confirmação
     public async Task<bool> RegisterUserAsync(CreateUserDTO userDto)
     {
-        // 1. Lógica de Validação: Verifica se o e-mail já existe
+        // Verifica se o e-mail já está cadastrado
         if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
-        {
-            
             return false;
-        }
 
-        // 2. Lógica de Geração de Hash de Senha (bcrypt)
+        // Gera o hash da senha usando BCrypt
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
-        // 3. Mapeia o DTO para a Entidade
+        // Gera token de confirmação de e-mail e define validade
+        var token = Guid.NewGuid().ToString();
+        var expiracao = DateTime.UtcNow.AddHours(24);
+
+        // Cria o objeto User com os dados e token
         var user = new User
         {
             Name = userDto.Name,
@@ -42,54 +48,59 @@ public class AuthService
             PasswordHash = passwordHash,
             PhoneNumber = userDto.PhoneNumber,
             Document = userDto.Document,
-            Role = "Cliente" 
+            Role = "Cliente",
+            EmailConfirmed = false,
+            EmailConfirmationToken = token,
+            TokenExpiration = expiracao
         };
 
-        // 4. Persiste os dados do usuário no banco de dados
+        // Salva o usuário no banco
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        // 5. Preparar lógica para envio de e-mail (mockado)
-        
-        Console.WriteLine($"Mock: E-mail de confirmação enviado para {user.Email}");
+        // Envia o e-mail de confirmação
+        await _emailService.EnviarEmailConfirmacaoAsync(user.Email, token);
 
         return true;
     }
 
+    // Realiza login e retorna token JWT se o e-mail estiver confirmado
     public async Task<string> LoginAsync(UserLoginDTO loginDto)
     {
-        // 1. Lógica de Validação de Credenciais
+        // Busca o usuário pelo e-mail
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
 
         // Verifica se o usuário existe e se a senha está correta
         if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
-        {
-            return null; 
-        }
+            return null;
 
-        // 2. Gerar e retornar token JWT
+        // Impede login se o e-mail ainda não foi confirmado
+        if (!user.EmailConfirmed)
+            return null;
+
+        // Gera e retorna o token JWT
         var token = GenerateJwtToken(user);
         return token;
     }
 
+    // Gera o token JWT com claims do usuário
     private string GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
 
-        // Claims são as "informações" 
         var claims = new List<Claim>
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id_User.ToString()), // Sujeito do token, geralmente o ID do usuário
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id_User.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("role", user.Role), // Claim customizada para o perfil do usuário
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // ID único para o token
+            new Claim("role", user.Role),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddHours(8), // Tempo de expiração do token
+            Expires = DateTime.UtcNow.AddHours(8),
             Issuer = _configuration["Jwt:Issuer"],
             Audience = _configuration["Jwt:Audience"],
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -98,4 +109,34 @@ public class AuthService
         var token = tokenHandler.CreateToken(tokenDescriptor);
         return tokenHandler.WriteToken(token);
     }
+
+    // Confirma o e-mail do usuário com base no token
+    public async Task<bool> ConfirmarEmailAsync(string email, string token)
+    {
+        Console.WriteLine($"[DEBUG] Tentando confirmar e-mail: {email} com token: {token}");
+
+        var user = await _context.Users.FirstOrDefaultAsync(u =>
+            u.Email == email && u.EmailConfirmationToken == token);
+
+        if (user == null)
+        {
+            Console.WriteLine("[DEBUG] Usuário não encontrado ou token inválido.");
+            return false;
+        }
+
+        if (user.TokenExpiration < DateTime.UtcNow)
+        {
+            Console.WriteLine("[DEBUG] Token expirado.");
+            return false;
+        }
+
+        user.EmailConfirmed = true;
+        user.EmailConfirmationToken = null;
+        user.TokenExpiration = null;
+
+        await _context.SaveChangesAsync();
+        Console.WriteLine("[DEBUG] E-mail confirmado com sucesso.");
+        return true;
+    }
+
 }

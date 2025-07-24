@@ -7,6 +7,7 @@ using WebApplication1.Exceptions;
 using WebApplication1.Filters;
 using WebApplication1.Profiles;
 using WebApplication1.Repositories;
+using WebApplication1.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,8 +31,9 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// 🔐 Serviços
-builder.Services.AddScoped<AuthService>();
+// ✅ Serviços
+builder.Services.AddScoped<EmailService>(); // Serviço de envio de e-mail
+builder.Services.AddScoped<AuthService>();  // Serviço de autenticação
 
 // 🌍 CORS
 builder.Services.AddCors(options =>
@@ -48,24 +50,22 @@ builder.Services.AddAuthorization();
 // ✅ Controllers com filtro de validação global
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<ValidationFilter>(); // ⬅️ Filtro de validação
+    options.Filters.Add<ValidationFilter>(); // Filtro de validação customizado
 })
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-
-//Desativando 
+// ❌ Desativa a validação automática do ModelState (usamos filtro customizado)
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
 
-
 var app = builder.Build();
 
-// 🌐 Pipeline
+// 🌐 Pipeline de requisições
 app.UseCors("AllowAll");
 
 if (app.Environment.IsDevelopment())
@@ -74,7 +74,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ⚠️ Middleware de exceções
+// ⚠️ Middleware de tratamento global de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
