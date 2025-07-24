@@ -27,19 +27,6 @@ builder.Services.AddScoped<ReservationTravelerRepository>();
 // 🔄 Registro do AutoMapper com o perfil correto
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-// ✅ Configurações dos controllers
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        // Serializa enums como strings no JSON
-        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-    })
-    .AddFluentValidation(fv =>
-    {
-        // Registra validadores do FluentValidation
-        fv.RegisterValidatorsFromAssemblyContaining<Program>();
-    });
-
 // 🔍 Swagger para documentação da API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -47,7 +34,19 @@ builder.Services.AddSwaggerGen();
 // 🔐 Serviços adicionais (ex: autenticação)
 builder.Services.AddScoped<AuthService>();
 
+//Add CORS
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // 🌐 Configuração do pipeline HTTP
 if (app.Environment.IsDevelopment())
