@@ -6,11 +6,12 @@
 // 🚀 Descrição: Controller responsável por gerenciar reservas
 // -----------------------------------------------------------------------------
 
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
+using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
-using AutoMapper;
 
 namespace WebApplication1.Controllers
 {
@@ -42,7 +43,7 @@ namespace WebApplication1.Controllers
         {
             var reservation = await _repository.GetByIdAsync(id);
             if (reservation == null)
-                return NotFound();
+                throw new NotFoundException("Reserva", id);
 
             var dto = _mapper.Map<ReservationDto>(reservation);
             return Ok(dto);
@@ -64,7 +65,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                return NotFound();
+                throw new NotFoundException("Reserva", id);
 
             _mapper.Map(dto, existing);
             await _repository.UpdateAsync(existing);
@@ -78,7 +79,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                return NotFound();
+                 throw new NotFoundException("Reserva", id);
 
             await _repository.DeleteAsync(id);
             return NoContent();
