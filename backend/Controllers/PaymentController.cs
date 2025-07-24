@@ -6,11 +6,12 @@
 // 🚀 Descrição: Controller responsável por gerenciar pagamentos
 // -----------------------------------------------------------------------------
 
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
+using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
-using AutoMapper;
 
 namespace WebApplication1.Controllers
 {
@@ -45,7 +46,7 @@ namespace WebApplication1.Controllers
         {
             var payment = await _repository.GetByIdAsync(id);
             if (payment == null)
-                return NotFound();
+                throw new NotFoundException("Pagamento", id);
 
             var dto = _mapper.Map<PaymentDto>(payment);
             return Ok(dto);
@@ -69,7 +70,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                return NotFound();
+                throw new NotFoundException("Pagamento", id);
 
             _mapper.Map(dto, existing);
             await _repository.UpdateAsync(existing);
@@ -84,7 +85,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                return NotFound();
+                throw new NotFoundException("Pagamento", id);
 
             await _repository.DeleteAsync(id);
             return NoContent(); // 204 - Exclusão bem-sucedida
