@@ -40,7 +40,6 @@ public class AuthController : ControllerBase
         return Ok(new { token });
     }
 
-
     // GET: api/auth/confirmar-email
     // Confirma o e-mail do usuário com base no token
     [HttpGet("confirmar-email")]
