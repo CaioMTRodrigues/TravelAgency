@@ -1,11 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
-using WebApplication1.Repositories;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -13,22 +11,20 @@ namespace WebApplication1.Controllers
     [Route("api/[controller]")]
     public class ReservationController : ControllerBase
     {
-        private readonly IRepository<Reservation, int> _repository;
-        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly ReservationService _reservationService;
 
-        public ReservationController(IRepository<Reservation, int> repository, ApplicationDbContext context, IMapper mapper)
+        public ReservationController(IMapper mapper, ReservationService reservationService)
         {
-            _repository = repository;
-            _context = context;
             _mapper = mapper;
+            _reservationService = reservationService;
         }
 
         // GET: api/reservation
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReservationDto>>> GetAll()
         {
-            var reservations = await _repository.GetAllAsync();
+            var reservations = await _reservationService.ObterTodasAsync();
             var result = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
             return Ok(result);
         }
@@ -37,7 +33,7 @@ namespace WebApplication1.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReservationDto>> GetById(int id)
         {
-            var reservation = await _repository.GetByIdAsync(id);
+            var reservation = await _reservationService.ObterPorIdAsync(id);
             if (reservation == null)
                 throw new NotFoundException("Reserva", id);
 
@@ -49,30 +45,17 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateReservationDto dto)
         {
-            var pacote = await _context.Packages.FindAsync(dto.Id_Pacote);
-            if (pacote == null)
-                return BadRequest(new { message = "Pacote não encontrado." });
-
-            var reservation = _mapper.Map<Reservation>(dto);
-            reservation.Data_Reserva = DateTime.UtcNow;
-            reservation.Status = StatusReserva.Pendente;
-            reservation.ValorPacote = pacote.Valor;
-
-            await _repository.AddAsync(reservation);
-
-            return CreatedAtAction(nameof(GetById), new { id = reservation.Id_Reserva }, dto);
+            var reservation = await _reservationService.CriarReservaAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = reservation.Id_Reserva }, _mapper.Map<ReservationDto>(reservation));
         }
 
         // PUT: api/reservation/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult> Update(int id, CreateReservationDto dto)
         {
-            var existing = await _repository.GetByIdAsync(id);
-            if (existing == null)
+            var updated = await _reservationService.AtualizarReservaAsync(id, dto);
+            if (!updated)
                 throw new NotFoundException("Reserva", id);
-
-            _mapper.Map(dto, existing);
-            await _repository.UpdateAsync(existing);
 
             return NoContent();
         }
@@ -81,11 +64,10 @@ namespace WebApplication1.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var existing = await _repository.GetByIdAsync(id);
-            if (existing == null)
+            var deleted = await _reservationService.ExcluirReservaAsync(id);
+            if (!deleted)
                 throw new NotFoundException("Reserva", id);
 
-            await _repository.DeleteAsync(id);
             return NoContent();
         }
     }

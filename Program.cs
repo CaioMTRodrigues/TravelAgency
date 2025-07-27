@@ -34,6 +34,8 @@ builder.Services.AddSwaggerGen();
 // ✅ Serviços
 builder.Services.AddScoped<EmailService>(); // Serviço de envio de e-mail
 builder.Services.AddScoped<AuthService>();  // Serviço de autenticação
+builder.Services.AddScoped<ReservationService>(); // Serviço Reservation
+
 
 // 🌍 CORS
 builder.Services.AddCors(options =>

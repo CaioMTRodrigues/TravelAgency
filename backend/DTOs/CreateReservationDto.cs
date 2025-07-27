@@ -1,6 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WebApplication1.Entities;
+﻿// -----------------------------------------------------------------------------
+// 🧠 Autor: Ericson Sérgio Costa Soares
+// 📅 Data de Criação: 27/07/2025
+// 📁 Arquivo: CreateReservationDto.cs
+// 📦 Projeto: TravelAgency
+// 🚀 Descrição: DTO para criação de reservas
+// -----------------------------------------------------------------------------
 
+using System.ComponentModel.DataAnnotations;
+using WebApplication1.Entities;
 
 namespace WebApplication1.DTOs
 {
@@ -11,15 +18,10 @@ namespace WebApplication1.DTOs
             Numero_Reserva = GerarNumeroReserva();
         }
 
-        [Required(ErrorMessage = "A data da reserva é obrigatória.")]
-        public DateTime Data_Reserva { get; set; }
+        public DateTime? Data_Reserva { get; set; }
 
-        [Required(ErrorMessage = "O status da reserva é obrigatório.")]
-        [EnumDataType(typeof(StatusReserva), ErrorMessage = "Status inválido.")]
         public StatusReserva Status { get; set; } = StatusReserva.Pendente;
 
-        [Required(ErrorMessage = "O número da reserva é obrigatório.")]
-        [StringLength(50, ErrorMessage = "O número da reserva deve ter no máximo 50 caracteres.")]
         public string Numero_Reserva { get; private set; }
 
         [Required(ErrorMessage = "O ID do usuário é obrigatório.")]
