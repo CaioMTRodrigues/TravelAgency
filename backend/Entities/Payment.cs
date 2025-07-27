@@ -15,9 +15,10 @@ namespace WebApplication1.Entities
     // Enum para os tipos de pagamento disponíveis
     public enum TipoPagamento
     {
-        Cartao,   // Pagamento via cartão de crédito ou débito
-        Pix,      // Pagamento instantâneo via Pix
-        Boleto    // Pagamento via boleto bancário
+        Cartao_Credito,   // Pagamento via cartão de crédito 
+        Cartao_Debito,    // Pagamento via cartoa de débito
+        Pix,              // Pagamento instantâneo via Pix
+        Boleto            // Pagamento via boleto bancário
     }
 
     // Enum para os status possíveis de um pagamento
@@ -33,15 +34,11 @@ namespace WebApplication1.Entities
         [Key]
         public int Id_Pagamento { get; set; }
 
-        public TipoPagamento Tipo { get; set; } // Ex: Cartao, Pix, Boleto
-
-        public StatusPagamento Status { get; set; } // Ex: Pago, Pendente, Cancelado
-
+        public TipoPagamento Tipo { get; set; }
+        public StatusPagamento Status { get; set; }
         public decimal Valor { get; set; }
-
         public DateTime Data_Pagamento { get; set; }
 
-        // Chave estrangeira
         public int Id_Reserva { get; set; }
 
         [ForeignKey("Id_Reserva")]

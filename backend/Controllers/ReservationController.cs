@@ -70,5 +70,21 @@ namespace WebApplication1.Controllers
 
             return NoContent();
         }
+
+        // POST: api/reservation/{id}/pagamentos
+        [HttpPost("{id}/payments")]
+        public async Task<IActionResult> RegistrarPagamentos(int id, [FromBody] List<CreatePaymentDto> pagamentosDto)
+        {
+            var pagamentos = pagamentosDto.Select(dto => new Payment
+            {
+                Tipo = dto.Tipo,
+                Status = dto.Status,
+                Valor = dto.Valor,
+                Data_Pagamento = dto.Data_Pagamento
+            }).ToList();
+
+            await _reservationService.RegistrarPagamentosAsync(id, pagamentos);
+            return Ok(new { message = "Pagamentos registrados com sucesso!" });
+        }
     }
 }

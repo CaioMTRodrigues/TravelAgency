@@ -64,11 +64,11 @@ namespace WebApplication1.Data
                 .HasForeignKey(e => e.Id_Pacote)
                 .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
 
-            // Relacionamento Payment -> Reservation (um para um)
+            // Relacionamento Payment -> Reservation (um para muitos)
             modelBuilder.Entity<Reservation>()
-                .HasOne(r => r.Pagamento)
+                .HasMany(r => r.Pagamentos)
                 .WithOne(p => p.Reserva)
-                .HasForeignKey<Payment>(p => p.Id_Reserva)
+                .HasForeignKey(p => p.Id_Reserva)
                 .HasConstraintName("FK_Payments_Reservations_Id_Reserva");
 
             // Relacionamento Traveler -> User (muitos viajantes para um usuário)

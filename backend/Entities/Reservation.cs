@@ -21,11 +21,9 @@ namespace WebApplication1.Entities
         public StatusReserva Status { get; set; }
         public string Numero_Reserva { get; set; }
 
-        // Novo campo para manter o valor do pacote no momento da reserva
         [Precision(10, 2)]
         public decimal ValorPacote { get; set; }
 
-        // Relacionamentos
         public int Id_Usuario { get; set; }
         public User Usuario { get; set; }
 
@@ -33,6 +31,9 @@ namespace WebApplication1.Entities
         public Package Pacote { get; set; }
 
         public ICollection<ReservationTraveler> ReservaViajantes { get; set; }
-        public Payment Pagamento { get; set; }
+
+        // Agora uma reserva pode ter vários pagamentos
+        public ICollection<Payment> Pagamentos { get; set; }
     }
+
 }

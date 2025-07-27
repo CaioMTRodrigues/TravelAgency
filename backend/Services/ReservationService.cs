@@ -7,10 +7,12 @@
 // -----------------------------------------------------------------------------
 
 using Microsoft.EntityFrameworkCore;
+using Volo.Abp;
 using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
+using BusinessException = WebApplication1.Exceptions.BusinessException;
 
 namespace WebApplication1.Services
 {
@@ -42,7 +44,7 @@ namespace WebApplication1.Services
                 .Include(r => r.Pacote)
                 .Include(r => r.ReservaViajantes)
                     .ThenInclude(rv => rv.Viajante)
-                .Include(r => r.Pagamento)
+                .Include(r => r.Pagamentos)
                 .FirstOrDefaultAsync(r => r.Id_Reserva == id);
         }
 
@@ -110,6 +112,37 @@ namespace WebApplication1.Services
             _context.Reservations.Remove(reserva);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        //Método para efetuar pagamentos
+        public async Task RegistrarPagamentosAsync(int idReserva, List<Payment> pagamentos)
+        {
+            var reserva = await _context.Reservations
+                .Include(r => r.Pagamentos)
+                .FirstOrDefaultAsync(r => r.Id_Reserva == idReserva);
+
+            if (reserva == null)
+                throw new NotFoundException("Reserva", idReserva);
+
+            decimal totalExistente = reserva.Pagamentos.Sum(p => p.Valor);
+            decimal totalNovo = pagamentos.Sum(p => p.Valor);
+            decimal totalFinal = totalExistente + totalNovo;
+
+            if (totalFinal > reserva.ValorPacote)
+                throw new BusinessException("O valor total dos pagamentos excede o valor da reserva.");
+
+            foreach (var pagamento in pagamentos)
+            {
+                pagamento.Id_Reserva = idReserva;
+                pagamento.Data_Pagamento = DateTime.UtcNow;
+                _context.Payments.Add(pagamento);
+            }
+
+            if (totalFinal == reserva.ValorPacote)
+            {
+                reserva.Status = StatusReserva.Concluida;
+            }
+            await _context.SaveChangesAsync();
         }
     }
 }
