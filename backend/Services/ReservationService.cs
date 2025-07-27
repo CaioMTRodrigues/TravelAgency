@@ -7,7 +7,6 @@
 // -----------------------------------------------------------------------------
 
 using Microsoft.EntityFrameworkCore;
-using Volo.Abp;
 using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
@@ -24,38 +23,43 @@ namespace WebApplication1.Services
             _context = context;
         }
 
-        // Retorna todas as reservas com dados relacionados
+        // 🔍 Retorna todas as reservas com dados relacionados
         public async Task<IEnumerable<Reservation>> ObterTodasAsync()
         {
             return await _context.Reservations
                 .Include(r => r.Usuario)
                 .Include(r => r.Pacote)
                 .Include(r => r.ReservaViajantes)
-                .ThenInclude(rv => rv.Viajante)
+                    .ThenInclude(rv => rv.Viajante)
                 .ToListAsync();
         }
 
-        // Retorna uma reserva específica pelo ID
+        // 🔍 Retorna uma reserva específica pelo ID
         public async Task<Reservation?> ObterPorIdAsync(int id)
         {
             return await _context.Reservations
                 .Include(r => r.Usuario)
                 .Include(r => r.Pacote)
                 .Include(r => r.ReservaViajantes)
-                .ThenInclude(rv => rv.Viajante)
+                    .ThenInclude(rv => rv.Viajante)
                 .Include(r => r.Pagamento)
                 .FirstOrDefaultAsync(r => r.Id_Reserva == id);
         }
 
-        // Cria uma nova reserva com validações e uso dos dados do DTO
+        // 🆕 Cria uma nova reserva com validações e uso dos dados do DTO
         public async Task<Reservation> CriarReservaAsync(CreateReservationDto dto)
         {
+            // 🔎 Valida existência do usuário
             var usuario = await _context.Users.FindAsync(dto.Id_Usuario);
+            if (usuario == null)
+                throw new NotFoundException("Usuário", dto.Id_Usuario);
+
+            // 🔎 Valida existência do pacote
             var pacote = await _context.Packages.FindAsync(dto.Id_Pacote);
+            if (pacote == null)
+                throw new NotFoundException("Pacote", dto.Id_Pacote);
 
-            if (usuario == null || pacote == null)
-                throw new BusinessException("Usuário ou pacote não encontrado.");
-
+            // 🏗️ Cria a reserva
             var reserva = new Reservation
             {
                 Id_Usuario = dto.Id_Usuario,
@@ -72,17 +76,20 @@ namespace WebApplication1.Services
             return reserva;
         }
 
-        // Atualiza os dados de uma reserva existente
+        // ✏️ Atualiza os dados de uma reserva existente
         public async Task<bool> AtualizarReservaAsync(int id, CreateReservationDto dto)
         {
+            // 🔎 Valida existência da reserva
             var reserva = await _context.Reservations.FindAsync(id);
             if (reserva == null)
-                return false;
+                throw new NotFoundException("Reserva", id);
 
+            // 🔎 Valida existência do pacote
             var pacote = await _context.Packages.FindAsync(dto.Id_Pacote);
             if (pacote == null)
-                throw new BusinessException("Pacote não encontrado.");
+                throw new NotFoundException("Pacote", dto.Id_Pacote);
 
+            // 🛠️ Atualiza os dados
             reserva.Id_Usuario = dto.Id_Usuario;
             reserva.Id_Pacote = dto.Id_Pacote;
             reserva.ValorPacote = pacote.Valor;
@@ -92,12 +99,13 @@ namespace WebApplication1.Services
             return true;
         }
 
-        // Remove uma reserva do banco de dados
+        // ❌ Remove uma reserva do banco de dados
         public async Task<bool> ExcluirReservaAsync(int id)
         {
+            // 🔎 Valida existência da reserva
             var reserva = await _context.Reservations.FindAsync(id);
             if (reserva == null)
-                return false;
+                throw new NotFoundException("Reserva", id);
 
             _context.Reservations.Remove(reserva);
             await _context.SaveChangesAsync();
