@@ -3,11 +3,11 @@ using WebApplication1.DTOs;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController : ControllerBase
+public class UserController : ControllerBase
 {
     private readonly AuthService _authService;
 
-    public AuthController(AuthService authService)
+    public UserController(AuthService authService)
     {
         _authService = authService;
     }
@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
     // Confirma o e-mail do usuário com base no token
     [HttpGet("confirmar-email")]
     public async Task<IActionResult> ConfirmarEmail([FromQuery] string email, [FromQuery] string token)
-    {
+    { 
         var sucesso = await _authService.ConfirmarEmailAsync(email, token);
 
         if (!sucesso)

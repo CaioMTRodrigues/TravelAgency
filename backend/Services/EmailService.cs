@@ -31,7 +31,7 @@ namespace WebApplication1.Services
         <p>Obrigado por se cadastrar na <strong>TravelAgency</strong>!</p>
         <p>Para ativar sua conta, clique no botão abaixo:</p>
         <p style='text-align: center;'>
-            <a href='http://localhost:5000/api/auth/confirmar-email?email={WebUtility.UrlEncode(destinatario)}&token={WebUtility.UrlEncode(token)}'
+            <a href='http://localhost:5000/api/user/confirmar-email?email={WebUtility.UrlEncode(destinatario)}&token={WebUtility.UrlEncode(token)}'
                style='display: inline-block; padding: 12px 24px; background-color: #3498db; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;'>
                 Confirmar E-mail
             </a>
