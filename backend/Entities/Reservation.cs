@@ -1,11 +1,4 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Data de Criação: 19/07/2025
-// 📁 Arquivo: Reservation
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Classe Reservation e seus atributos
-// -----------------------------------------------------------------------------
-
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebApplication1.backend.Entities;
@@ -28,19 +21,18 @@ namespace WebApplication1.Entities
         public StatusReserva Status { get; set; }
         public string Numero_Reserva { get; set; }
 
+        // Novo campo para manter o valor do pacote no momento da reserva
+        [Precision(10, 2)]
+        public decimal ValorPacote { get; set; }
+
         // Relacionamentos
         public int Id_Usuario { get; set; }
         public User Usuario { get; set; }
 
         public int Id_Pacote { get; set; }
-
         public Package Pacote { get; set; }
 
-        // Relacionamento com a tabela de associação ReservaViajante
         public ICollection<ReservationTraveler> ReservaViajantes { get; set; }
-        
         public Payment Pagamento { get; set; }
-       
-
     }
 }

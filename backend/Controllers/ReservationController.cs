@@ -1,13 +1,7 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 19/07/2025
-// 📁 Arquivo: ReservationController
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Controller responsável por gerenciar reservas
-// -----------------------------------------------------------------------------
-
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
@@ -16,15 +10,17 @@ using WebApplication1.Repositories;
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // Define a rota como: api/reservation
+    [Route("api/[controller]")]
     public class ReservationController : ControllerBase
     {
         private readonly IRepository<Reservation, int> _repository;
+        private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public ReservationController(IRepository<Reservation, int> repository, IMapper mapper)
+        public ReservationController(IRepository<Reservation, int> repository, ApplicationDbContext context, IMapper mapper)
         {
             _repository = repository;
+            _context = context;
             _mapper = mapper;
         }
 
@@ -53,7 +49,15 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] CreateReservationDto dto)
         {
+            var pacote = await _context.Packages.FindAsync(dto.Id_Pacote);
+            if (pacote == null)
+                return BadRequest(new { message = "Pacote não encontrado." });
+
             var reservation = _mapper.Map<Reservation>(dto);
+            reservation.Data_Reserva = DateTime.UtcNow;
+            reservation.Status = StatusReserva.Pendente;
+            reservation.ValorPacote = pacote.Valor;
+
             await _repository.AddAsync(reservation);
 
             return CreatedAtAction(nameof(GetById), new { id = reservation.Id_Reserva }, dto);
@@ -79,7 +83,7 @@ namespace WebApplication1.Controllers
         {
             var existing = await _repository.GetByIdAsync(id);
             if (existing == null)
-                 throw new NotFoundException("Reserva", id);
+                throw new NotFoundException("Reserva", id);
 
             await _repository.DeleteAsync(id);
             return NoContent();

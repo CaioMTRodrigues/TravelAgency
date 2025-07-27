@@ -6,6 +6,8 @@
 // 🚀  Descrição: Pega a Entidade Reservation e converte em ReservationDto
 // -----------------------------------------------------------------------------
 
+using WebApplication1.Entities;
+
 namespace WebApplication1.DTOs
 {
     public class ReservationDto

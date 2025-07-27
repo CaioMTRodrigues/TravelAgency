@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WebApplication1.Entities;
+
 
 namespace WebApplication1.DTOs
 {
@@ -33,13 +35,5 @@ namespace WebApplication1.DTOs
             var aleatorio = new Random().Next(1000, 9999);
             return $"{prefixo}-{data}-{aleatorio}";
         }
-    }
-
-    public enum StatusReserva
-    {
-        Pendente,
-        Confirmada,
-        Cancelada,
-        Concluida
     }
 }
