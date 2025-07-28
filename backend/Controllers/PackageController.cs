@@ -12,6 +12,7 @@ using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
+using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -21,12 +22,16 @@ namespace WebApplication1.Controllers
     {
         private readonly IRepository<Package, int> _repository;
         private readonly IMapper _mapper;
+        private readonly PackageService _service;
+
 
         // Construtor com injeção de dependência do repositório e do AutoMapper
-        public PackageController(IRepository<Package, int> repository, IMapper mapper)
+        public PackageController(IRepository<Package, int> repository, IMapper mapper,
+            PackageService service)
         {
             _repository = repository;
             _mapper = mapper;
+            _service = service;
         }
 
         // GET: api/package
@@ -57,11 +62,10 @@ namespace WebApplication1.Controllers
         [HttpPost]
         public async Task<ActionResult> Create(CreatePackageDto dto)
         {
-            var package = _mapper.Map<Package>(dto);
-            await _repository.AddAsync(package);
 
-            // Retorna 201 Created com a rota para consultar o novo pacote
+            var package = await _service.CreateAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = package.Id_Pacote }, dto);
+
         }
 
         // PUT: api/package/{id}
@@ -83,14 +87,12 @@ namespace WebApplication1.Controllers
         // DELETE: api/package/{id}
         // Remove um pacote pelo ID
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id, CreatePackageDto dto)
         {
-            var existing = await _repository.GetByIdAsync(id);
-            if (existing == null)
-                throw new NotFoundException("Pacote", id);
 
-            await _repository.DeleteAsync(id);
-            return NoContent(); // 204 - Exclusão bem-sucedida
+            await _service.UpdateAsync(id, dto);
+            return NoContent();
+
         }
     }
 }
