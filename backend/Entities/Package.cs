@@ -24,11 +24,8 @@ namespace WebApplication1.Entities
         [Precision(10, 2)]
         public decimal Valor { get; set; }
         public string ImagemUrl { get; set; }
-
         
              public ICollection<Reservation> Reservas { get; set; }
              public ICollection<Evaluation> Avaliacoes { get; set; }
-        
     }
-
 }

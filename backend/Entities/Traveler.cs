@@ -22,7 +22,7 @@ namespace WebApplication1.Entities
         public DateTime Data_Nascimento { get; set; }
 
         // Chave estrangeira para o usuário responsável
-        public int Id_Usuario { get; set; }
+        public string Id_Usuario { get; set; }
 
         [ForeignKey("Id_Usuario")]
         public User Usuario { get; set; }

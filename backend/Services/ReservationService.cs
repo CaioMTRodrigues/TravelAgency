@@ -64,7 +64,7 @@ namespace WebApplication1.Services
             // 🏗️ Cria a reserva
             var reserva = new Reservation
             {
-                Id_Usuario = dto.Id_Usuario,
+                Id_Usuario = dto.Id_Usuario.ToString(),
                 Id_Pacote = dto.Id_Pacote,
                 Data_Reserva = dto.Data_Reserva ?? DateTime.UtcNow,
                 Status = dto.Status,
@@ -92,7 +92,7 @@ namespace WebApplication1.Services
                 throw new NotFoundException("Pacote", dto.Id_Pacote);
 
             // 🛠️ Atualiza os dados
-            reserva.Id_Usuario = dto.Id_Usuario;
+            reserva.Id_Usuario = dto.Id_Usuario.ToString();
             reserva.Id_Pacote = dto.Id_Pacote;
             reserva.ValorPacote = pacote.Valor;
             reserva.Status = dto.Status;

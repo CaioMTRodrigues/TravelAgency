@@ -20,7 +20,7 @@ namespace WebApplication1.Entities
         public DateTime Data { get; set; }
 
         // Chaves estrangeiras
-        public int Id_Usuario { get; set; }
+        public string Id_Usuario { get; set; }
         public int Id_Pacote { get; set; }
 
 

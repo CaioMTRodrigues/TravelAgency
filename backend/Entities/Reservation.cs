@@ -24,7 +24,7 @@ namespace WebApplication1.Entities
         [Precision(10, 2)]
         public decimal ValorPacote { get; set; }
 
-        public int Id_Usuario { get; set; }
+        public string Id_Usuario { get; set; }
         public User Usuario { get; set; }
 
         public int Id_Pacote { get; set; }

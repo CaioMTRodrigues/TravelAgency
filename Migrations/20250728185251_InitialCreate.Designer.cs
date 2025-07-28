@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250724114042_AddEmailConfirmationFieldsToUser")]
-    partial class AddEmailConfirmationFieldsToUser
+    [Migration("20250728185251_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,82 @@ namespace WebApplication1.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Document")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmailConfirmationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("TokenExpiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Document")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
 
             modelBuilder.Entity("WebApplication1.Entities.Evaluation", b =>
                 {
@@ -43,8 +119,9 @@ namespace WebApplication1.Migrations
                     b.Property<int>("Id_Pacote")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id_Usuario")
-                        .HasColumnType("int");
+                    b.Property<string>("Id_Usuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Nota")
                         .HasColumnType("float");
@@ -125,8 +202,7 @@ namespace WebApplication1.Migrations
 
                     b.HasKey("Id_Pagamento");
 
-                    b.HasIndex("Id_Reserva")
-                        .IsUnique();
+                    b.HasIndex("Id_Reserva");
 
                     b.ToTable("Payments");
                 });
@@ -145,15 +221,21 @@ namespace WebApplication1.Migrations
                     b.Property<int>("Id_Pacote")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id_Usuario")
-                        .HasColumnType("int");
+                    b.Property<string>("Id_Usuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Numero_Reserva")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ValorPacote")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id_Reserva");
 
@@ -179,8 +261,9 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Id_Usuario")
-                        .HasColumnType("int");
+                    b.Property<string>("Id_Usuario")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -191,58 +274,6 @@ namespace WebApplication1.Migrations
                     b.HasIndex("Id_Usuario");
 
                     b.ToTable("Travelers");
-                });
-
-            modelBuilder.Entity("WebApplication1.Entities.User", b =>
-                {
-                    b.Property<int>("Id_User")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id_User"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Document")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmailConfirmationToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PasswordHash")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("TokenExpiration")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id_User");
-
-                    b.HasIndex("Document")
-                        .IsUnique();
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("WebApplication1.backend.Entities.ReservationTraveler", b =>
@@ -269,7 +300,7 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Evaluations_Packages_Id_Pacote");
 
-                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                    b.HasOne("User", "Usuario")
                         .WithMany()
                         .HasForeignKey("Id_Usuario")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -284,8 +315,8 @@ namespace WebApplication1.Migrations
             modelBuilder.Entity("WebApplication1.Entities.Payment", b =>
                 {
                     b.HasOne("WebApplication1.Entities.Reservation", "Reserva")
-                        .WithOne("Pagamento")
-                        .HasForeignKey("WebApplication1.Entities.Payment", "Id_Reserva")
+                        .WithMany("Pagamentos")
+                        .HasForeignKey("Id_Reserva")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Payments_Reservations_Id_Reserva");
@@ -302,7 +333,7 @@ namespace WebApplication1.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Reservations_Packages_Id_Pacote");
 
-                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                    b.HasOne("User", "Usuario")
                         .WithMany()
                         .HasForeignKey("Id_Usuario")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -316,7 +347,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Traveler", b =>
                 {
-                    b.HasOne("WebApplication1.Entities.User", "Usuario")
+                    b.HasOne("User", "Usuario")
                         .WithMany()
                         .HasForeignKey("Id_Usuario")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -356,8 +387,7 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
                 {
-                    b.Navigation("Pagamento")
-                        .IsRequired();
+                    b.Navigation("Pagamentos");
 
                     b.Navigation("ReservaViajantes");
                 });

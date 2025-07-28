@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class LimpezaMigrations : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,19 +35,31 @@ namespace WebApplication1.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id_User = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Document = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Document = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EmailConfirmationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TokenExpiration = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedUserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NormalizedEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
+                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id_User);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,7 +71,7 @@ namespace WebApplication1.Migrations
                     Nota = table.Column<double>(type: "float", nullable: false),
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Data = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Id_Usuario = table.Column<int>(type: "int", nullable: false),
+                    Id_Usuario = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id_Pacote = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -75,7 +87,7 @@ namespace WebApplication1.Migrations
                         name: "FK_Evaluations_Users_Id_Usuario",
                         column: x => x.Id_Usuario,
                         principalTable: "Users",
-                        principalColumn: "Id_User",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -86,9 +98,10 @@ namespace WebApplication1.Migrations
                     Id_Reserva = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Data_Reserva = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Numero_Reserva = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Id_Usuario = table.Column<int>(type: "int", nullable: false),
+                    ValorPacote = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
+                    Id_Usuario = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id_Pacote = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -104,7 +117,7 @@ namespace WebApplication1.Migrations
                         name: "FK_Reservations_Users_Id_Usuario",
                         column: x => x.Id_Usuario,
                         principalTable: "Users",
-                        principalColumn: "Id_User",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -117,7 +130,7 @@ namespace WebApplication1.Migrations
                     Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Documento = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Data_Nascimento = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Id_Usuario = table.Column<int>(type: "int", nullable: false)
+                    Id_Usuario = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -126,7 +139,7 @@ namespace WebApplication1.Migrations
                         name: "FK_Travelers_Users_Id_Usuario",
                         column: x => x.Id_Usuario,
                         principalTable: "Users",
-                        principalColumn: "Id_User");
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -187,8 +200,7 @@ namespace WebApplication1.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_Id_Reserva",
                 table: "Payments",
-                column: "Id_Reserva",
-                unique: true);
+                column: "Id_Reserva");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_Id_Pacote",
@@ -209,6 +221,12 @@ namespace WebApplication1.Migrations
                 name: "IX_Travelers_Id_Usuario",
                 table: "Travelers",
                 column: "Id_Usuario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Document",
+                table: "Users",
+                column: "Document",
+                unique: true);
         }
 
         /// <inheritdoc />

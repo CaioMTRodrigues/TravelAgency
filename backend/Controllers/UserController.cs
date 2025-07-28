@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
+using WebApplication1.Services;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -12,13 +14,9 @@ public class UserController : ControllerBase
         _authService = authService;
     }
 
-    // POST: api/auth/register
-    // Registra um novo usuário
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] CreateUserDTO userDto)
     {
-        // A validação do modelo é feita automaticamente pelo ValidationFilter
-
         var success = await _authService.RegisterUserAsync(userDto);
 
         if (!success)
@@ -27,8 +25,6 @@ public class UserController : ControllerBase
         return CreatedAtAction(nameof(Register), new { email = userDto.Email }, new { message = "Usuário registrado com sucesso." });
     }
 
-    // POST: api/auth/login
-    // Realiza login e retorna token JWT
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
     {
@@ -40,16 +36,14 @@ public class UserController : ControllerBase
         return Ok(new { token });
     }
 
-    // GET: api/auth/confirmar-email
-    // Confirma o e-mail do usuário com base no token
     [HttpGet("confirmar-email")]
     public async Task<IActionResult> ConfirmarEmail([FromQuery] string email, [FromQuery] string token)
-    { 
+    {
         var sucesso = await _authService.ConfirmarEmailAsync(email, token);
 
         if (!sucesso)
             return BadRequest(new { message = "Token inválido ou expirado." });
 
-        return Ok(new { message = "E-mail confirmado com sucesso. Você já pode fazer login!" });
+        return Ok(new { message = "✅ E-mail confirmado com sucesso! Agora você pode fazer login." });
     }
 }

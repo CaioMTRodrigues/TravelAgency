@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Projeto.TravelAgency.Services;
 using System.Text.Json.Serialization;
 using WebApplication1.Data;
 using WebApplication1.Entities;
-using WebApplication1.Exceptions;
 using WebApplication1.Filters;
 using WebApplication1.Profiles;
 using WebApplication1.Repositories;
@@ -14,7 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 // 🔗 Conexão com o banco de dados
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString, sqlOptions =>
+        sqlOptions.EnableRetryOnFailure())); // Habilita resiliência a falhas
 
 // 🧩 Repositórios
 builder.Services.AddScoped<IRepository<Package, int>, PackageRepository>();
@@ -27,18 +29,31 @@ builder.Services.AddScoped<ReservationTravelerRepository>();
 // 🔄 AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-// 📘 Swagger
+// 📘 Swagger para documentação da API
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ✅ Serviços
-builder.Services.AddScoped<EmailService>(); // Serviço de envio de e-mail
-builder.Services.AddScoped<UserService>();  // Serviço de autenticação
-builder.Services.AddScoped<ReservationService>(); // Serviço Reservation
-builder.Services.AddScoped<PackageService>(); // Serviço Package
+// ✅ Serviços da aplicação
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<ReservationService>();
+builder.Services.AddScoped<PackageService>();
 
+// 🔐 Configuração do Identity
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
 
-// 🌍 CORS
+// 🔐 Serviço de geração de token JWT
+builder.Services.AddScoped<JwtService>(provider =>
+{
+    var configuration = provider.GetRequiredService<IConfiguration>();
+    var userManager = provider.GetRequiredService<UserManager<User>>();
+    var secretKey = configuration["Jwt:Key"];
+    return new JwtService(secretKey, userManager);
+});
+
+// 🌍 CORS - Permite requisições de qualquer origem
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -53,14 +68,14 @@ builder.Services.AddAuthorization();
 // ✅ Controllers com filtro de validação global
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add<ValidationFilter>(); // Filtro de validação customizado
+    options.Filters.Add<ValidationFilter>();
 })
 .AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-// ❌ Desativa a validação automática do ModelState (usamos filtro customizado)
+// ❌ Desativa a validação automática do ModelState
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
@@ -80,7 +95,7 @@ if (app.Environment.IsDevelopment())
 // ⚠️ Middleware de tratamento global de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseHttpsRedirection();
+app.UseHttpsRedirection(); // Middleware de redirecionamento HTTPS
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
