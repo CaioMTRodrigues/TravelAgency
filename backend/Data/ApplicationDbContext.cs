@@ -31,6 +31,11 @@ namespace WebApplication1.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            //Ao invés de salvar o Enum: 0, 1, 2, 3 vai salvar o nome do STATUS
+            modelBuilder.Entity<Reservation>()
+                .Property(r => r.Status)
+                .HasConversion<string>();
+
             // 🔒 Restrição de unicidade para o campo Document (CPF ou Passaporte)
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Document)
