@@ -33,7 +33,7 @@ builder.Services.AddSwaggerGen();
 
 // ✅ Serviços
 builder.Services.AddScoped<EmailService>(); // Serviço de envio de e-mail
-builder.Services.AddScoped<AuthService>();  // Serviço de autenticação
+builder.Services.AddScoped<UserService>();  // Serviço de autenticação
 builder.Services.AddScoped<ReservationService>(); // Serviço Reservation
 builder.Services.AddScoped<PackageService>(); // Serviço Package
 

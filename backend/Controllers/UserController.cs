@@ -5,9 +5,9 @@ using WebApplication1.DTOs;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private readonly AuthService _authService;
+    private readonly UserService _authService;
 
-    public UserController(AuthService authService)
+    public UserController(UserService authService)
     {
         _authService = authService;
     }

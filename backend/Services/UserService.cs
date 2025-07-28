@@ -12,14 +12,14 @@ using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Services;
 
-public class AuthService
+public class UserService
 {
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
     private readonly EmailService _emailService;
 
     // Construtor com injeção de dependências
-    public AuthService(ApplicationDbContext context, IConfiguration configuration, EmailService emailService)
+    public UserService(ApplicationDbContext context, IConfiguration configuration, EmailService emailService)
     {
         _context = context;
         _configuration = configuration;
