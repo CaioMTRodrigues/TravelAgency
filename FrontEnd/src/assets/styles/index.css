@@ -1,0 +1,41 @@
+/*
+ * Eu começo importando a fonte 'Roboto' do Google Fonts.
+ * É importante que ela venha primeiro para que o navegador
+ * a carregue antes de aplicar os outros estilos.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+/*
+ * Aqui eu defino a fonte 'Roboto' como padrão para todo o site.
+ * As outras fontes na lista (como -apple-system, Segoe UI, etc.)
+ * servem como alternativas caso o Roboto não carregue.
+ * As duas últimas linhas melhoram a renderização das fontes,
+ * deixando-as mais suaves.
+ */
+body {
+  margin: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*
+ * Esta regra garante que os elementos base da aplicação
+ * (o HTML, o corpo da página e a div principal do React)
+ * ocupem 100% da altura da tela. É um passo crucial para
+ * o layout do rodapé fixo funcionar corretamente.
+ */
+html, body, #root {
+  height: 100%;
+}
+
+/*
+ * Eu defino uma fonte monoespaçada para qualquer elemento
+ * de código, para manter um visual padrão de programação.
+ */
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
