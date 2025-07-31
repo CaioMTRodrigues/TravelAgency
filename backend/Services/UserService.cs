@@ -130,4 +130,44 @@ public class UserService
         _logger.LogInformation("E-mail confirmado com sucesso.");
         return true;
     }
+
+    public async Task<bool> ForgotPasswordAsync(string email)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null)
+        {
+            // Por segurança, não revele se o e-mail existe ou não
+            return true;
+        }
+
+        user.PasswordResetToken = Guid.NewGuid().ToString();
+        user.PasswordResetTokenExpiration = DateTime.UtcNow.AddHours(1);
+
+        await _context.SaveChangesAsync();
+
+        // Monta o link de redefinição
+        var encodedToken = WebUtility.UrlEncode(user.PasswordResetToken);
+        var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/reset-password?token={encodedToken}";
+
+        await _emailService.EnviarEmailRecuperacaoSenhaAsync(user.Email, resetLink);
+
+        return true;
+    }
+
+    public async Task<bool> ResetPasswordAsync(string token, string newPassword)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u =>
+            u.PasswordResetToken == token &&
+            u.PasswordResetTokenExpiration > DateTime.UtcNow);
+
+        if (user == null)
+            return false;
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        user.PasswordResetToken = null;
+        user.PasswordResetTokenExpiration = null;
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
 }

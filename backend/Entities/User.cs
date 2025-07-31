@@ -9,4 +9,6 @@ public class User : IdentityUser
 
     public string? EmailConfirmationToken { get; set; }
     public DateTime? TokenExpiration { get; set; }
+    public string? PasswordResetToken { get; set; }
+    public DateTime? PasswordResetTokenExpiration { get; set; }
 }
