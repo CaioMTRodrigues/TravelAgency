@@ -20,7 +20,7 @@ namespace WebApplication1.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         // DbSets representam as tabelas no banco de dados
-        public DbSet<User> Users { get; set; }
+        //public DbSet<User> Users { get; set; }
         public DbSet<Package> Packages { get; set; }
         public DbSet<Evaluation> Evaluations { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
@@ -31,6 +31,10 @@ namespace WebApplication1.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // Configurações adicionais para o Identity
+            modelBuilder.Entity<User>().ToTable("Users");
+
 
             // Renomeia as tabelas padrão do Identity para nomes personalizados
             modelBuilder.Entity<IdentityRole>().ToTable("Roles");
