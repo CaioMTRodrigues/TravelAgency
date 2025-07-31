@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projeto.TravelAgency.Services;
-using System.Text.Json.Serialization;
+using WebApplication1.backend.Data;
 using WebApplication1.Data;
 using WebApplication1.Entities;
 using WebApplication1.Filters;
@@ -82,6 +83,25 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 });
 
 var app = builder.Build();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        var userManager = services.GetRequiredService<UserManager<User>>();
+        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+        await SeedData.Initialize(context, userManager, roleManager);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Erro ao popular o DB com as Roles: {ex.Message}");
+    }
+}
 
 // 🌐 Pipeline de requisições
 app.UseCors("AllowAll");
