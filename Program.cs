@@ -45,6 +45,16 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
+// ✅ Configuração de requisitos de senha do Identity
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 6;
+});
+
 // 🔐 Serviço de geração de token JWT
 builder.Services.AddScoped<JwtService>(provider =>
 {
@@ -84,7 +94,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
 
 var app = builder.Build();
 
-
+// 🌱 Seed de dados iniciais
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -100,6 +110,8 @@ using (var scope = app.Services.CreateScope())
     catch (Exception ex)
     {
         Console.WriteLine($"Erro ao popular o DB com as Roles: {ex.Message}");
+        if (ex.InnerException != null)
+            Console.WriteLine($"Detalhe interno: {ex.InnerException.Message}");
     }
 }
 
@@ -115,7 +127,7 @@ if (app.Environment.IsDevelopment())
 // ⚠️ Middleware de tratamento global de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 
-app.UseHttpsRedirection(); // Middleware de redirecionamento HTTPS
+app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

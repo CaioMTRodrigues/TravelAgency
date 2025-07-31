@@ -32,18 +32,45 @@ namespace WebApplication1.backend.Data
 
             if (adminUser == null)
             {
-                // Cria o usuário admin com nome e sobrenome
                 adminUser = new User
                 {
                     Name = "Administrador",
                     Email = "admin@travelagency.com",
+                    UserName = "admin@travelagency.com",
+                    Document = "00000000000",
+                    Role = "Admin"
 
                 };
 
+                try
+                {
+                    var result = await userManager.CreateAsync(adminUser, "SenhaSegura123!");
+
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(adminUser, "Admin");
+                        Console.WriteLine("Usuário admin criado e atribuído à role Admin.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Erro ao criar usuário admin:");
+                        foreach (var error in result.Errors)
+                        {
+                            Console.WriteLine($"- {error.Description}");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erro ao popular o DB com as Roles: {ex.Message}");
+                    if (ex.InnerException != null)
+                        Console.WriteLine($"Detalhe interno: {ex.InnerException.Message}");
+                }
             }
-            await context.SaveChangesAsync();
+
         }
-        
     }
 }
-        
+
+
+
