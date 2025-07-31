@@ -20,7 +20,11 @@ namespace WebApplication1.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         // DbSets representam as tabelas no banco de dados
+<<<<<<< HEAD
         //public DbSet<User> Users { get; set; }
+=======
+       //public DbSet<User> Users { get; set; }
+>>>>>>> 3f2742028394d204987603bd5ca91c0c7227ab83
         public DbSet<Package> Packages { get; set; }
         public DbSet<Evaluation> Evaluations { get; set; }
         public DbSet<Reservation> Reservations { get; set; }
@@ -32,12 +36,17 @@ namespace WebApplication1.Data
         {
             base.OnModelCreating(modelBuilder);
 
+<<<<<<< HEAD
             // Configurações adicionais para o Identity
+            //modelBuilder.Entity<User>().ToTable("Users");
+
+
+=======
             modelBuilder.Entity<User>().ToTable("Users");
 
-
+>>>>>>> 3f2742028394d204987603bd5ca91c0c7227ab83
             // Renomeia as tabelas padrão do Identity para nomes personalizados
-            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+            //modelBuilder.Entity<IdentityRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UsuariosRoles");
             modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UsuarioClaims");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UsuariosLogins");
