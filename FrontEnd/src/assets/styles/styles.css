@@ -51,7 +51,7 @@ main {
  */
 .menu {
   background-color: #005A9C;
-  padding: 10px 30px; /* Ajustei um pouco o padding vertical */
+  padding: 10px 30px;
   color: white;
   display: flex;
   justify-content: space-between;
@@ -60,8 +60,8 @@ main {
 }
 
 /*
- * O link que envolve a logo e o título.
- * Defino como 'flex' para alinhar a logo e o texto perfeitamente.
+ * O link que envolve a logo.
+ * Defino como 'flex' para alinhar a logo perfeitamente.
  */
 .header-title-link {
   text-decoration: none;
@@ -72,7 +72,7 @@ main {
 
 /* Defino o tamanho da minha logo no cabeçalho. */
 .header-logo {
-  height: 60px; /* Um bom tamanho padrão */
+  height: 60px;
 }
 
 /*
@@ -83,7 +83,7 @@ main {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  margin-right: 20px; /* Espaço entre o hambúrguer e a logo */
+  margin-right: 20px;
 }
 
 .hamburger-icon {
@@ -114,7 +114,7 @@ main {
   display: block;
 }
 
-/* Defino a aparência dos links dentro do menu suspenso. */
+/* Defino a aparência dos links/botões dentro do menu suspenso. */
 .dropdown-menu a, .dropdown-button-link {
   color: #333;
   padding: 12px 20px;
@@ -185,116 +185,213 @@ main {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* Seção dos Pacotes em Destaque com 4 colunas. */
-.featured-packages {
+/*
+ * A nova seção de pacotes, com fileiras horizontais e alternadas.
+ */
+.featured-packages-reloaded {
+  padding: 40px 0;
+  overflow: hidden; /* Garante que nada vaze para os lados */
+}
+
+/* Cada fileira (uma para Nacionais, outra para Internacionais, etc.) */
+.package-row {
+  display: flex;
+  align-items: center;
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 0 auto 80px auto; /* Aumento o espaço entre as fileiras */
+  gap: 30px;
   padding: 0 20px;
 }
 
-.featured-packages h2 {
-  text-align: center;
+/*
+ * Layout Padrão: Título à Esquerda, Carrossel à Direita.
+ * Eu divido o espaço em 1/3 para o título e 2/3 para o carrossel.
+ */
+.package-row .row-title {
+  flex: 1;
+}
+
+.package-row .row-carousel {
+  flex: 2;
+  min-width: 0; /* Isso previne que o carrossel quebre o layout */
+}
+
+/*
+ * Layout Reverso: Aqui eu inverto a ordem dos elementos.
+ * O CSS é simples, mas o efeito visual é bem profissional.
+ */
+.package-row.reverse {
+  flex-direction: row-reverse;
+}
+
+/* Agrupa o ícone e o título */
+.title-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espaço entre o ícone e o título */
+  margin-bottom: 10px;
+}
+
+.title-with-icon svg {
+  color: #005A9C;
   font-size: 2rem;
+}
+
+.row-title h3 {
+  font-size: 2.5rem;
   color: #333;
-  margin-bottom: 30px;
-}
-
-/* O grid que organiza as 4 colunas e as torna responsivas. */
-.columns-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-}
-
-/* O estilo de cada uma das 4 colunas. */
-.package-column {
-  background-color: #f8f9fa;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-  display: flex;
-  flex-direction: column;
-}
-
-.column-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #e9ecef;
-  padding-bottom: 10px;
-}
-
-.column-header h3 {
   margin: 0;
-  color: #005A9C;
+  font-weight: 700; /* Letra mais chamativa (negrito) */
+  line-height: 1.2;
+}
+
+.row-title p {
   font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 25px; /* Mais espaço antes dos botões */
 }
 
-/* O contêiner rolável dentro de cada coluna. */
-.column-content {
-  height: 480px;
-  overflow-y: auto;
-  padding-right: 8px;
+/* Contêiner para os botões laranja e amarelo */
+.title-buttons {
+  display: flex;
+  gap: 10px;
 }
 
-/* Um estilo para a barra de rolagem ficar mais bonita. */
-.column-content::-webkit-scrollbar { width: 6px; }
-.column-content::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
-.column-content::-webkit-scrollbar-thumb { background: #005A9C; border-radius: 10px; }
-.column-content::-webkit-scrollbar-thumb:hover { background: #003d6e; }
-
-/* O card de cada destino dentro das colunas. */
-.destiny-card {
-  display: block;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-  text-decoration: none;
+/* Botão Laranja "Pacotes" */
+.btn-package {
+  background-color: #ff9900;
   color: white;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.destiny-card img {
-  width: 100%;
-  height: 150px;
-  object-fit: cover;
-  display: block;
-  transition: transform 0.3s ease;
-}
-
-.destiny-card:hover img {
-  transform: scale(1.08);
-}
-
-/* A legenda com o nome do destino que fica em cima da imagem. */
-.destiny-name {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-  padding: 25px 15px 10px;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
   font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-/* Estilo para o filtro de "Saindo de:". */
-.departure-filter {
+.btn-package:hover {
+  background-color: #e68a00;
+}
+
+/* Botão Amarelo "Ofertas" */
+.btn-offer {
+  background-color: #ffcc00;
+  color: #333; /* Letra preta para melhor contraste */
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-offer:hover {
+  background-color: #e6b800;
+}
+
+/* Wrapper para criar o espaçamento entre os cards */
+.promo-card-wrapper, .package-card-wrapper {
+  padding: 10px; /* Cria o espaçamento lateral entre os cards */
+  text-decoration: none; /* Remove sublinhado do Link */
+  display: block;
+}
+
+/* O card de cada pacote dentro do carrossel da home. */
+.promo-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  background: #fff;
+  border: 3px solid transparent; /* Borda transparente por padrão */
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+/* Efeito de destaque laranja ao passar o mouse */
+.promo-card:hover {
+  transform: translateY(-5px);
+  border-color: #ff9900;
+}
+
+.promo-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.promo-details {
+  padding: 15px;
+}
+
+.promo-details h4 {
+  margin: 0 0 5px 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.promo-date {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.promo-price {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #005A9C;
+}
+
+/* As setas customizadas para o carrossel. */
+.custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #005A9C;
+  justify-content: center;
+  z-index: 5;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  color: #333;
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease;
 }
 
-.departure-filter select {
-  border: 1px solid #ced4da;
-  border-radius: 5px;
-  padding: 6px 8px;
-  font-weight: bold;
-  color: #495057;
-  background-color: white;
-  cursor: pointer;
+.custom-arrow:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.custom-arrow.slick-next {
+  right: -50px;
+}
+
+.custom-arrow.slick-prev {
+  left: -50px;
+}
+
+/* Adiciono responsividade para telas menores */
+@media (max-width: 768px) {
+  .package-row, .package-row.reverse {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .package-row .row-carousel {
+    width: 100%;
+  }
+
+  .title-with-icon, .title-buttons {
+    justify-content: center;
+  }
+  
+  .custom-arrow {
+    display: none !important;
+  }
 }
 
 
@@ -342,7 +439,7 @@ main {
 /* A caixa branca do modal. */
 .modal-content {
   background: white;
-  padding: 40px; /* Mais padding para um visual mais limpo */
+  padding: 40px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.3);
   position: relative;
@@ -655,14 +752,6 @@ main {
   margin-bottom: 30px;
 }
 
-/*
- * Um wrapper para o card dentro do carrossel, para garantir
- * que o espaçamento e a sombra funcionem bem.
- */
-.package-card-wrapper {
-  padding: 10px;
-}
-
 .package-card {
   background-color: #ffffff;
   border-radius: 12px;
@@ -670,7 +759,7 @@ main {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  height: 100%; /* Garante que todos os cards tenham a mesma altura */
+  height: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -690,7 +779,7 @@ main {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Faz esta área crescer para alinhar os botões */
+  flex-grow: 1;
 }
 
 .package-details h3 {
@@ -705,7 +794,7 @@ main {
   font-size: 0.95rem;
   margin-bottom: 15px;
   line-height: 1.5;
-  flex-grow: 1; /* Ocupa o espaço para empurrar o preço e botão para baixo */
+  flex-grow: 1;
 }
 
 .package-price {
@@ -724,7 +813,7 @@ main {
   cursor: pointer;
   font-size: 1rem;
   font-weight: bold;
-  align-self: flex-start; /* Alinha o botão à esquerda no card */
+  align-self: flex-start;
   transition: background-color 0.3s ease;
 }
 
@@ -732,11 +821,877 @@ main {
   background-color: #003d6e;
 }
 
-/* Estilos para os pontos de navegação do carrossel. */
 .slick-dots li button:before {
   font-size: 12px;
   color: #ccc;
 }
 .slick-dots li.slick-active button:before {
   color: #005A9C;
+}
+
+
+/* ==========================================================================
+   9. PÁGINA: PRINCIPAIS DESTINOS (VERSÃO INSPIRADORA)
+   ========================================================================== */
+
+.destinations-page-inspired {
+  background-color: #f8f9fa;
+}
+
+.destinations-hero {
+  padding: 60px 20px;
+  background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
+  text-align: center;
+}
+
+.destinations-hero h1 {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+/* O quiz-box continua central mas com estilo um pouco diferente */
+.quiz-box {
+  max-width: 700px;
+  margin: 0 auto;
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.quiz-box h2 { 
+  font-size: 1.8rem; 
+  margin-top: 0; 
+}
+.quiz-box p { 
+  font-size: 1.1rem; 
+}
+.quiz-button {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 25px;
+  background-color: #ff9900;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 25px;
+  transition: background-color 0.3s ease;
+}
+.quiz-button:hover { 
+  background-color: #e68a00; 
+}
+
+.destinations-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* A fileira de cada carrossel temático */
+.destination-carousel-row {
+  margin-bottom: 50px;
+}
+
+.destination-row-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+.destination-row-header svg {
+  font-size: 1.8rem;
+  color: #005A9C;
+}
+
+.destination-row-header h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+/* O wrapper do card, para que ele seja um link e tenha padding */
+.destination-card-wrapper {
+  display: block;
+  padding: 0 10px;
+  text-decoration: none;
+}
+
+/* O card de cada destino */
+.destination-card {
+  height: 350px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.destination-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.destination-card:hover img {
+  transform: scale(1.1);
+}
+
+.destination-card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 20px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+  color: white;
+}
+
+.destination-card-overlay h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.5rem;
+}
+
+.destination-card-overlay p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+
+/* ==========================================================================
+   11. PÁGINA: DETALHES DO PACOTE
+   ========================================================================== */
+
+.package-detail-page {
+  background-color: #f8f9fa;
+}
+
+.detail-header {
+  height: 60vh;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  color: white;
+}
+
+.detail-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.detail-header h1 {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0px 5px 15px rgba(0,0,0,0.5); 
+  font-size: 5rem;
+  font-weight: 900;
+}
+
+/* Layout de duas colunas para o conteúdo */
+.detail-content {
+  max-width: 1200px;
+  margin: -80px auto 50px auto;
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.detail-main-info {
+  background: white;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.detail-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.detail-info-section {
+  margin-bottom: 30px;
+}
+
+.detail-info-section:last-child {
+  margin-bottom: 0;
+}
+
+.detail-info-section h2, .detail-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #005A9C;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.detail-card h3 {
+  font-size: 1.4rem;
+}
+
+.detail-info-section h4 {
+  font-size: 1.3rem;
+  color: #333;
+  margin-top: 25px;
+}
+
+.detail-info-section p {
+  color: #555;
+  line-height: 1.7;
+  font-size: 1.05rem;
+}
+
+.detail-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.detail-card p {
+  margin-bottom: 10px;
+  color: #555;
+}
+
+.hotel-amenities {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.hotel-amenities span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hotel-amenities .available { color: #28a745; }
+.hotel-amenities .unavailable { color: #dc3545; text-decoration: line-through; }
+
+.booking-link {
+  display: inline-block;
+  margin-top: 20px;
+  font-weight: bold;
+  color: #007bff;
+}
+
+/* Nova caixa de preço */
+.price-box {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+.price-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.price-label {
+  font-size: 1rem;
+  color: #666;
+}
+
+.price-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #005A9C;
+  margin: 0;
+}
+
+.currency-converter button {
+  background: #f0f0f0;
+  border: none;
+  padding: 5px 10px;
+  margin-left: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.currency-converter button.active {
+  background: #005A9C;
+  color: white;
+}
+
+/* Botão de Compra */
+.buy-package-button {
+  width: 100%;
+  padding: 18px;
+  background-color: #ff9900;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.buy-package-button:hover {
+  background-color: #e68a00;
+  transform: scale(1.03);
+}
+
+/* Estilo para o contêiner do mapa (versão menor) */
+.map-container-small {
+  width: 100%;
+  height: 300px; /* A altura do mapa foi diminuída para 300px */
+  border-radius: 10px;
+  margin-top: 15px;
+  z-index: 1; /* Garante que o mapa não sobreponha outros elementos */
+}
+
+
+/* ==========================================================================
+   12. PÁGINA: MINHAS RESERVAS
+   ========================================================================== */
+
+.my-reservations-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.reservations-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.reservations-header h1 {
+  font-size: 2.8rem;
+  color: #005A9C;
+  margin: 0;
+}
+
+.reservations-header p {
+  font-size: 1.2rem;
+  color: #555;
+}
+
+/* Estilo para a lista de cards */
+.reservations-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+/* Card de cada reserva */
+.reservation-card {
+  display: flex;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.reservation-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+.reservation-image {
+  width: 200px;
+  height: auto;
+  object-fit: cover;
+}
+
+.reservation-details {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.reservation-details h2 {
+  font-size: 1.8rem;
+  margin: 5px 0 15px 0;
+  color: #333;
+}
+
+.reservation-info {
+  display: flex;
+  gap: 20px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.reservation-info span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Emblemas de Status */
+.status-badge {
+  align-self: flex-start;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-badge.confirmada { background-color: #e9f6e9; color: #2F6F2F; }
+.status-badge.pendente { background-color: #fff8e1; color: #f57c00; }
+.status-badge.cancelada { background-color: #FFD2D2; color: #D8000C; }
+
+.status-icon.confirmed { color: #2F6F2F; }
+.status-icon.pending { color: #f57c00; }
+.status-icon.cancelled { color: #D8000C; }
+
+.reservation-actions {
+  margin-top: auto; /* Empurra os botões para o final do card */
+  display: flex;
+  gap: 10px;
+}
+
+.btn-details, .btn-cancel {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-details {
+  background-color: #005A9C;
+  color: white;
+}
+
+.btn-cancel {
+  background-color: #f1f1f1;
+  color: #555;
+}
+
+/* Box para quando não há reservas */
+.no-reservations-box {
+  text-align: center;
+  background: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.no-reservations-box h2 {
+  color: #333;
+}
+
+
+/* ==========================================================================
+   13. PÁGINA: OFERTAS
+   ========================================================================== */
+
+/* Banner Principal (Hero Section) */
+.offers-hero {
+  height: 50vh;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.offers-hero-overlay {
+  background: rgba(0,0,0,0.5);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.offers-hero h1 {
+  font-size: 3rem;
+  margin: 0;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+
+.offers-hero p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin-top: 10px;
+}
+
+/* Conteúdo principal da página de ofertas */
+.offers-page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Seção da Oferta Destaque */
+.featured-offer-section {
+  margin-bottom: 50px;
+}
+
+.featured-offer-section h2, .offers-gallery-section h2 {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.featured-offer-card {
+  display: flex;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.featured-offer-card img {
+  width: 50%;
+  object-fit: cover;
+}
+
+.featured-offer-details {
+  padding: 30px;
+  width: 50%;
+}
+
+.featured-offer-pricing {
+  margin: 20px 0;
+}
+
+/* Adicione estas classes na seção 13. PÁGINA: OFERTAS */
+
+/* Data na oferta destaque */
+.featured-offer-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+/* Texto "por pessoa" na oferta destaque */
+.per-person-text {
+  color: #777;
+  font-size: 0.9rem;
+  margin-top: -15px; /* Puxa o texto para mais perto do preço */
+  margin-bottom: 20px;
+}
+
+/* Data nos cards da galeria */
+.offer-card-date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #555;
+  font-weight: 500;
+  margin: 10px 0;
+}
+
+/* Texto "por pessoa" nos cards da galeria */
+.per-person-text-small {
+  color: #777;
+  font-size: 0.8rem;
+  margin-top: -10px;
+  margin-bottom: 15px;
+}
+
+.old-price {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 1.1rem;
+  margin-right: 10px;
+}
+
+.new-price {
+  color: #D8000C;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+/* Estilos do Contador Regressivo */
+.countdown-container {
+  margin-bottom: 25px;
+}
+
+.countdown-container span {
+  display: block;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.countdown-timer {
+  display: flex;
+  gap: 15px;
+}
+
+.countdown-segment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f1f1f1;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.countdown-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #005A9C;
+}
+
+.countdown-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #666;
+}
+
+/* Galeria de Ofertas */
+.offers-filters {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.offers-filters button {
+  background: #f1f1f1;
+  border: none;
+  padding: 10px 20px;
+  margin: 0 5px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.offers-filters button.active {
+  background: #005A9C;
+  color: white;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+.offer-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.offer-card-image {
+  height: 200px;
+  background-size: cover;
+  position: relative;
+}
+
+.discount-tag {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #ff9900;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.offer-card-details {
+  padding: 20px;
+}
+
+.offer-card-pricing {
+  margin: 10px 0 15px 0;
+}
+
+/* Seção da Newsletter */
+.newsletter-section {
+    background-color: #004a80;
+    color: white;
+    padding: 50px 20px;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.newsletter-section h2 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.newsletter-section p {
+    margin-bottom: 25px;
+}
+
+.newsletter-form {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.newsletter-form input {
+    width: 300px;
+    padding: 15px;
+    border-radius: 8px;
+    border: none;
+}
+
+.newsletter-form button {
+    background-color: #ff9900;
+    color: white;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ==========================================================================
+   14. PÁGINA: QUIZ (VERSÃO BUZZFEED)
+   ========================================================================== */
+
+/*
+ * O fundo da página. Eu uso um gradiente vibrante para criar
+ * um ambiente divertido e imersivo para o quiz.
+ */
+.quiz-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  background-image: linear-gradient(to right, #6a11cb 0%, #2575fc 100%);
+  min-height: calc(100vh - 180px); /* Garante que ocupe a tela toda, descontando header/footer */
+}
+
+/* O container principal do quiz, com um visual de card branco. */
+.quiz-container {
+  width: 100%;
+  max-width: 650px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+  padding: 40px;
+  text-align: center;
+}
+
+/* A barra de progresso no topo. */
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background-color: #ffcc00; /* Um amarelo vibrante para o progresso */
+  border-radius: 6px;
+  transition: width 0.4s ease-in-out;
+}
+
+/* A área da pergunta. */
+.quiz-question-area h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  min-height: 120px;
+  margin-bottom: 30px;
+}
+
+/* O grid que segura os botões de resposta. */
+.quiz-answers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+/* O estilo base dos botões de resposta. */
+.quiz-answers button {
+  border: none;
+  border-radius: 12px;
+  padding: 20px;
+  font-size: 1.1rem;
+  font-weight: 700; /* Negrito para dar mais impacto */
+  color: white;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.quiz-answers button:hover {
+  transform: scale(1.05); /* Efeito de crescimento */
+  filter: brightness(1.1); /* Deixa o botão mais "brilhante" */
+}
+
+/*
+ * Aqui está a mágica do estilo BuzzFeed!
+ * Eu dou uma cor diferente e vibrante para cada um dos 4 botões.
+ */
+.quiz-answers button:nth-child(1) { background-color: #00A8A8; /* Azul-piscina */ }
+.quiz-answers button:nth-child(2) { background-color: #FF6B6B; /* Vermelho-coral */ }
+.quiz-answers button:nth-child(3) { background-color: #FFD166; /* Amarelo-sol */ color: #333; }
+.quiz-answers button:nth-child(4) { background-color: #4D96FF; /* Azul-céu */ }
+
+/* A tela de resultado final. */
+.quiz-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.quiz-result img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 25px;
+}
+
+.quiz-result h2 {
+  font-size: 2.2rem;
+  color: #005A9C;
+  margin: 0 0 10px 0;
+}
+
+.quiz-result p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+/* O botão secundário para refazer o quiz. */
+.btn-secondary-quiz {
+  background: none;
+  border: none;
+  color: #555;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 15px;
+  font-size: 1rem;
 }
