@@ -1,11 +1,12 @@
 import React, { useState } from "react";
+import { Link } from 'react-router-dom'; // Importei o Link aqui.
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
 import AuthModal from "../components/AuthModal";
-import Slider from "react-slick"; // Eu importo o componente de Carrossel (Slider).
-import "slick-carousel/slick/slick.css"; // E também importo os estilos base dele.
-import "slick-carousel/slick/slick-theme.css"; // E os estilos do tema, para os botões e pontos.
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import "./../assets/styles/styles.css";
 
 // Para esta página, eu criei duas listas de pacotes de exemplo.
@@ -32,9 +33,6 @@ const Pacotes = () => {
   const closeModal = () => setIsModalOpen(false);
 
   // Criei um objeto com as configurações dos meus carrosséis.
-  // 'infinite: false' significa que o carrossel não volta para o começo ao chegar no fim.
-  // A parte 'responsive' é muito legal, pois ajusta quantos slides aparecem
-  // dependendo do tamanho da tela do usuário.
   const settings = {
     dots: true,
     infinite: false,
@@ -61,14 +59,12 @@ const Pacotes = () => {
         <h1 className="packages-title">Nossos Pacotes de Viagem</h1>
         <p className="packages-subtitle">Descubra o destino dos seus sonhos</p>
 
-        {/* Criei uma seção para os Destinos Nacionais. */}
         <div className="carousel-section">
           <h2>Destinos Nacionais</h2>
-          {/* O componente 'Slider' cria o carrossel com as minhas configurações. */}
           <Slider {...settings}>
-            {/* Eu uso o '.map()' para criar um card para cada pacote da minha lista. */}
             {pacotesNacionais.map((pacote) => (
-              <div key={pacote.id} className="package-card-wrapper">
+              // --- MUDANÇA APLICADA AQUI ---
+              <Link to={`/pacotes/${pacote.id}`} key={pacote.id} className="package-card-wrapper">
                 <div className="package-card">
                   <img src={pacote.imagem} alt={pacote.nome} className="package-image" />
                   <div className="package-details">
@@ -78,17 +74,17 @@ const Pacotes = () => {
                     <button className="package-button">Ver Detalhes</button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </Slider>
         </div>
 
-        {/* E aqui eu repito o processo para os Destinos Internacionais. */}
         <div className="carousel-section">
           <h2>Destinos Internacionais</h2>
           <Slider {...settings}>
             {pacotesInternacionais.map((pacote) => (
-              <div key={pacote.id} className="package-card-wrapper">
+              // --- MUDANÇA APLICADA AQUI ---
+              <Link to={`/pacotes/${pacote.id}`} key={pacote.id} className="package-card-wrapper">
                 <div className="package-card">
                   <img src={pacote.imagem} alt={pacote.nome} className="package-image" />
                   <div className="package-details">
@@ -98,7 +94,7 @@ const Pacotes = () => {
                     <button className="package-button">Ver Detalhes</button>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </Slider>
         </div>

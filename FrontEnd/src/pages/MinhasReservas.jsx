@@ -1,53 +1,84 @@
 import React, { useEffect, useState } from "react";
-
-// Este é o meu componente para a página "Minhas Reservas".
-// Aqui o cliente logado poderá ver o histórico de viagens que ele comprou.
-const MinhasReservas = () => {
-  // Eu uso um estado para guardar a lista de reservas que virá da API.
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import Modal from "../components/Modal";
+import AuthModal from "../components/AuthModal";
+import { FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaTag } from "react-icons/fa";
+import "./../assets/styles/styles.css";const MinhasReservas = () => {
   const [reservas, setReservas] = useState([]);
-  // E outro estado para controlar a mensagem de "carregando..." enquanto os dados não chegam.
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // O 'useEffect' é ideal para buscar os dados assim que a página é carregada.
   useEffect(() => {
-    // No futuro, aqui será uma chamada para a minha API real,
-    // que vai retornar apenas as reservas do cliente que está logado.
     fetch("/api/reservas.json")
       .then((res) => res.json())
       .then((data) => {
-        setReservas(data); // Guardo os dados no estado.
-        setLoading(false); // Escondo a mensagem de "carregando".
+        setReservas(data);
+        setLoading(false);
       })
-      .catch(() => setLoading(false)); // Também escondo se der algum erro.
-  }, []); // A lista de dependências '[]' garante que isso rode só uma vez.
+      .catch(() => setLoading(false));
+  }, []);
 
-  // Enquanto 'loading' for verdadeiro, eu mostro esta mensagem.
-  if (loading) return <p>Carregando suas reservas...</p>;
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
-  // Se, após o carregamento, a lista de reservas estiver vazia, eu mostro outra mensagem.
-  if (reservas.length === 0) return <p>Você ainda não possui nenhuma reserva.</p>;
+  // Função para renderizar o ícone de status da reserva
+  const getStatusIcon = (status) => {
+    if (status === 'Confirmada') return <FaCheckCircle className="status-icon confirmed" />;
+    if (status === 'Pendente') return <FaHourglassHalf className="status-icon pending" />;
+    if (status === 'Cancelada') return <FaTimesCircle className="status-icon cancelled" />;
+    return null;
+  };
 
-  // Se tudo deu certo e existem reservas, eu mostro a lista.
   return (
-    <div className="minhas-reservas">
-      <h2>Minhas Reservas</h2>
-      <ul>
-        {/*
-          Aqui eu uso o '.map()' para percorrer a lista de reservas.
-          Para cada 'reserva', eu crio um item de lista '<li>' com os detalhes dela.
-        */}
-        {reservas.map((reserva) => (
-          <li key={reserva.id}>
-            <img src={reserva.imagem} alt={reserva.destino} />
-            <div>
-              <h3>{reserva.destino}</h3>
-              <p>Data: {reserva.data}</p>
-              <p>Valor pago: R$ {reserva.valor}</p>
-              <p>Status: {reserva.status}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="home">
+      <Header onLoginClick={openModal} />
+
+      <main className="my-reservations-page">
+        <div className="reservations-header">
+          <h1>Minhas Reservas</h1>
+          <p>Acompanhe aqui o histórico e o status das suas viagens.</p>
+        </div>
+
+        {loading ? (
+          <p>Carregando suas reservas...</p>
+        ) : reservas.length === 0 ? (
+          <div className="no-reservations-box">
+            <h2>Você ainda não possui nenhuma reserva.</h2>
+            <p>Que tal começar a planejar sua próxima aventura agora mesmo?</p>
+            <a href="/pacotes" className="quiz-button">Ver Pacotes</a>
+          </div>
+        ) : (
+          <div className="reservations-list">
+            {reservas.map((reserva) => (
+              <div key={reserva.id} className="reservation-card">
+                <img src={reserva.imagem} alt={reserva.destino} className="reservation-image" />
+                <div className="reservation-details">
+                  <div className={`status-badge ${reserva.status.toLowerCase()}`}>
+                    {getStatusIcon(reserva.status)}
+                    {reserva.status}
+                  </div>
+                  <h2>{reserva.destino}</h2>
+                  <div className="reservation-info">
+                    <span><FaCalendarAlt /> {reserva.data}</span>
+                    <span><FaTag /> R$ {reserva.valor}</span>
+                  </div>
+                  <div className="reservation-actions">
+                    <button className="btn-details">Ver Detalhes</button>
+                    <button className="btn-cancel">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+
+      <Footer />
+
+      <Modal isOpen={isModalOpen} onClose={closeModal}>
+        <AuthModal />
+      </Modal>
     </div>
   );
 };
