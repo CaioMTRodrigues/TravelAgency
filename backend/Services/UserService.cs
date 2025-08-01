@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -16,14 +17,18 @@ using WebApplication1.Services;
 
 public class UserService
 {
-    private readonly ApplicationDbContext _context;
+    private readonly UserManager<User> _userManager;
     private readonly IConfiguration _configuration;
     private readonly EmailService _emailService;
     private readonly ILogger<UserService> _logger;
 
-    public UserService(ApplicationDbContext context, IConfiguration configuration, EmailService emailService, ILogger<UserService> logger)
+    public UserService(
+        UserManager<User> userManager,
+        IConfiguration configuration,
+        EmailService emailService,
+        ILogger<UserService> logger)
     {
-        _context = context;
+        _userManager = userManager;
         _configuration = configuration;
         _emailService = emailService;
         _logger = logger;
@@ -31,20 +36,17 @@ public class UserService
 
     public async Task<bool> RegisterUserAsync(CreateUserDTO userDto)
     {
-        if (await _context.Users.AnyAsync(u => u.Email == userDto.Email))
+        if (await _userManager.FindByEmailAsync(userDto.Email) != null)
             return false;
-
-        string passwordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
 
         var token = Guid.NewGuid().ToString();
         var expiracao = DateTime.UtcNow.AddHours(24);
 
         var user = new User
         {
-            // Do NOT set Id here
             Name = userDto.Name,
             Email = userDto.Email,
-            PasswordHash = passwordHash,
+            UserName = userDto.Email,
             PhoneNumber = userDto.PhoneNumber,
             Document = userDto.Document,
             Role = "Cliente",
@@ -53,8 +55,18 @@ public class UserService
             TokenExpiration = expiracao
         };
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        var result = await _userManager.CreateAsync(user, userDto.Password);
+
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                _logger.LogError($"Erro ao criar usuário: {error.Description}");
+            }
+            return false;
+        }
+
+        await _userManager.AddToRoleAsync(user, "User");
 
         var encodedToken = WebUtility.UrlEncode(token);
         var confirmationLink = $"{_configuration["AppSettings:FrontendUrl"]}/confirmar-email?email={user.Email}&token={encodedToken}";
@@ -66,9 +78,9 @@ public class UserService
 
     public async Task<string> LoginAsync(UserLoginDTO loginDto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
+        var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
-        if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
+        if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             return null;
 
         if (!user.EmailConfirmed)
@@ -107,10 +119,9 @@ public class UserService
     {
         _logger.LogInformation($"Tentando confirmar e-mail: {email} com token: {token}");
 
-        var user = await _context.Users.FirstOrDefaultAsync(u =>
-            u.Email == email && u.EmailConfirmationToken == token);
+        var user = await _userManager.FindByEmailAsync(email);
 
-        if (user == null)
+        if (user == null || user.EmailConfirmationToken != token)
         {
             _logger.LogWarning("Usuário não encontrado ou token inválido.");
             return false;
@@ -126,8 +137,53 @@ public class UserService
         user.EmailConfirmationToken = null;
         user.TokenExpiration = null;
 
-        await _context.SaveChangesAsync();
+        await _userManager.UpdateAsync(user);
         _logger.LogInformation("E-mail confirmado com sucesso.");
+        return true;
+    }
+
+    public async Task<bool> ForgotPasswordAsync(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            return true;
+        }
+
+        user.PasswordResetToken = Guid.NewGuid().ToString();
+        user.PasswordResetTokenExpiration = DateTime.UtcNow.AddHours(1);
+
+        await _userManager.UpdateAsync(user);
+
+        var encodedToken = WebUtility.UrlEncode(user.PasswordResetToken);
+        var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/reset-password?token={encodedToken}";
+
+        await _emailService.EnviarEmailRecuperacaoSenhaAsync(user.Email, resetLink);
+
+        return true;
+    }
+
+    public async Task<bool> ResetPasswordAsync(string token, string newPassword)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(u =>
+            u.PasswordResetToken == token &&
+            u.PasswordResetTokenExpiration > DateTime.UtcNow);
+
+        if (user == null)
+            return false;
+
+        var result = await _userManager.RemovePasswordAsync(user);
+        if (!result.Succeeded)
+            return false;
+
+        result = await _userManager.AddPasswordAsync(user, newPassword);
+        if (!result.Succeeded)
+            return false;
+
+        user.PasswordResetToken = null;
+        user.PasswordResetTokenExpiration = null;
+
+        await _userManager.UpdateAsync(user);
         return true;
     }
 }

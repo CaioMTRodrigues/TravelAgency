@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
@@ -32,6 +33,7 @@ namespace WebApplication1.Controllers
         // GET: api/payment
         // Retorna todos os pagamentos cadastrados
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PaymentDto>>> GetAll()
         {
             var payments = await _repository.GetAllAsync();
@@ -42,6 +44,7 @@ namespace WebApplication1.Controllers
         // GET: api/payment/{id}
         // Retorna um pagamento específico pelo ID
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<PaymentDto>> GetById(int id)
         {
             var payment = await _repository.GetByIdAsync(id);
@@ -55,6 +58,7 @@ namespace WebApplication1.Controllers
         // POST: api/payment
         // Cria um novo pagamento
         [HttpPost]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> Create(CreatePaymentDto dto)
         {
             var payment = _mapper.Map<Payment>(dto);
@@ -66,6 +70,7 @@ namespace WebApplication1.Controllers
         // PUT: api/payment/{id}
         // Atualiza um pagamento existente
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Update(int id, CreatePaymentDto dto)
         {
             var existing = await _repository.GetByIdAsync(id);
@@ -81,6 +86,7 @@ namespace WebApplication1.Controllers
         // DELETE: api/payment/{id}
         // Remove um pagamento pelo ID
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var existing = await _repository.GetByIdAsync(id);

@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
@@ -37,6 +38,7 @@ namespace WebApplication1.Controllers
         // GET: api/package
         // Retorna todos os pacotes cadastrados
         [HttpGet]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<PackageDto>>> GetAll()
         {
             var packages = await _repository.GetAllAsync();
@@ -47,6 +49,7 @@ namespace WebApplication1.Controllers
         // GET: api/package/{id}
         // Retorna um pacote específico pelo ID
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<PackageDto>> GetById(int id)
         {
             var package = await _repository.GetByIdAsync(id);
@@ -60,6 +63,7 @@ namespace WebApplication1.Controllers
         // POST: api/package
         // Cria um novo pacote
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(CreatePackageDto dto)
         {
 
@@ -71,6 +75,7 @@ namespace WebApplication1.Controllers
         // PUT: api/package/{id}
         // Atualiza um pacote existente
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Update(int id, CreatePackageDto dto)
         {
             var existing = await _repository.GetByIdAsync(id);
@@ -87,6 +92,7 @@ namespace WebApplication1.Controllers
         // DELETE: api/package/{id}
         // Remove um pacote pelo ID
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id, CreatePackageDto dto)
         {
 

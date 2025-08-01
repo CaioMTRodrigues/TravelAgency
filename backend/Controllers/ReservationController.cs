@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
@@ -22,6 +23,7 @@ namespace WebApplication1.Controllers
 
         // GET: api/reservation
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ReservationDto>>> GetAll()
         {
             var reservations = await _reservationService.ObterTodasAsync();
@@ -31,6 +33,7 @@ namespace WebApplication1.Controllers
 
         // GET: api/reservation/{id}
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<ReservationDto>> GetById(int id)
         {
             var reservation = await _reservationService.ObterPorIdAsync(id);
@@ -43,6 +46,7 @@ namespace WebApplication1.Controllers
 
         // POST: api/reservation
         [HttpPost]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> Create([FromBody] CreateReservationDto dto)
         {
             var reservation = await _reservationService.CriarReservaAsync(dto);
@@ -51,6 +55,7 @@ namespace WebApplication1.Controllers
 
         // PUT: api/reservation/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult> Update(int id, CreateReservationDto dto)
         {
             var updated = await _reservationService.AtualizarReservaAsync(id, dto);
@@ -62,6 +67,7 @@ namespace WebApplication1.Controllers
 
         // DELETE: api/reservation/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult> Delete(int id)
         {
             var deleted = await _reservationService.ExcluirReservaAsync(id);
