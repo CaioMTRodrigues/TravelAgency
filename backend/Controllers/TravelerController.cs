@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.backend.DTOs;
 using WebApplication1.DTOs;
@@ -33,6 +34,7 @@ namespace WebApplication1.Controllers
         // GET: api/traveler
         // Retorna todos os viajantes cadastrados
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<TravelerDto>>> GetAll()
         {
             var travelers = await _repository.GetAllAsync();
@@ -43,6 +45,7 @@ namespace WebApplication1.Controllers
         // GET: api/traveler/{id}
         // Retorna um viajante específico pelo ID
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<TravelerDto>> GetById(int id)
         {
             var traveler = await _repository.GetByIdAsync(id);
@@ -56,6 +59,7 @@ namespace WebApplication1.Controllers
         // POST: api/traveler
         // Cria um novo viajante
         [HttpPost]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> Create(CreateTravelerDto dto)
         {
             var traveler = _mapper.Map<Traveler>(dto);
@@ -67,6 +71,7 @@ namespace WebApplication1.Controllers
         // PUT: api/traveler/{id}
         // Atualiza um viajante existente
         [HttpPut("{id}")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> Update(int id, CreateTravelerDto dto)
         {
             var existing = await _repository.GetByIdAsync(id);
@@ -82,6 +87,7 @@ namespace WebApplication1.Controllers
         // DELETE: api/traveler/{id}
         // Remove um viajante pelo ID
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult> Delete(int id)
         {
             var existing = await _repository.GetByIdAsync(id);

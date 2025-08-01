@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.backend.DTOs;
 using WebApplication1.DTOs;
@@ -16,6 +17,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Register([FromBody] CreateUserDTO userDto)
     {
         var success = await _userService.RegisterUserAsync(userDto);
@@ -27,6 +29,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> Login([FromBody] UserLoginDTO loginDto)
     {
         var token = await _userService.LoginAsync(loginDto);
@@ -38,6 +41,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("confirmar-email")]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> ConfirmarEmail([FromQuery] string email, [FromQuery] string token)
     {
         var sucesso = await _userService.ConfirmarEmailAsync(email, token);
@@ -49,6 +53,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("forgot-password")]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> ForgotPassword([FromBody] PasswordRecoveryRequestDto dto)
     {
         await _userService.ForgotPasswordAsync(dto.Email);
@@ -57,6 +62,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("reset-password")]
+    [Authorize(Roles = "Admin, User")]
     public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto dto)
     {
         var result = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword);

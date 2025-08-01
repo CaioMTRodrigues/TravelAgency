@@ -7,6 +7,7 @@
 // -----------------------------------------------------------------------------
 
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
@@ -17,6 +18,7 @@ namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("api/[controller]")] // Define a rota como: api/evaluation
+
     public class EvaluationController : ControllerBase
     {
         private readonly IRepository<Evaluation, int> _repository;
@@ -30,6 +32,7 @@ namespace WebApplication1.Controllers
 
         // GET: api/evaluation
         [HttpGet]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<EvaluationDto>>> GetAll()
         {
             var evaluations = await _repository.GetAllAsync();
@@ -39,6 +42,7 @@ namespace WebApplication1.Controllers
 
         // GET: api/evaluation/{id}
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<EvaluationDto>> GetById(int id)
         {
             var evaluation = await _repository.GetByIdAsync(id);
@@ -51,6 +55,7 @@ namespace WebApplication1.Controllers
 
         // POST: api/evaluation
         [HttpPost]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> Create(CreateEvaluationDto dto)
         {
             var evaluation = _mapper.Map<Evaluation>(dto);
@@ -61,6 +66,7 @@ namespace WebApplication1.Controllers
 
         // PUT: api/evaluation/{id}
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Update(int id, CreateEvaluationDto dto)
         {
             var existing = await _repository.GetByIdAsync(id);
@@ -75,6 +81,7 @@ namespace WebApplication1.Controllers
 
         // DELETE: api/evaluation/{id}
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var existing = await _repository.GetByIdAsync(id);

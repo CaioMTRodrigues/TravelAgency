@@ -31,6 +31,7 @@ namespace WebApplication1.Controllers
         // GET: api/reservationtraveler
         // Retorna todos os vínculos entre reservas e viajantes
         [HttpGet]
+
         public async Task<ActionResult<IEnumerable<ReservationTravelerDto>>> GetAll()
         {
             var entities = await _repository.GetAllAsync();
