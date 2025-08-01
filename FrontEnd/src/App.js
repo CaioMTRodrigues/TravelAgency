@@ -13,6 +13,9 @@ import DetalhesPacote from "./pages/DetalhesPacote";
 import CentralAjuda from "./pages/CentralAjuda";
 import MinhasReservas from "./pages/MinhasReservas";
 import AvaliacoesClientes from "./pages/avaliacoesClientes";
+import Destinos from "./pages/Destinos";
+import Ofertas from "./pages/Ofertas";
+import Quiz from "./pages/Quiz"; // 1. Importei a nova página do Quiz aqui
 
 // Importando páginas do painel de administração
 import AdminDashboard from "./pages/Admin/AdminDashboard";
@@ -32,6 +35,9 @@ function App() {
         <Route path="/ajuda" element={<CentralAjuda />} />
         <Route path="/minhas-reservas" element={<MinhasReservas />} />
         <Route path="/avaliacoes" element={<AvaliacoesClientes />} />
+        <Route path="/destinos" element={<Destinos />} />
+        <Route path="/ofertas" element={<Ofertas />} />
+        <Route path="/quiz" element={<Quiz />} /> {/* 2. Adicionei a nova rota aqui */}
 
         {/* Rotas de Administração */}
         <Route path="/admin" element={<AdminDashboard />} />
