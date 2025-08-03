@@ -25,7 +25,7 @@ namespace WebApplication1.DTOs
         public string Numero_Reserva { get; private set; }
 
         [Required(ErrorMessage = "O ID do usuário é obrigatório.")]
-        public int Id_Usuario { get; set; }
+        public string Id_Usuario { get; set; }
 
         [Required(ErrorMessage = "O ID do pacote é obrigatório.")]
         public int Id_Pacote { get; set; }

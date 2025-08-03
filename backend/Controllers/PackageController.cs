@@ -67,8 +67,18 @@ namespace WebApplication1.Controllers
         public async Task<ActionResult> Create(CreatePackageDto dto)
         {
 
-            var package = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = package.Id_Pacote }, dto);
+
+            try
+            {
+                var package = await _service.CreateAsync(dto);
+                return CreatedAtAction(nameof(GetById), new { id = package.Id_Pacote }, dto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao cadastrar pacote: {ex.Message}");
+                return BadRequest(new { message = ex.Message });
+            }
+
 
         }
 

@@ -1,9 +1,11 @@
-﻿using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Projeto.TravelAgency.Services;
-using WebApplication1.backend.Data;
+using System.Text;
+using System.Text.Json.Serialization;
 using WebApplication1.Data;
 using WebApplication1.Entities;
 using WebApplication1.Filters;
@@ -17,7 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString, sqlOptions =>
-        sqlOptions.EnableRetryOnFailure())); // Habilita resiliência a falhas
+        sqlOptions.EnableRetryOnFailure()));
 
 // 🧩 Repositórios
 builder.Services.AddScoped<IRepository<Package, int>, PackageRepository>();
@@ -30,7 +32,7 @@ builder.Services.AddScoped<ReservationTravelerRepository>();
 // 🔄 AutoMapper
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
-// 📘 Swagger para documentação da API
+// 📘 Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -40,12 +42,12 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<PackageService>();
 
-// 🔐 Configuração do Identity
+// 🔐 Identity
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// ✅ Configuração de requisitos de senha do Identity
+// ✅ Requisitos de senha
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = false;
@@ -55,7 +57,33 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredLength = 6;
 });
 
-// 🔐 Serviço de geração de token JWT
+// 🔐 JWT Authentication
+var jwtKey = builder.Configuration["Jwt:Key"];
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
+
+// JWT Service
 builder.Services.AddScoped<JwtService>(provider =>
 {
     var configuration = provider.GetRequiredService<IConfiguration>();
@@ -64,7 +92,7 @@ builder.Services.AddScoped<JwtService>(provider =>
     return new JwtService(secretKey, userManager);
 });
 
-// 🌍 CORS - Permite requisições de qualquer origem
+// 🌍 CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -76,7 +104,7 @@ builder.Services.AddCors(options =>
 // ✅ Autorização
 builder.Services.AddAuthorization();
 
-// ✅ Controllers com filtro de validação global
+// ✅ Controllers com filtro de validação
 builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ValidationFilter>();
@@ -86,34 +114,13 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
-// ❌ Desativa a validação automática do ModelState
+// ❌ Desativa validação automática do ModelState
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
 
 var app = builder.Build();
-
-// 🌱 Seed de dados iniciais
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        var userManager = services.GetRequiredService<UserManager<User>>();
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-
-        await SeedData.Initialize(context, userManager, roleManager);
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Erro ao popular o DB com as Roles: {ex.Message}");
-        if (ex.InnerException != null)
-            Console.WriteLine($"Detalhe interno: {ex.InnerException.Message}");
-    }
-}
 
 // 🌐 Pipeline de requisições
 app.UseCors("AllowAll");
@@ -124,10 +131,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// ⚠️ Middleware de tratamento global de exceções
 app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication(); // ✅ Importante: antes do Authorization
 app.UseAuthorization();
+
 app.MapControllers();
 app.Run();

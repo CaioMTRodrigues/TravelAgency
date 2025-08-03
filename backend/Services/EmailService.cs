@@ -20,7 +20,9 @@ namespace WebApplication1.Services
 
             var assunto = "Confirmação de E-mail - TravelAgency";
 
+
             var link = $"http://localhost:5000/api/user/confirmar-email?email={WebUtility.UrlEncode(destinatario)}&token={WebUtility.UrlEncode(token)}";
+
 
             var corpo = $@"
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #f9f9f9;'>

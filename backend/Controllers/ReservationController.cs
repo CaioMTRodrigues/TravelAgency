@@ -46,7 +46,7 @@ namespace WebApplication1.Controllers
 
         // POST: api/reservation
         [HttpPost]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult> Create([FromBody] CreateReservationDto dto)
         {
             var reservation = await _reservationService.CriarReservaAsync(dto);

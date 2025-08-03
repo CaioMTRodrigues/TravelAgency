@@ -10,7 +10,6 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Services;
@@ -47,6 +46,8 @@ public class UserService
             Name = userDto.Name,
             Email = userDto.Email,
             UserName = userDto.Email,
+            NormalizedEmail = userDto.Email.ToLower(), // salva em minúsculo
+            NormalizedUserName = userDto.Email.ToLower(), // opcional
             PhoneNumber = userDto.PhoneNumber,
             Document = userDto.Document,
             Role = "Cliente",
@@ -78,7 +79,9 @@ public class UserService
 
     public async Task<string> LoginAsync(UserLoginDTO loginDto)
     {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+        var normalizedEmail = loginDto.Email.ToLower(); // busca em minúsculo
+        var user = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
 
         if (user == null || !await _userManager.CheckPasswordAsync(user, loginDto.Password))
             return null;
@@ -119,7 +122,9 @@ public class UserService
     {
         _logger.LogInformation($"Tentando confirmar e-mail: {email} com token: {token}");
 
-        var user = await _userManager.FindByEmailAsync(email);
+        var normalizedEmail = email.ToLower();
+        var user = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
 
         if (user == null || user.EmailConfirmationToken != token)
         {
@@ -144,11 +149,12 @@ public class UserService
 
     public async Task<bool> ForgotPasswordAsync(string email)
     {
-        var user = await _userManager.FindByEmailAsync(email);
+        var normalizedEmail = email.ToLower();
+        var user = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == normalizedEmail);
+
         if (user == null)
-        {
             return true;
-        }
 
         user.PasswordResetToken = Guid.NewGuid().ToString();
         user.PasswordResetTokenExpiration = DateTime.UtcNow.AddHours(1);

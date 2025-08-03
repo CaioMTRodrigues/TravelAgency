@@ -41,8 +41,10 @@ namespace WebApplication1.Services
 
         private void ValidarDatas(DateTime inicio, DateTime fim)
         {
-            if (fim < inicio)
+
+            if (fim.Date < inicio.Date)
                 throw new BusinessException("A data final não pode ser anterior à data inicial.");
+
         }
     }
 }

@@ -48,34 +48,37 @@ namespace WebApplication1.Services
                 .FirstOrDefaultAsync(r => r.Id_Reserva == id);
         }
 
-        // 🆕 Cria uma nova reserva com validações e uso dos dados do DTO
         public async Task<Reservation> CriarReservaAsync(CreateReservationDto dto)
         {
-            // 🔎 Valida existência do usuário
-            var usuario = await _context.Users.FindAsync(dto.Id_Usuario);
-            if (usuario == null)
-                throw new NotFoundException("Usuário", dto.Id_Usuario);
-
-            // 🔎 Valida existência do pacote
-            var pacote = await _context.Packages.FindAsync(dto.Id_Pacote);
-            if (pacote == null)
-                throw new NotFoundException("Pacote", dto.Id_Pacote);
-
-            // 🏗️ Cria a reserva
-            var reserva = new Reservation
+            try
             {
-                Id_Usuario = dto.Id_Usuario.ToString(),
-                Id_Pacote = dto.Id_Pacote,
-                Data_Reserva = dto.Data_Reserva ?? DateTime.UtcNow,
-                Status = dto.Status,
-                Numero_Reserva = dto.Numero_Reserva,
-                ValorPacote = pacote.Valor
-            };
+                var usuario = await _context.Users.FindAsync(dto.Id_Usuario);
+                if (usuario == null)
+                    throw new NotFoundException("Usuário", dto.Id_Usuario);
 
-            _context.Reservations.Add(reserva);
-            await _context.SaveChangesAsync();
+                var pacote = await _context.Packages.FindAsync(dto.Id_Pacote);
+                if (pacote == null)
+                    throw new NotFoundException("Pacote", dto.Id_Pacote);
 
-            return reserva;
+                var reserva = new Reservation
+                {
+                    Id_Usuario = dto.Id_Usuario,
+                    Id_Pacote = dto.Id_Pacote,
+                    Data_Reserva = dto.Data_Reserva ?? DateTime.UtcNow,
+                    Status = dto.Status,
+                    Numero_Reserva = dto.Numero_Reserva,
+                    ValorPacote = pacote.Valor
+                };
+
+                _context.Reservations.Add(reserva);
+                await _context.SaveChangesAsync();
+
+                return reserva;
+            }
+            catch (Exception ex)
+            {
+                throw new BusinessException("Erro ao criar reserva: " + ex.Message);
+            }
         }
 
         // ✏️ Atualiza os dados de uma reserva existente

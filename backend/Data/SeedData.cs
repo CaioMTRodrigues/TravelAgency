@@ -38,6 +38,7 @@ namespace WebApplication1.backend.Data
                     Email = "admin@travelagency.com",
                     UserName = "admin@travelagency.com",
                     Document = "00000000000",
+                    PasswordHash = "SenhaSegura123!", // A senha será definida posteriormente
                     Role = "Admin"
 
                 };

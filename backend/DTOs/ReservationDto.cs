@@ -17,7 +17,7 @@ namespace WebApplication1.DTOs
         public DateTime Data_Reserva { get; set; }
         public StatusReserva Status { get; set; }
         public string Numero_Reserva { get; set; }
-        public int Id_Usuario { get; set; }
+        public string Id_Usuario { get; set; }
         public int Id_Pacote { get; set; }
     }
 }
