@@ -1,12 +1,4 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 18/07/2025
-// 📁 Arquivo: PackageController
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Controller responsável por gerenciar pacotes turísticos
-// -----------------------------------------------------------------------------
-
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
@@ -14,6 +6,7 @@ using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
 using WebApplication1.Services;
+using System.Linq; // Adicionado para usar OrderByDescending e Take
 
 namespace WebApplication1.Controllers
 {
@@ -46,6 +39,24 @@ namespace WebApplication1.Controllers
             return Ok(result);
         }
 
+        // NOVO MÉTODO ADICIONADO AQUI
+        // GET: api/package/recentes
+        // Retorna os 6 pacotes mais recentes para a HomePage
+        [HttpGet("recentes")]
+        [AllowAnonymous] // Permite que qualquer pessoa (mesmo não logada) veja os pacotes
+        public async Task<ActionResult<IEnumerable<PackageDto>>> GetRecentPackages()
+        {
+            var allPackages = await _repository.GetAllAsync();
+
+            // Ordena os pacotes pelo ID (do maior para o menor) e pega os 6 primeiros
+            var recentPackages = allPackages
+                .OrderByDescending(p => p.Id_Pacote)
+                .Take(6);
+
+            var result = _mapper.Map<IEnumerable<PackageDto>>(recentPackages);
+            return Ok(result);
+        }
+
         // GET: api/package/{id}
         // Retorna um pacote específico pelo ID
         [HttpGet("{id}")]
@@ -66,8 +77,6 @@ namespace WebApplication1.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(CreatePackageDto dto)
         {
-
-
             try
             {
                 var package = await _service.CreateAsync(dto);
@@ -78,8 +87,6 @@ namespace WebApplication1.Controllers
                 Console.WriteLine($"Erro ao cadastrar pacote: {ex.Message}");
                 return BadRequest(new { message = ex.Message });
             }
-
-
         }
 
         // PUT: api/package/{id}
@@ -105,10 +112,8 @@ namespace WebApplication1.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id, CreatePackageDto dto)
         {
-
             await _service.UpdateAsync(id, dto);
             return NoContent();
-
         }
     }
 }
