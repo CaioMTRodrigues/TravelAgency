@@ -101,3 +101,53 @@
   color: white;
   font-size: 24px;
 }
+
+
+/*    ICONES        */
+
+.icon {
+  margin-right: 6px;
+  color: #007bff;
+  font-size: 1rem;
+}
+
+.package-card p {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Setas personalizadas */
+.custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 10px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.custom-arrow:hover {
+  background-color: rgba(0, 123, 255, 0.9);
+}
+
+.next-arrow {
+  right: 10px;
+}
+
+.prev-arrow {
+  left: 10px;
+}
+
+.arrow-icon {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.custom-arrow:hover .arrow-icon {
+  color: #fff;
+}

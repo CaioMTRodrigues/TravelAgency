@@ -42,13 +42,17 @@ namespace WebApplication1.Profiles
             #endregion
 
             #region Traveler
-            CreateMap<Traveler, TravelerDto>();
             CreateMap<CreateTravelerDto, Traveler>();
+            CreateMap<Traveler, TravelerDto>();
             #endregion
 
             #region ReservationTraveler
             CreateMap<ReservationTraveler, ReservationTravelerDto>();
-            CreateMap<CreateReservationTravelerDto, ReservationTraveler>();
+
+            CreateMap<CreateReservationTravelerDto, ReservationTraveler>()
+                .ForMember(dest => dest.Reserva, opt => opt.Ignore())
+                .ForMember(dest => dest.Viajante, opt => opt.Ignore());
+
             #endregion
 
 

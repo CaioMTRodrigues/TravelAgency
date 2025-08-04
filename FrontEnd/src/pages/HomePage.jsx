@@ -11,8 +11,15 @@ import FeaturedPackages from "../components/FeaturedPackages";
 import Modal from "../components/Modal";
 import AuthModal from "../components/AuthModal";
 
+
+
+import FiltroPacotes from "../components/FiltroPacotes";
+
+
+
 // E também importo meu arquivo de estilos principal.
 import "./../assets/styles/styles.css";
+
 
 // Este é o componente da minha página inicial, a principal página do site.
 const HomePage = () => {
@@ -43,6 +50,9 @@ const HomePage = () => {
           <BannerCarousel />
         </div>
         <FeaturedPackages />
+        
+        <FiltroPacotes />
+        {/* Aqui eu poderia adicionar mais seções ou componentes, como notícias, promoções, etc. */}
       </main>
 
       {/* Uso meu componente de rodapé aqui. */}

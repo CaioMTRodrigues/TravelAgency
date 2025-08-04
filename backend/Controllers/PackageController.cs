@@ -38,7 +38,7 @@ namespace WebApplication1.Controllers
         // GET: api/package
         // Retorna todos os pacotes cadastrados
         [HttpGet]
-        [Authorize(Roles = "Admin, User")]
+        
         public async Task<ActionResult<IEnumerable<PackageDto>>> GetAll()
         {
             var packages = await _repository.GetAllAsync();

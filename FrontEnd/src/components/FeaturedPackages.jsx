@@ -5,7 +5,7 @@ import { listarPacotes } from "../services/pacoteService";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./FeaturedPackages.css";
-import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
+import { FaArrowRight, FaArrowLeft, FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag } from "react-icons/fa";
 
 // Setas personalizadas com ícones visíveis
 const NextArrow = ({ onClick }) => (
@@ -73,10 +73,11 @@ const FeaturedPackages = () => {
               <div className="package-card">
                 <img src={pacote.imagemUrl} alt={pacote.titulo} />
                 <h3>{pacote.titulo}</h3>
-                <p>{pacote.destino}</p>
-                <p>R${pacote.valor.toFixed(2)}</p>
-                <p>{pacote.duracaoDias} dias</p>
+                <p><FaMapMarkerAlt className="icon" /> {pacote.destino}</p>
+                <p><FaTag className="icon" /> R${pacote.valor.toFixed(2)}</p>
+                <p><FaClock className="icon" /> {pacote.duracaoDias} dias</p>
                 <p>
+                  <FaCalendarAlt className="icon" />{" "}
                   {new Date(pacote.dataInicio).toLocaleDateString()} -{" "}
                   {new Date(pacote.dataFim).toLocaleDateString()}
                 </p>

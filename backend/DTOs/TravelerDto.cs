@@ -10,16 +10,14 @@ namespace WebApplication1.backend.DTOs
 {
     public class TravelerDto
     {
-        public int Id_Traveler { get; set; }
 
+        public int Id_Viajante { get; set; }
         public string Nome { get; set; }
+        public string Documento { get; set; }
+        public DateTime Data_Nascimento { get; set; }
+        public string Id_Usuario { get; set; }
 
-        public string Email { get; set; }
 
-        public string Telefone { get; set; }
 
-        public DateTime DataNascimento { get; set; }
-
-        public string? Endereco { get; set; }
     }
 }

@@ -3,6 +3,9 @@ import { cadastrarPacote } from "../../services/pacoteService";
 import Spinner from "../../components/Spinner";
 import "./CadastroPacote.css";
 
+import axios from "axios";
+
+
 const CadastroPacote = () => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -106,18 +109,31 @@ const CadastroPacote = () => {
 
         {/* Campo de imagem */}
         <div className="form-group">
-          <label htmlFor="imagemUrl">URL da Imagem*</label>
-          <input
-            type="url"
-            id="imagemUrl"
-            name="imagemUrl"
-            value={formData.imagemUrl}
-            onChange={handleChange}
-            className={invalidFields.includes("imagemUrl") ? "input-error" : ""}
-            placeholder="https://exemplo.com/imagem.jpg"
-            required
-          />
-        </div>
+  <label htmlFor="imagemUpload">Imagem do Pacote*</label>
+  <input
+    type="file"
+    id="imagemUpload"
+    accept="image/*"
+    onChange={async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formDataImagem = new FormData();
+      formDataImagem.append("arquivo", file);
+
+      try {
+        const response = await axios.post("http://localhost:5000/api/imagens/upload", formDataImagem);
+        const urlImagem = `http://localhost:5000/api/imagens/${response.data.nome}`;
+        setFormData({ ...formData, imagemUrl: urlImagem });
+        setSucesso("Imagem enviada com sucesso!");
+      } catch (err) {
+        console.log(err);
+        setErro("Erro ao enviar imagem.");
+      }
+    }}
+  />
+</div>
+
 
         {erro && <p className="login-error-message">{erro}</p>}
         {sucesso && <p className="login-success-message">{sucesso}</p>}

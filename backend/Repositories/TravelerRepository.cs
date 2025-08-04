@@ -37,9 +37,17 @@ namespace WebApplication1.Repositories
         // Adiciona um novo viajante
         public async Task AddAsync(Traveler entity)
         {
-            await _appDbContext.Travelers.AddAsync(entity);
-            await _appDbContext.SaveChangesAsync();
+            try
+            {
+                _appDbContext.Travelers.Add(entity);
+                await _appDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Erro ao salvar Traveler: {ex.Message}", ex);
+            }
         }
+
 
         // Atualiza um viajante existente
         public async Task UpdateAsync(Traveler entity)

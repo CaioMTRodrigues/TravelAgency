@@ -1,18 +1,23 @@
 // src/pages/CadastroReserva.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ModalViajante from "../components/ModalViajante";
 import { listarPacotes } from "../services/pacoteService";
-import { cadastrarReserva } from "../services/reservaService"; // você vai criar esse
-import "./CadastroReserva.css"; // opcional para estilização
+import { cadastrarReserva } from "../services/reservaService";
+import { vincularViajanteReserva } from "../services/reservationTravelerService";
+
+import "./CadastroReserva.css";
 
 const CadastroReserva = () => {
   const [pacotes, setPacotes] = useState([]);
   const [idPacote, setIdPacote] = useState("");
   const [dataReserva, setDataReserva] = useState(new Date().toISOString().slice(0, 10));
   const [erro, setErro] = useState("");
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [viajanteSelecionado, setViajanteSelecionado] = useState(null);
   const navigate = useNavigate();
 
-  const idUsuario = localStorage.getItem("idUsuario"); // ou use contexto/autenticação
+  const idUsuario = localStorage.getItem("idUsuario");
 
   useEffect(() => {
     const fetchPacotes = async () => {
@@ -29,11 +34,22 @@ const CadastroReserva = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await cadastrarReserva({
+      const reserva = await cadastrarReserva({
         id_Usuario: idUsuario,
         id_Pacote: parseInt(idPacote),
         data_Reserva: dataReserva,
       });
+
+      if (viajanteSelecionado) {
+        console.log("Enviando vínculo:", {
+  id_Reserva: reserva.id_Reserva,
+  id_Viajante: viajanteSelecionado?.id_Viajante,
+});
+
+
+        await vincularViajanteReserva(reserva.id_Reserva, viajanteSelecionado.id_Viajante);
+      }
+
       navigate("/minhas-reservas");
     } catch (err) {
       setErro(err.message || "Erro ao cadastrar reserva.");
@@ -63,8 +79,23 @@ const CadastroReserva = () => {
           required
         />
 
+        <button type="button" onClick={() => setMostrarModal(true)}>
+          Cadastrar Acompanhante
+        </button>
+
         <button type="submit">Confirmar Reserva</button>
       </form>
+
+      {mostrarModal && (
+        <ModalViajante
+          idUsuario={idUsuario}
+          onSelecionar={(v) => {
+            setViajanteSelecionado(v);
+            setMostrarModal(false);
+          }}
+          onFechar={() => setMostrarModal(false)}
+        />
+      )}
     </div>
   );
 };
