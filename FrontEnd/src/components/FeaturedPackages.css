@@ -11,15 +11,10 @@
   margin-bottom: 30px;
 }
 
-/* --- CORREÇÃO PRINCIPAL APLICADA AQUI --- */
 .packages-container {
   display: grid;
-  /* Cria um mosaico responsivo: 
-     - Tenta encaixar o máximo de colunas de 300px que couberem.
-     - Em ecrãs menores, ele automaticamente quebra para menos colunas.
-  */
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px; /* Espaçamento entre os cards */
+  gap: 25px;
 }
 
 .package-card {
@@ -47,7 +42,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Faz esta área crescer para preencher o espaço */
+  flex-grow: 1;
 }
 
 .package-name {
@@ -60,7 +55,7 @@
   color: #666;
   font-size: 0.95rem;
   line-height: 1.5;
-  flex-grow: 1; /* Empurra os botões para o fundo */
+  flex-grow: 1;
   margin-bottom: 15px;
 }
 
@@ -76,7 +71,6 @@
   gap: 10px;
 }
 
-/* Estilo base dos botões */
 .btn-details, .btn-edit, .btn-delete {
   width: 100%;
   padding: 10px;
@@ -91,7 +85,6 @@
   background-color: #005A9C;
   color: white;
 }
-<<<<<<< HEAD
 .btn-details:hover {
   background-color: #004a80;
 }
@@ -111,55 +104,3 @@
 .btn-delete:hover {
   background-color: #c82333;
 }
-=======
-
-
-/*    ICONES        */
-
-.icon {
-  margin-right: 6px;
-  color: #007bff;
-  font-size: 1rem;
-}
-
-.package-card p {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Setas personalizadas */
-.custom-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
-  background-color: rgba(255, 255, 255, 0.9);
-  padding: 10px;
-  border-radius: 50%;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.custom-arrow:hover {
-  background-color: rgba(0, 123, 255, 0.9);
-}
-
-.next-arrow {
-  right: 10px;
-}
-
-.prev-arrow {
-  left: 10px;
-}
-
-.arrow-icon {
-  font-size: 1.2rem;
-  color: #333;
-}
-
-.custom-arrow:hover .arrow-icon {
-  color: #fff;
-}
->>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8

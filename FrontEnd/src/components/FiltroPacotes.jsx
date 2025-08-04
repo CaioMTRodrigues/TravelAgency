@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { listarPacotes } from "../services/pacoteService";
+// CORREÇÃO: A função foi renomeada para 'listarTodosPacotes'.
+import { listarTodosPacotes } from "../services/pacoteService";
 import "./FiltroPacotes.css";
 import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag } from "react-icons/fa";
 
@@ -16,7 +17,8 @@ const FiltroPacotes = () => {
   useEffect(() => {
     const fetchPacotes = async () => {
       try {
-        const dados = await listarPacotes();
+        // CORREÇÃO: Usando a função correta que foi importada.
+        const dados = await listarTodosPacotes();
         setPacotes(dados);
       } catch (err) {
         setErro(err.message || "Erro ao carregar pacotes.");

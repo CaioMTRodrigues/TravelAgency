@@ -1,52 +1,42 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-// CORREÇÃO: Importamos a nova função para buscar um pacote por ID.
-import { getPacoteById } from '../services/pacoteService'; 
+import { getPacoteById } from '../services/pacoteService';
+import { cadastrarReserva } from "../services/reservaService";
+import { vincularViajanteReserva } from "../services/reservationTravelerService";
 import Spinner from '../components/Spinner';
-import './CadastroReserva.css'; // Usaremos um CSS para estilizar a página
+import ModalViajante from "../components/ModalViajante";
+import './CadastroReserva.css';
 
 const CadastroReserva = () => {
-    const { id } = useParams(); // Pega o ID do pacote da URL
+    const { id } = useParams(); // ID do pacote vindo da URL
     const navigate = useNavigate();
+    const idUsuario = localStorage.getItem("idUsuario"); // Pega o ID do usuário logado
 
+    // Estado para o pacote
     const [pacote, setPacote] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    
-    // Dados do formulário
+
+    // Dados do formulário da reserva
     const [dadosReserva, setDadosReserva] = useState({
         nomeCompleto: '',
         email: '',
         telefone: '',
         numPessoas: 1,
     });
-=======
-// src/pages/CadastroReserva.jsx
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import ModalViajante from "../components/ModalViajante";
-import { listarPacotes } from "../services/pacoteService";
-import { cadastrarReserva } from "../services/reservaService";
-import { vincularViajanteReserva } from "../services/reservationTravelerService";
+    
+    // Estado para a lógica de acompanhantes
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [viajanteSelecionado, setViajanteSelecionado] = useState(null);
 
-import "./CadastroReserva.css";
-
-const CadastroReserva = () => {
-  const [pacotes, setPacotes] = useState([]);
-  const [idPacote, setIdPacote] = useState("");
-  const [dataReserva, setDataReserva] = useState(new Date().toISOString().slice(0, 10));
-  const [erro, setErro] = useState("");
-  const [mostrarModal, setMostrarModal] = useState(false);
-  const [viajanteSelecionado, setViajanteSelecionado] = useState(null);
-  const navigate = useNavigate();
-
-  const idUsuario = localStorage.getItem("idUsuario");
->>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
-
+    // Efeito para buscar os detalhes do pacote
     useEffect(() => {
         const fetchPacoteDetails = async () => {
-            if (!id) return;
+            if (!id) {
+                setError('ID do pacote não fornecido.');
+                setLoading(false);
+                return;
+            }
             try {
                 const data = await getPacoteById(id);
                 setPacote(data);
@@ -58,48 +48,44 @@ const CadastroReserva = () => {
         };
 
         fetchPacoteDetails();
-    }, [id]); // Roda sempre que o ID na URL mudar
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setDadosReserva(prevState => ({ ...prevState, [name]: value }));
     };
 
-<<<<<<< HEAD
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Aqui viria a lógica para enviar os dados da reserva para a API
-        console.log("Dados da reserva a serem enviados:", { id_pacote: id, ...dadosReserva });
-        alert('Reserva enviada com sucesso! (Simulação)');
-        navigate('/minhas-reservas');
+        setError('');
+
+        if (!idUsuario) {
+            setError("Você precisa estar logado para fazer uma reserva.");
+            return;
+        }
+
+        try {
+            const reservaCriada = await cadastrarReserva({
+                id_Usuario: idUsuario,
+                id_Pacote: parseInt(id),
+                data_Reserva: new Date().toISOString(),
+                // O status e número da reserva já são definidos no backend
+            });
+
+            if (viajanteSelecionado) {
+                await vincularViajanteReserva(reservaCriada.id_Reserva, viajanteSelecionado.id_Viajante);
+            }
+            
+            alert('Reserva enviada com sucesso!');
+            navigate('/minhas-reservas');
+
+        } catch (err) {
+            setError(err.message || "Ocorreu um erro ao cadastrar a reserva.");
+        }
     };
 
     if (loading) {
         return <Spinner />;
-=======
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const reserva = await cadastrarReserva({
-        id_Usuario: idUsuario,
-        id_Pacote: parseInt(idPacote),
-        data_Reserva: dataReserva,
-      });
-
-      if (viajanteSelecionado) {
-        console.log("Enviando vínculo:", {
-  id_Reserva: reserva.id_Reserva,
-  id_Viajante: viajanteSelecionado?.id_Viajante,
-});
-
-
-        await vincularViajanteReserva(reserva.id_Reserva, viajanteSelecionado.id_Viajante);
-      }
-
-      navigate("/minhas-reservas");
-    } catch (err) {
-      setErro(err.message || "Erro ao cadastrar reserva.");
->>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
     }
 
     if (error) {
@@ -110,7 +96,6 @@ const CadastroReserva = () => {
         return <div className="error-message-full-page">Pacote não encontrado.</div>;
     }
 
-<<<<<<< HEAD
     return (
         <div className="cadastro-reserva-container">
             <div className="reserva-summary">
@@ -140,35 +125,31 @@ const CadastroReserva = () => {
                         <label>Número de Viajantes</label>
                         <input type="number" name="numPessoas" value={dadosReserva.numPessoas} onChange={handleChange} min="1" required />
                     </div>
+
+                    <button type="button" onClick={() => setMostrarModal(true)}>
+                        Adicionar Acompanhante
+                    </button>
+                    {viajanteSelecionado && <p>Acompanhante selecionado: {viajanteSelecionado.nome}</p>}
+
                     <div className="total-price">
                         Valor Total: <strong>R$ {(pacote.valor * dadosReserva.numPessoas).toFixed(2)}</strong>
                     </div>
                     <button type="submit" className="submit-button">Confirmar Reserva</button>
                 </form>
             </div>
+            
+            {mostrarModal && (
+                <ModalViajante
+                    idUsuario={idUsuario}
+                    onSelecionar={(v) => {
+                        setViajanteSelecionado(v);
+                        setMostrarModal(false);
+                    }}
+                    onFechar={() => setMostrarModal(false)}
+                />
+            )}
         </div>
     );
-=======
-        <button type="button" onClick={() => setMostrarModal(true)}>
-          Cadastrar Acompanhante
-        </button>
-
-        <button type="submit">Confirmar Reserva</button>
-      </form>
-
-      {mostrarModal && (
-        <ModalViajante
-          idUsuario={idUsuario}
-          onSelecionar={(v) => {
-            setViajanteSelecionado(v);
-            setMostrarModal(false);
-          }}
-          onFechar={() => setMostrarModal(false)}
-        />
-      )}
-    </div>
-  );
->>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
 };
 
 export default CadastroReserva;

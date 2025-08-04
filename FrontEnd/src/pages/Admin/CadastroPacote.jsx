@@ -1,18 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-// Importamos todas as funções que vamos usar do nosso serviço de pacotes
 import { cadastrarPacote, getPacoteById, atualizarPacote } from '../../services/pacoteService';
 import { FaSignature, FaFileAlt, FaMapMarkedAlt, FaClock, FaCalendarAlt, FaDollarSign, FaImage } from 'react-icons/fa';
 import Spinner from '../../components/Spinner';
 import './CadastroPacote.css';
-
 import axios from "axios";
 
-
 const CadastroPacote = () => {
-  const { id } = useParams(); // Pega o ID da URL. Será 'undefined' se for a página de cadastro.
+  const { id } = useParams();
   const navigate = useNavigate();
-  const isEditing = Boolean(id); // Converte o ID (ou a falta dele) para um verdadeiro/falso.
+  const isEditing = Boolean(id);
 
   const [pacote, setPacote] = useState({
     titulo: '',
@@ -24,20 +21,16 @@ const CadastroPacote = () => {
     valor: '',
     imagemUrl: ''
   });
-  
-  // O loading começa como 'true' apenas se estivermos a editar, para dar tempo de buscar os dados.
-  const [loading, setLoading] = useState(isEditing); 
+
+  const [loading, setLoading] = useState(isEditing);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Este useEffect roda apenas uma vez se 'isEditing' for verdadeiro.
   useEffect(() => {
     if (isEditing) {
       const fetchPacoteParaEdicao = async () => {
         try {
           const data = await getPacoteById(id);
-          // O backend retorna datas em formato completo (ISO). Precisamos formatá-las
-          // para o formato YYYY-MM-DD que o <input type="date"> entende.
           const dadosFormatados = {
             ...data,
             dataInicio: new Date(data.dataInicio).toISOString().split('T')[0],
@@ -48,12 +41,12 @@ const CadastroPacote = () => {
           setError('Não foi possível carregar os dados do pacote para edição.');
           console.error(err);
         } finally {
-          setLoading(false); // Para o loading após buscar os dados (ou falhar)
+          setLoading(false);
         }
       };
       fetchPacoteParaEdicao();
     }
-  }, [id, isEditing]); // Dependências do useEffect
+  }, [id, isEditing]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -63,14 +56,30 @@ const CadastroPacote = () => {
     }));
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formDataImagem = new FormData();
+    formDataImagem.append("arquivo", file);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/imagens/upload", formDataImagem);
+      const urlImagem = `http://localhost:5000/api/imagens/${response.data.nome}`;
+      setPacote(prevState => ({ ...prevState, imagemUrl: urlImagem }));
+      setSuccess("Imagem enviada com sucesso!");
+    } catch (err) {
+      console.log(err);
+      setError("Erro ao enviar imagem.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
-    // Validação
     for (const key in pacote) {
-      // Ignora o 'id_pacote' que pode vir do backend na validação de campos obrigatórios
       if (pacote[key] === '' && key !== 'id_pacote') {
         setError('Todos os campos são obrigatórios.');
         return;
@@ -79,16 +88,13 @@ const CadastroPacote = () => {
 
     try {
       if (isEditing) {
-        // Se estivermos a editar, chamamos a função de ATUALIZAR
         await atualizarPacote(id, pacote);
         setSuccess('Pacote atualizado com sucesso! Redirecionando...');
       } else {
-        // Se não, chamamos a função de CADASTRAR
         await cadastrarPacote(pacote);
         setSuccess('Pacote cadastrado com sucesso! Redirecionando...');
       }
       
-      // Após sucesso, espera 2 segundos e redireciona para a lista de pacotes
       setTimeout(() => {
         navigate('/admin/pacotes');
       }, 2000);
@@ -97,8 +103,7 @@ const CadastroPacote = () => {
       setError(err.message || `Ocorreu um erro ao ${isEditing ? 'atualizar' : 'cadastrar'} o pacote.`);
     }
   };
-  
-  // Exibe o spinner enquanto busca os dados no modo de edição
+
   if (loading) {
     return <Spinner />;
   }
@@ -106,10 +111,8 @@ const CadastroPacote = () => {
   return (
     <div className="cadastro-pacote-container">
       <div className="form-column">
-        {/* O título da página muda dependendo se estamos a criar ou editar */}
         <h1 className="form-title">{isEditing ? 'Editar Pacote' : 'Cadastro de Novo Pacote'}</h1>
         <form onSubmit={handleSubmit} className="pacote-form">
-          {/* O formulário em si é o mesmo */}
           <div className="form-group">
             <label><FaSignature /> Título do Pacote</label>
             <input type="text" name="titulo" value={pacote.titulo} onChange={handleChange} placeholder="Ex: Aventura no Rio" />
@@ -143,22 +146,24 @@ const CadastroPacote = () => {
             </div>
           </div>
           <div className="form-group">
-            <label><FaImage /> URL da Imagem</label>
-            <input type="text" name="imagemUrl" value={pacote.imagemUrl} onChange={handleChange} placeholder="https://exemplo.com/imagem.jpg" />
+            <label><FaImage /> Imagem do Pacote*</label>
+            <input
+              type="file"
+              id="imagemUpload"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
           </div>
           
           {error && <p className="error-message">{error}</p>}
           {success && <p className="success-message">{success}</p>}
 
-<<<<<<< HEAD
-          {/* O texto do botão também muda dinamicamente */}
           <button type="submit" className="submit-button">
             {isEditing ? 'Salvar Alterações' : 'Cadastrar Pacote'}
           </button>
         </form>
       </div>
       
-      {/* A pré-visualização continua a funcionar como antes, mostrando os dados do 'pacote' */}
       <div className="preview-column">
         <h2 className="preview-title">Pré-visualização do Card</h2>
         <div className="package-card-preview">
@@ -177,43 +182,6 @@ const CadastroPacote = () => {
           </div>
         </div>
       </div>
-=======
-        {/* Campo de imagem */}
-        <div className="form-group">
-  <label htmlFor="imagemUpload">Imagem do Pacote*</label>
-  <input
-    type="file"
-    id="imagemUpload"
-    accept="image/*"
-    onChange={async (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const formDataImagem = new FormData();
-      formDataImagem.append("arquivo", file);
-
-      try {
-        const response = await axios.post("http://localhost:5000/api/imagens/upload", formDataImagem);
-        const urlImagem = `http://localhost:5000/api/imagens/${response.data.nome}`;
-        setFormData({ ...formData, imagemUrl: urlImagem });
-        setSucesso("Imagem enviada com sucesso!");
-      } catch (err) {
-        console.log(err);
-        setErro("Erro ao enviar imagem.");
-      }
-    }}
-  />
-</div>
-
-
-        {erro && <p className="login-error-message">{erro}</p>}
-        {sucesso && <p className="login-success-message">{sucesso}</p>}
-
-        <button type="submit" className="login-button">
-          Cadastrar Pacote
-        </button>
-      </form>
->>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
     </div>
   );
 };
