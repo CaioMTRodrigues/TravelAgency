@@ -1,16 +1,17 @@
-import api from "./api";
-import { setToken } from "../utils/tokenUtils";
+// FrontEnd/src/services/authService.js
+import api from './api';
 
-export const loginUsuario = async (dados) => {
-  try {
-    const response = await api.post("/User/login", dados);
-
-    console.log("Resposta da API:", response.data);
-
-    setToken(response.data.token); // salva o token
-    localStorage.setItem("idUsuario", response.data.idUsuario); // salva o ID corretamente
+// A função de login que você já tinha
+export const loginUsuario = async (userData) => {
+    const response = await api.post('/user/login', userData);
+    if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+    }
     return response.data;
-  } catch (error) {
-    throw error.response?.data?.message || "Erro ao fazer login.";
-  }
+};
+
+// NOVA FUNÇÃO DE LOGOUT
+// Esta função simplesmente remove o token do armazenamento local.
+export const logout = () => {
+    localStorage.removeItem('token');
 };

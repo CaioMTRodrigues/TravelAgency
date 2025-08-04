@@ -1,16 +1,11 @@
-import React, { useState } from "react";
-import { Link } from 'react-router-dom'; // Importei o Link aqui.
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Modal from "../components/Modal";
-import AuthModal from "../components/AuthModal";
+import React from "react";
+import { Link } from 'react-router-dom';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "./../assets/styles/styles.css";
 
-// Para esta página, eu criei duas listas de pacotes de exemplo.
-// No futuro, quando eu conectar o backend, vou buscar esses dados de lá.
+// Seus dados de exemplo são mantidos exatamente como estavam.
 const pacotesNacionais = [
   { id: 1, nome: "Rio de Janeiro", descricao: "Praias, Cristo Redentor e a alegria carioca.", preco: 999, imagem: "https://wallpaperaccess.com/full/125819.jpg" },
   { id: 2, nome: "Gramado", descricao: "O charme da Europa na Serra Gaúcha.", preco: 1299, imagem: "https://gramadoinesquecivel.tur.br/img/gramado/img-gramado-5.jpg" },
@@ -25,14 +20,8 @@ const pacotesInternacionais = [
   { id: 8, nome: "Cancún, México", descricao: "Praias paradisíacas e festas inesquecíveis no Caribe.", preco: 3800, imagem: "https://tse4.mm.bing.net/th/id/OIP.MP9nZk52AVkhmKx2ZcfGyQHaEK?r=0&w=2560&h=1440&rs=1&pid=ImgDetMain&o=7&rm=3" },
 ];
 
-// Este é o meu componente para a página que lista todos os pacotes.
 const Pacotes = () => {
-  // Eu mantenho a lógica do modal aqui também, para que o Header funcione corretamente.
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
-  // Criei um objeto com as configurações dos meus carrosséis.
+  // A lógica do Modal, Header e Footer foi removida.
   const settings = {
     dots: true,
     infinite: false,
@@ -52,59 +41,48 @@ const Pacotes = () => {
   };
 
   return (
-    <div className="home">
-      <Header onLoginClick={openModal} />
+    // O componente agora começa diretamente com o conteúdo da página.
+    <div className="packages-page">
+      <h1 className="packages-title">Nossos Pacotes de Viagem</h1>
+      <p className="packages-subtitle">Descubra o destino dos seus sonhos</p>
 
-      <main className="packages-page">
-        <h1 className="packages-title">Nossos Pacotes de Viagem</h1>
-        <p className="packages-subtitle">Descubra o destino dos seus sonhos</p>
-
-        <div className="carousel-section">
-          <h2>Destinos Nacionais</h2>
-          <Slider {...settings}>
-            {pacotesNacionais.map((pacote) => (
-              // --- MUDANÇA APLICADA AQUI ---
-              <Link to={`/pacotes/${pacote.id}`} key={pacote.id} className="package-card-wrapper">
-                <div className="package-card">
-                  <img src={pacote.imagem} alt={pacote.nome} className="package-image" />
-                  <div className="package-details">
-                    <h3>{pacote.nome}</h3>
-                    <p className="package-description">{pacote.descricao}</p>
-                    <p className="package-price">A partir de R$ {pacote.preco}</p>
-                    <button className="package-button">Ver Detalhes</button>
-                  </div>
+      <div className="carousel-section">
+        <h2>Destinos Nacionais</h2>
+        <Slider {...settings}>
+          {pacotesNacionais.map((pacote) => (
+            <Link to={`/pacotes/${pacote.id}`} key={pacote.id} className="package-card-wrapper">
+              <div className="package-card">
+                <img src={pacote.imagem} alt={pacote.nome} className="package-image" />
+                <div className="package-details">
+                  <h3>{pacote.nome}</h3>
+                  <p className="package-description">{pacote.descricao}</p>
+                  <p className="package-price">A partir de R$ {pacote.preco}</p>
+                  <button className="package-button">Ver Detalhes</button>
                 </div>
-              </Link>
-            ))}
-          </Slider>
-        </div>
+              </div>
+            </Link>
+          ))}
+        </Slider>
+      </div>
 
-        <div className="carousel-section">
-          <h2>Destinos Internacionais</h2>
-          <Slider {...settings}>
-            {pacotesInternacionais.map((pacote) => (
-              // --- MUDANÇA APLICADA AQUI ---
-              <Link to={`/pacotes/${pacote.id}`} key={pacote.id} className="package-card-wrapper">
-                <div className="package-card">
-                  <img src={pacote.imagem} alt={pacote.nome} className="package-image" />
-                  <div className="package-details">
-                    <h3>{pacote.nome}</h3>
-                    <p className="package-description">{pacote.descricao}</p>
-                    <p className="package-price">A partir de R$ {pacote.preco}</p>
-                    <button className="package-button">Ver Detalhes</button>
-                  </div>
+      <div className="carousel-section">
+        <h2>Destinos Internacionais</h2>
+        <Slider {...settings}>
+          {pacotesInternacionais.map((pacote) => (
+            <Link to={`/pacotes/${pacote.id}`} key={pacote.id} className="package-card-wrapper">
+              <div className="package-card">
+                <img src={pacote.imagem} alt={pacote.nome} className="package-image" />
+                <div className="package-details">
+                  <h3>{pacote.nome}</h3>
+                  <p className="package-description">{pacote.descricao}</p>
+                  <p className="package-price">A partir de R$ {pacote.preco}</p>
+                  <button className="package-button">Ver Detalhes</button>
                 </div>
-              </Link>
-            ))}
-          </Slider>
-        </div>
-      </main>
-
-      <Footer />
-
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AuthModal />
-      </Modal>
+              </div>
+            </Link>
+          ))}
+        </Slider>
+      </div>
     </div>
   );
 };

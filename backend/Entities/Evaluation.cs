@@ -11,6 +11,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApplication1.Entities
 {
+    public enum StatusAvaliacao
+    {
+        Pendente,
+        Aprovada,
+        Reprovada
+    }
     public class Evaluation
     {
         [Key]
@@ -18,6 +24,8 @@ namespace WebApplication1.Entities
         public double Nota { get; set; }
         public string Comentario { get; set; }
         public DateTime Data { get; set; }
+
+        public StatusAvaliacao Status { get; set; } = StatusAvaliacao.Pendente;
 
         // Chaves estrangeiras
         public string Id_Usuario { get; set; }

@@ -1,14 +1,10 @@
-import React, { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import Modal from "../components/Modal";
-import AuthModal from "../components/AuthModal";
+import React from "react";
+import { Link } from 'react-router-dom'; // Adicionado Link para o botão do Quiz
 import DestinationCarousel from "../components/DestinationCarousel"; // Eu importo o novo componente de carrossel
 import { FaMountain, FaUsers, FaHeart, FaUserFriends } from 'react-icons/fa';
 import "./../assets/styles/styles.css";
 
-// Criei uma base de dados de exemplo para cada tema.
-// No futuro, isso virá da sua API.
+// Seus dados de exemplo são mantidos exatamente como estavam.
 const destinationsData = {
   aventura: [
     { id: 4, nome: "Fernando de Noronha", imagem: "https://a.cdn-hotels.com/gdcs/production55/d458/fc74de3b-0bd1-4284-b53b-be71ba136901.jpg", descricao: "Mergulho e natureza pura." },
@@ -37,35 +33,28 @@ const destinationsData = {
 };
 
 const Destinos = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
-
+  // A lógica do Modal, Header e Footer foi removida daqui,
+  // pois o App.js já controla isso.
   return (
-    <div className="home">
-      <Header onLoginClick={openModal} />
-      <main className="destinations-page-inspired">
+    // O componente agora começa diretamente com o conteúdo da página.
+    <div className="destinations-page-inspired">
         <div className="destinations-hero">
             <h1>Encontre a Viagem Perfeita para Você</h1>
             <div className="quiz-box">
                 <h2>Não sabe para onde viajar?</h2>
                 <p>Responda nosso quiz e encontre o destino perfeito para seu estilo!</p>
-                <a href="/quiz" className="quiz-button">Começar o Quiz</a>
+                {/* Alterado de <a> para <Link> para uma navegação mais fluida no React */}
+                <Link to="/quiz" className="quiz-button">Começar o Quiz</Link>
             </div>
         </div>
 
         <div className="destinations-content">
-            {/* Agora eu uso o meu novo componente de carrossel para cada tema. */}
+            {/* Seus carrosséis de destino são mantidos exatamente como estavam. */}
             <DestinationCarousel title="Aventura" icon={<FaMountain/>} destinations={destinationsData.aventura} />
             <DestinationCarousel title="Família" icon={<FaUsers/>} destinations={destinationsData.familia} />
             <DestinationCarousel title="Amigos" icon={<FaUserFriends/>} destinations={destinationsData.amigos} />
             <DestinationCarousel title="Romance" icon={<FaHeart/>} destinations={destinationsData.romance} />
         </div>
-      </main>
-      <Footer />
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AuthModal />
-      </Modal>
     </div>
   );
 };

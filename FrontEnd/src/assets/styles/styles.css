@@ -42,97 +42,122 @@ main {
 
 
 /* ==========================================================================
-   2. CABEÇALHO (HEADER)
+   2. CABEÇALHO RESPONSIVO (HEADER)
    ========================================================================== */
 
-/*
- * Defino o estilo do cabeçalho principal: cor de fundo, espaçamentos
- * e a organização dos itens (logo à esquerda).
- */
+/* Estrutura base do Header */
 .menu {
-  background-color: #005A9C;
-  padding: 10px 30px;
-  color: white;
+  background-color: #005A9C; /* Cor principal da sua agência */
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+}
+
+.menu-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 70px; /* Altura do cabeçalho */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/*
- * O link que envolve a logo.
- * Defino como 'flex' para alinhar a logo perfeitamente.
- */
-.header-title-link {
-  text-decoration: none;
-  color: inherit;
+.menu-left, .menu-right {
   display: flex;
   align-items: center;
 }
 
-/* Defino o tamanho da minha logo no cabeçalho. */
 .header-logo {
-  height: 60px;
+  height: 60px; /* Mantive o seu tamanho original */
+  width: auto;
 }
 
-/*
- * O menu "hambúrguer" (retrátil). Eu o posiciono como relativo
- * para que o menu suspenso (dropdown) possa ser posicionado a partir dele.
- */
-.hamburger-menu {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-  margin-right: 20px;
-}
-
-.hamburger-icon {
-  color: white;
-  vertical-align: middle;
-}
-
-/*
- * O menu suspenso em si. Ele começa escondido (`display: none`)
- * e só aparece quando o usuário interage.
- */
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  min-width: 240px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 10;
-  border-radius: 8px;
-  padding: 10px 0;
-  overflow: hidden;
-}
-
-/* Aqui eu faço o menu aparecer quando o mouse passa por cima. */
-.hamburger-menu:hover .dropdown-menu {
-  display: block;
-}
-
-/* Defino a aparência dos links/botões dentro do menu suspenso. */
-.dropdown-menu a, .dropdown-button-link {
-  color: #333;
-  padding: 12px 20px;
-  text-decoration: none;
+/* Navegação do Desktop */
+.menu-center {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1rem;
+  gap: 25px;
+}
+
+.menu-center a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.menu-center a:hover {
+  color: #ffc300; /* Cor de destaque */
+}
+
+.menu-center a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #ffc300;
+  transition: all 0.3s ease-in-out;
+  transform: translateX(-50%);
+}
+
+.menu-center a:hover::after {
+  width: 100%;
+}
+
+/* Ícones da direita e Botão Hambúrguer */
+.menu-right {
+  gap: 15px;
+}
+
+.hamburger-button {
+  display: none; /* Escondido por padrão em telas grandes */
   background: none;
   border: none;
-  width: 100%;
-  text-align: left;
-  font-family: 'Roboto', sans-serif;
+  color: white;
+  font-size: 28px;
   cursor: pointer;
 }
 
-.dropdown-menu a:hover, .dropdown-button-link:hover {
-  background-color: #f1f1f1;
+/* Menu Dropdown para Mobile */
+.mobile-menu-dropdown {
+  display: none; /* Escondido por padrão */
+  background-color: #005A9C;
+  padding: 10px 20px 20px;
+  border-top: 1px solid #004a8d;
+}
+
+.mobile-menu-dropdown a {
+  display: block;
+  color: white;
+  text-decoration: none;
+  padding: 12px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #004a8d;
+}
+
+.mobile-menu-dropdown a:last-child {
+  border-bottom: none;
+}
+
+/* Media Query para Responsividade do Header */
+@media (max-width: 768px) {
+  .menu-center {
+    display: none; /* Esconde a navegação do desktop */
+  }
+
+  .hamburger-button {
+    display: block; /* Mostra o botão hambúrguer */
+  }
+
+  .mobile-menu-dropdown {
+    display: block; /* Permite que o menu dropdown seja exibido quando o estado for true */
+  }
 }
 
 
@@ -1694,4 +1719,97 @@ main {
   cursor: pointer;
   margin-top: 15px;
   font-size: 1rem;
+}
+
+.desktop-profile-icon {
+  position: relative;
+}
+
+.dropdown-menu-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.dropdown-menu-container .dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dropdown-menu-container:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a, .dropdown-content .dropdown-button-link {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  font-family: 'Roboto', sans-serif;
+  font-size: 1rem;
+}
+
+.dropdown-content a:hover, .dropdown-content .dropdown-button-link:hover {
+  background-color: #f1f1f1;
+}
+
+@media (max-width: 768px) {
+  .desktop-profile-icon {
+    display: none; /* Esconde o ícone de perfil do desktop em telas pequenas */
+  }
+}
+
+/* Adicionar ao final do seu ficheiro styles.css */
+
+/* Container para os botões de autenticação */
+.auth-buttons-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Estilo base do botão */
+.btn-login, .btn-register {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  color: white;
+}
+
+.btn-login:hover, .btn-register:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+/* Botão "Entrar" (Azul) */
+.btn-login {
+  background-color: #005A9C; /* Mesmo azul do menu */
+  border: 2px solid white;
+}
+
+/* Botão "Cadastrar-se" (Amarelo) */
+.btn-register {
+  background-color: #ffc300; /* Um amarelo ouro */
+}
+
+/* Esconde os botões em telas pequenas para dar lugar ao menu hambúrguer */
+@media (max-width: 768px) {
+  .auth-buttons-container {
+    display: none;
+  }
 }

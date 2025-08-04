@@ -1,0 +1,112 @@
+.admin-reservas-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.admin-reservas-container h1 {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+.reservas-table-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.reservas-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reservas-table th, .reservas-table td {
+  padding: 15px 20px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.reservas-table thead {
+  background-color: #f8f9fa;
+}
+
+.reservas-table th {
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.reservas-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.reservas-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.reservas-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.status-select {
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid transparent;
+  font-weight: 500;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-position: right 15px center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  padding-right: 35px;
+  cursor: pointer;
+}
+
+/* Cores dinâmicas para o status */
+.status-pendente {
+  background-color: #fff8e1;
+  color: #f57c00;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f57c00' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.status-confirmada {
+  background-color: #e9f6e9;
+  color: #2F6F2F;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F6F2F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.status-cancelada {
+  background-color: #FFD2D2;
+  color: #D8000C;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D8000C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+.no-reservas-message {
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 1.1rem;
+}
+
+/* Mensagens de feedback (reutilizadas de AdminPacotes.css) */
+.error-message, .success-message {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+}

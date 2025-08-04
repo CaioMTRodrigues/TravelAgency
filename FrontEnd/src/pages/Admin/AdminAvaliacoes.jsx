@@ -1,65 +1,97 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { listarTodasAvaliacoes, excluirAvaliacao } from '../../services/avaliacaoService';
+import { FaTrash, FaStar } from 'react-icons/fa';
+import Spinner from '../../components/Spinner';
+import './AdminAvaliacoes.css'; // Novo CSS para a página
 
-// Este é o meu painel administrativo para gerenciar as avaliações dos clientes.
 const AdminAvaliacoes = () => {
-  // Eu uso este estado para armazenar a lista de avaliações que vem da API.
   const [avaliacoes, setAvaliacoes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  // O 'useEffect' busca os dados das avaliações assim que a página carrega.
-  // A lista de dependências '[]' faz com que ele rode apenas uma vez.
   useEffect(() => {
-    // Por enquanto, estou buscando de um arquivo .json local,
-    // mas no futuro, trocarei pela URL da minha API real.
-    fetch("/api/adminavaliacoes.json")
-      .then((res) => res.json())
-      .then((data) => setAvaliacoes(data));
+    const carregarAvaliacoes = async () => {
+      try {
+        const data = await listarTodasAvaliacoes();
+        setAvaliacoes(data);
+      } catch (err) {
+        setError('Falha ao carregar as avaliações.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    carregarAvaliacoes();
   }, []);
 
-  // Criei esta função para excluir uma avaliação.
-  // Ela recebe o 'index' (a posição na lista) da avaliação que eu quero remover.
-  const excluirAvaliacao = (index) => {
-    // Eu mostro uma janela de confirmação para evitar exclusões acidentais.
-    const confirmacao = window.confirm("Deseja realmente excluir esta avaliação?");
-    
-    // Se o administrador confirmar...
-    if (confirmacao) {
-      // Eu uso o '.filter()' para criar uma nova lista de avaliações,
-      // mantendo apenas os itens que NÃO têm o 'index' que eu quero excluir.
-      const atualizadas = avaliacoes.filter((_, i) => i !== index);
-      // E então, eu atualizo o estado com a nova lista, que não contém a avaliação excluída.
-      setAvaliacoes(atualizadas);
+  const handleExcluir = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir esta avaliação permanentemente?')) {
+      try {
+        await excluirAvaliacao(id);
+        setAvaliacoes(avaliacoes.filter(a => a.id_Avaliacao !== id));
+        setSuccess('Avaliação excluída com sucesso!');
+      } catch (err) {
+        setError('Erro ao excluir a avaliação.');
+      }
+      setTimeout(() => { setSuccess(''); setError(''); }, 3000);
     }
   };
+  
+  // Componente para renderizar as estrelas da nota
+  const StarRating = ({ nota }) => {
+    const totalStars = 5;
+    return (
+      <div className="star-rating">
+        {[...Array(totalStars)].map((_, index) => (
+          <FaStar key={index} color={index < nota ? "#ffc107" : "#e4e5e9"} />
+        ))}
+      </div>
+    );
+  };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
-    <div className="admin-avaliacoes">
-      <h2>Gerenciamento de Avaliações</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Comentário</th>
-            <th>Nota</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/*
-            Aqui eu uso o '.map()' para percorrer a lista de avaliações.
-            Para cada 'item' na lista, eu crio uma nova linha '<tr>' na tabela.
-          */}
-          {avaliacoes.map((item, index) => (
-            <tr key={index}>
-              <td>{item.nome}</td>
-              <td>{item.comentario}</td>
-              <td>{item.nota}/5</td>
-              <td>
-                <button onClick={() => excluirAvaliacao(index)}>Excluir</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="admin-avaliacoes-container">
+      <h1>Gerenciamento de Avaliações</h1>
+      <p className="subtitle">Modere os comentários e avaliações dos seus clientes.</p>
+
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+
+      <div className="avaliacoes-grid">
+        {avaliacoes.length > 0 ? (
+          avaliacoes.map(avaliacao => (
+            <div key={avaliacao.id_Avaliacao} className="avaliacao-card">
+              <div className="card-header">
+                <div className="cliente-info">
+                  <strong>{avaliacao.usuario?.nome || 'Anônimo'}</strong>
+                  <span>avaliou o pacote</span>
+                  <em>"{avaliacao.pacote?.titulo || 'N/A'}"</em>
+                </div>
+                <div className="card-actions">
+                  <button onClick={() => handleExcluir(avaliacao.id_Avaliacao)} className="action-btn delete-btn">
+                    <FaTrash /> Excluir
+                  </button>
+                </div>
+              </div>
+              <div className="card-body">
+                <p className="comentario">"{avaliacao.comentario}"</p>
+              </div>
+              <div className="card-footer">
+                <StarRating nota={avaliacao.nota} />
+                <span className="data-avaliacao">
+                  {new Date(avaliacao.data).toLocaleDateString('pt-BR')}
+                </span>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p className="no-avaliacoes-message">Nenhuma avaliação encontrada.</p>
+        )}
+      </div>
     </div>
   );
 };

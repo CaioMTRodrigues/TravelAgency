@@ -1,64 +1,131 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { listarTodosPacotes, excluirPacote, atualizarDestaquePacote } from '../../services/pacoteService';
+import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
+import Spinner from '../../components/Spinner';
+import './AdminPacotes.css';
 
-// Esta é a minha página para gerenciar os pacotes de viagem no painel de administração.
 const AdminPacotes = () => {
-  // Eu uso este estado para guardar a lista de pacotes que vem da API.
   const [pacotes, setPacotes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
-  // Assim que a página carrega, eu uso o 'useEffect' para buscar os dados dos pacotes.
-  // A lista de dependências '[]' faz com que isso aconteça só uma vez.
-  useEffect(() => {
-    // No futuro, aqui será a URL da minha API real. Por enquanto, uso um arquivo local.
-    fetch("/api/adminpacotes.json")
-      .then((res) => res.json())
-      .then((data) => setPacotes(data));
-  }, []);
-
-  // Criei esta função para excluir um pacote. Ela recebe o 'id' do pacote a ser removido.
-  const excluirPacote = (id) => {
-    // Eu sempre peço uma confirmação para evitar cliques acidentais.
-    const confirmacao = window.confirm("Deseja realmente excluir este pacote?");
-    
-    // Se o administrador confirmar...
-    if (confirmacao) {
-      // Eu crio uma nova lista de pacotes, filtrando e removendo aquele com o 'id' correspondente.
-      const atualizados = pacotes.filter((p) => p.id !== id);
-      // Atualizo o estado com a nova lista, o que faz a tela ser redesenhada sem o pacote excluído.
-      setPacotes(atualizados);
-      alert("Pacote excluído com sucesso!");
+  const carregarPacotes = async () => {
+    try {
+      const data = await listarTodosPacotes();
+      setPacotes(data);
+    } catch (err) {
+      setError('Falha ao carregar os pacotes. Tente novamente mais tarde.');
+    } finally {
+      setLoading(false);
     }
   };
 
+  useEffect(() => {
+    carregarPacotes();
+  }, []);
+
+  const handleDestaqueToggle = async (id, statusAtual) => {
+    try {
+      await atualizarDestaquePacote(id, !statusAtual);
+      setPacotes(pacotes.map(p => 
+        p.id_Pacote === id ? { ...p, destaque: !statusAtual } : p
+      ));
+      setSuccess('Status de destaque atualizado com sucesso!');
+    } catch (err) {
+      setError(err.toString());
+    }
+    setTimeout(() => { setSuccess(''); setError(''); }, 3000);
+  };
+
+  const handleExcluir = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir este pacote?')) {
+      try {
+        await excluirPacote(id);
+        setSuccess('Pacote excluído com sucesso!');
+        setPacotes(pacotes.filter(p => p.id_Pacote !== id));
+      } catch (err) {
+        setError('Erro ao excluir o pacote.');
+      }
+      setTimeout(() => { setSuccess(''); setError(''); }, 3000);
+    }
+  };
+
+  const handleEditar = (id) => {
+    navigate(`/admin/pacotes/editar/${id}`);
+  };
+
+  if (loading) {
+    return <Spinner />;
+  }
+
   return (
-    <div className="admin-pacotes">
-      <h2>Gerenciamento de Pacotes</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Destino</th>
-            <th>Preço</th>
-            <th>Duração</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/*
-            Aqui eu uso o '.map()' para percorrer a minha lista de pacotes.
-            Para cada 'pacote' na lista, eu crio uma linha '<tr>' na tabela.
-          */}
-          {pacotes.map((pacote) => (
-            <tr key={pacote.id}>
-              <td>{pacote.destino}</td>
-              {/* Uso .toFixed(2) para garantir que o preço sempre tenha duas casas decimais. */}
-              <td>R$ {pacote.preco.toFixed(2)}</td>
-              <td>{pacote.duracao}</td>
-              <td>
-                <button onClick={() => excluirPacote(pacote.id)}>Excluir</button>
-              </td>
+    <div className="admin-pacotes-container">
+      <div className="header-container">
+        <h1>Gerenciamento de Pacotes</h1>
+        <button onClick={() => navigate('/admin/pacotes/cadastro')} className="add-pacote-btn">
+          <FaPlus /> Adicionar Novo Pacote
+        </button>
+      </div>
+
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+
+      <div className="pacotes-table-container">
+        <table className="pacotes-table">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Destino</th>
+              <th>Valor</th>
+              <th>Destaque</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pacotes.length > 0 ? (
+              pacotes.map(pacote => (
+                <tr key={pacote.id_Pacote}>
+                  <td>{pacote.titulo}</td>
+                  <td>{pacote.destino}</td>
+                  <td>{`R$ ${pacote.valor.toFixed(2)}`}</td>
+                  <td>
+                    <label className="toggle-switch">
+                      {/*
+                        *** CORREÇÃO APLICADA AQUI ***
+                        Garantimos que a propriedade 'checked' recebe um valor booleano (true/false).
+                        A propriedade 'pacote.destaque' que vem da API já deve ser booleana.
+                      */}
+                      <input 
+                        type="checkbox" 
+                        checked={!!pacote.destaque} // O '!!' é uma segurança extra para garantir que o valor é booleano
+                        onChange={() => handleDestaqueToggle(pacote.id_Pacote, pacote.destaque)} 
+                      />
+                      <span className="slider"></span>
+                    </label>
+                  </td>
+                  <td className="actions-cell">
+                    <button onClick={() => handleEditar(pacote.id_Pacote)} className="action-btn edit-btn">
+                      <FaEdit />
+                    </button>
+                    <button onClick={() => handleExcluir(pacote.id_Pacote)} className="action-btn delete-btn">
+                      <FaTrash />
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="no-pacotes-message">
+                  Nenhum pacote cadastrado.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

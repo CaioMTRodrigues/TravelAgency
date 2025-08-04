@@ -31,11 +31,14 @@ namespace WebApplication1.Controllers
             _context = context;
         }
 
+        // MÉTODO ATUALIZADO COM A CORREÇÃO
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<PackageDto>>> GetAll()
         {
-            var packages = await _repository.GetAllAsync();
+            // Usamos o _context diretamente para garantir que os dados mais recentes são lidos,
+            // incluindo o status de 'Destaque' que acabamos de alterar.
+            var packages = await _context.Packages.ToListAsync();
             var result = _mapper.Map<IEnumerable<PackageDto>>(packages);
             return Ok(result);
         }
@@ -64,10 +67,10 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            if (destaque == true)
+            if (destaque)
             {
-                var currentDestaques = await _context.Packages.CountAsync(p => p.Destaque == true);
-                if (currentDestaques >= 6)
+                var currentDestaquesCount = await _context.Packages.CountAsync(p => p.Destaque == true && p.Id_Pacote != id);
+                if (currentDestaquesCount >= 6)
                 {
                     return BadRequest("Limite de 6 pacotes em destaque atingido. Remova um destaque existente para adicionar um novo.");
                 }
