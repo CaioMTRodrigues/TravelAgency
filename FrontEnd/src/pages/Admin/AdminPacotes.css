@@ -1,0 +1,185 @@
+.admin-pacotes-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-container h1 {
+  font-size: 2.5rem;
+  color: #333;
+}
+
+.add-pacote-btn {
+  background-color: #005A9C;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.add-pacote-btn:hover {
+  background-color: #004a80;
+  transform: translateY(-2px);
+}
+
+.pacotes-table-container {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+  overflow: hidden; /* Para que o border-radius funcione na tabela */
+}
+
+.pacotes-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.pacotes-table th, .pacotes-table td {
+  padding: 15px 20px;
+  text-align: left;
+}
+
+.pacotes-table thead {
+  background-color: #f8f9fa;
+}
+
+.pacotes-table th {
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.pacotes-table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.pacotes-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.pacotes-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.actions-cell {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.edit-btn {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.edit-btn:hover {
+  background-color: #ffc107;
+  color: white;
+}
+
+.delete-btn {
+  color: #dc3545;
+  border-color: #dc3545;
+}
+
+.delete-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.no-pacotes-message {
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 1.1rem;
+}
+
+/* Mensagens de feedback */
+.error-message, .success-message {
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 28px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #28a745; 
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}

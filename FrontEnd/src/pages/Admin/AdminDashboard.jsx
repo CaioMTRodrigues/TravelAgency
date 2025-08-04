@@ -1,140 +1,110 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FaBoxOpen, FaTasks, FaStar, FaPlusCircle, FaListAlt, FaCommentDots } from 'react-icons/fa';
+import { getDashboardStats } from '../../services/dashboardService';
+import Spinner from '../../components/Spinner';
+import './AdminDashboard.css';
 
-// Este é o meu painel principal de administração.
-// Ele serve como um resumo de tudo que está acontecendo no site.
 const AdminDashboard = () => {
-  // Eu uso três estados separados para guardar as listas de pacotes, reservas e avaliações.
-  const [pacotes, setPacotes] = useState([]);
-  const [reservas, setReservas] = useState([]);
-  const [avaliacoes, setAvaliacoes] = useState([]);
+  const [stats, setStats] = useState({
+    totalPackages: 0,
+    pendingReservations: 0,
+    newReviews: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  // O useEffect é perfeito para carregar os dados iniciais quando a página abre.
-  // A lista '[]' no final garante que isso aconteça apenas uma vez.
   useEffect(() => {
-    // Por enquanto, estou usando dados fixos ("hardcoded") para simular o que viria da API.
-    // No futuro, eu vou substituir isso por uma chamada real com 'fetch()'.
-    setPacotes([
-      { id: 1, destino: "Rio de Janeiro", data: "2025-09-10", preco: 1200 },
-      { id: 2, destino: "Natal", data: "2025-10-15", preco: 1500 },
-    ]);
+    const fetchStats = async () => {
+      try {
+        const data = await getDashboardStats();
+        // *** CORREÇÃO APLICADA AQUI ***
+        // Garantimos que os nomes das propriedades correspondem exatamente
+        // ao que o backend envia (geralmente camelCase em JSON).
+        setStats({
+            totalPackages: data.totalPackages,
+            pendingReservations: data.pendingReservations,
+            newReviews: data.newReviews
+        });
+      } catch (error) {
+        console.error("Falha ao carregar o dashboard", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setReservas([
-      { id: 101, cliente: "Maria", destino: "Natal", data: "2025-10-15" },
-      { id: 102, cliente: "João", destino: "Rio", data: "2025-09-10" },
-    ]);
-
-    setAvaliacoes([
-      { id: 1, cliente: "Paula", nota: 5, comentario: "Experiência incrível!" },
-      { id: 2, cliente: "Carlos", nota: 4, comentario: "Muito bom, recomendo!" },
-    ]);
+    fetchStats();
   }, []);
 
-  // Criei funções separadas para excluir cada tipo de item.
-  // Elas usam o método '.filter()' para criar uma nova lista sem o item que eu quero remover.
-  const excluirPacote = (id) => {
-    setPacotes(pacotes.filter((p) => p.id !== id));
-  };
+  const recentActivities = [
+    { id: 1, type: 'reserva', text: 'Nova reserva para o pacote "Rio de Janeiro" por Carlos Silva.' },
+    { id: 2, type: 'avaliacao', text: 'Ana Oliveira deixou uma avaliação de 5 estrelas para "Paris, França".' },
+    { id: 3, type: 'reserva', text: 'Nova reserva para o pacote "Gramado" por Juliana Pereira.' },
+  ];
 
-  const excluirReserva = (id) => {
-    setReservas(reservas.filter((r) => r.id !== id));
-  };
-
-  const excluirAvaliacao = (id) => {
-    setAvaliacoes(avaliacoes.filter((a) => a.id !== id));
-  };
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="admin-dashboard">
-      <h2>Painel do Administrador</h2>
-      <p>Bem-vindo, administrador! Abaixo estão os dados mais recentes:</p>
+      <h1 className="dashboard-title">Painel do Administrador</h1>
+      
+      <div className="stats-container">
+        <div className="stat-card">
+          <FaBoxOpen className="stat-icon" style={{ color: '#007bff' }} />
+          <div className="stat-info">
+            <span className="stat-number">{stats.totalPackages}</span>
+            <span className="stat-label">Pacotes Ativos</span>
+          </div>
+        </div>
+        <div className="stat-card">
+          <FaTasks className="stat-icon" style={{ color: '#ffc107' }} />
+          <div className="stat-info">
+            <span className="stat-number">{stats.pendingReservations}</span>
+            <span className="stat-label">Reservas Pendentes</span>
+          </div>
+        </div>
+        <div className="stat-card">
+          <FaStar className="stat-icon" style={{ color: '#28a745' }} />
+          <div className="stat-info">
+            <span className="stat-number">{stats.newReviews}</span>
+            <span className="stat-label">Novas Avaliações</span>
+          </div>
+        </div>
+      </div>
 
-      {/* Seção para gerenciar os pacotes de viagem. */}
-      <section>
-        <h3>Pacotes de Viagem</h3>
-        <table className="tabela-admin">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Destino</th>
-              <th>Data</th>
-              <th>Preço (R$)</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* Eu uso o '.map()' para criar uma linha na tabela para cada pacote. */}
-            {pacotes.map((pacote) => (
-              <tr key={pacote.id}>
-                <td>{pacote.id}</td>
-                <td>{pacote.destino}</td>
-                <td>{pacote.data}</td>
-                <td>{pacote.preco}</td>
-                <td>
-                  <button onClick={() => excluirPacote(pacote.id)}>🗑️ Excluir</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+      <div className="actions-container">
+        <h2 className="section-title">Ações Rápidas</h2>
+        <div className="actions-grid">
+          <Link to="/admin/pacotes/cadastro" className="action-card">
+            <FaPlusCircle className="action-icon" />
+            <span>Cadastrar Novo Pacote</span>
+          </Link>
+          <Link to="/admin/pacotes" className="action-card">
+            <FaListAlt className="action-icon" />
+            <span>Gerir Pacotes</span>
+          </Link>
+          <Link to="/admin/reservas" className="action-card">
+            <FaTasks className="action-icon" />
+            <span>Ver Todas as Reservas</span>
+          </Link>
+          <Link to="/admin/avaliacoes" className="action-card">
+            <FaCommentDots className="action-icon" />
+            <span>Moderar Avaliações</span>
+          </Link>
+        </div>
+      </div>
 
-      {/* Seção para gerenciar as reservas feitas pelos clientes. */}
-      <section>
-        <h3>Reservas</h3>
-        <table className="tabela-admin">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Destino</th>
-              <th>Data</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {reservas.map((reserva) => (
-              <tr key={reserva.id}>
-                <td>{reserva.id}</td>
-                <td>{reserva.cliente}</td>
-                <td>{reserva.destino}</td>
-                <td>{reserva.data}</td>
-                <td>
-                  <button onClick={() => excluirReserva(reserva.id)}>🗑️ Excluir</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      {/* Seção para visualizar as avaliações deixadas pelos clientes. */}
-      <section>
-        <h3>Avaliações dos Clientes</h3>
-        <table className="tabela-admin">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Cliente</th>
-              <th>Nota</th>
-              <th>Comentário</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {avaliacoes.map((avaliacao) => (
-              <tr key={avaliacao.id}>
-                <td>{avaliacao.id}</td>
-                <td>{avaliacao.cliente}</td>
-                <td>{avaliacao.nota}</td>
-                <td>{avaliacao.comentario}</td>
-                <td>
-                  <button onClick={() => excluirAvaliacao(avaliacao.id)}>🗑️ Excluir</button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
+      <div className="recent-activity-container">
+        <h2 className="section-title">Atividade Recente</h2>
+        <ul className="activity-list">
+          {recentActivities.map(activity => (
+            <li key={activity.id} className={`activity-item ${activity.type}`}>
+              {activity.text}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };

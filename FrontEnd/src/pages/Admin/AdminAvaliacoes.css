@@ -1,0 +1,124 @@
+.admin-avaliacoes-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.admin-avaliacoes-container h1 {
+  font-size: 2.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.admin-avaliacoes-container .subtitle {
+  text-align: center;
+  color: #777;
+  font-size: 1.1rem;
+  margin-bottom: 40px;
+}
+
+.avaliacoes-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 25px;
+}
+
+.avaliacao-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.cliente-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cliente-info strong {
+  font-size: 1.1rem;
+}
+
+.cliente-info em {
+  color: #005A9C;
+  font-weight: 500;
+}
+
+.card-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.delete-btn:hover {
+  background-color: #f1b0b7;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.comentario {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+  margin: 0;
+  font-style: italic;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-top: 1px solid #e9ecef;
+  margin-top: auto;
+}
+
+.star-rating {
+  display: flex;
+  gap: 3px;
+  font-size: 1.2rem;
+}
+
+.data-avaliacao {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.no-avaliacoes-message {
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 1.1rem;
+  background: #fff;
+  border-radius: 12px;
+}

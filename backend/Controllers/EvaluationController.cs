@@ -1,33 +1,43 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 18/07/2025
-// 📁 Arquivo: EvaluationController
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Controller responsável por gerenciar avaliações de pacotes
-// -----------------------------------------------------------------------------
-
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore; // Adicionado para usar o .Include()
+using WebApplication1.Data;         // Adicionado para ter acesso ao DbContext
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
 {
     [ApiController]
     [Route("api/[controller]")] // Define a rota como: api/evaluation
-
     public class EvaluationController : ControllerBase
     {
         private readonly IRepository<Evaluation, int> _repository;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _context;
 
-        public EvaluationController(IRepository<Evaluation, int> repository, IMapper mapper)
+        public EvaluationController(IRepository<Evaluation, int> repository, IMapper mapper, ApplicationDbContext context)
         {
             _repository = repository;
             _mapper = mapper;
+            _context = context; 
+        }
+        // GET: api/evaluation/admin
+        [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<EvaluationDto>>> GetAllAdmin()
+        {
+            var evaluations = await _context.Evaluations
+                .Include(e => e.Usuario)
+                .Include(e => e.Pacote)  
+                .OrderByDescending(e => e.Data) 
+                .ToListAsync();
+
+            return Ok(_mapper.Map<IEnumerable<EvaluationDto>>(evaluations));
         }
 
         // GET: api/evaluation

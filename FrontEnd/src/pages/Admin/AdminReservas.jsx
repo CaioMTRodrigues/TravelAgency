@@ -1,48 +1,104 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
+import { listarTodasReservas, atualizarStatusReserva } from '../../services/reservaService';
+import Spinner from '../../components/Spinner';
+import './AdminReservas.css'; // Certifique-se de que este ficheiro CSS existe
 
-// Esta é a minha página para visualizar as reservas feitas pelos clientes.
 const AdminReservas = () => {
-  // Eu uso este estado para guardar a lista de reservas que vem da API.
   const [reservas, setReservas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  // Assim que a página carrega, eu uso o 'useEffect' para buscar os dados.
-  // A lista de dependências '[]' garante que a busca aconteça só uma vez.
   useEffect(() => {
-    // Por enquanto, estou buscando de um arquivo .json local,
-    // mas no futuro, trocarei pela URL da minha API real que retorna as reservas.
-    fetch("/api/adminreservas.json")
-      .then((res) => res.json())
-      .then((data) => setReservas(data));
-  }, []);
+    const carregarReservas = async () => {
+      try {
+        // Agora busca os dados reais da sua API
+        const data = await listarTodasReservas();
+        setReservas(data);
+      } catch (err) {
+        setError('Falha ao carregar as reservas.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    carregarReservas();
+  }, []); // O array vazio [] garante que a busca aconteça só uma vez
+
+  const handleStatusChange = async (id, novoStatus) => {
+    try {
+      await atualizarStatusReserva(id, novoStatus);
+      // Atualiza o status na lista local para a UI refletir a mudança instantaneamente
+      setReservas(reservas.map(r => 
+        r.id_Reserva === id ? { ...r, status: novoStatus } : r
+      ));
+      setSuccess(`Status da reserva #${id} atualizado com sucesso!`);
+    } catch (err) {
+      setError('Erro ao atualizar o status da reserva.');
+    }
+    // Limpa a mensagem de feedback após 3 segundos
+    setTimeout(() => { setSuccess(''); setError(''); }, 3000);
+  };
+
+  const formatarData = (dataString) => {
+    // Formata a data para o padrão brasileiro (dd/mm/aaaa)
+    return new Date(dataString).toLocaleDateString('pt-BR');
+  };
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
-    <div className="admin-reservas">
-      <h2>Gerenciamento de Reservas</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Destino</th>
-            <th>Data</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/*
-            Aqui eu uso o '.map()' para percorrer a minha lista de reservas.
-            Para cada 'reserva' na lista, eu crio uma nova linha '<tr>' na tabela
-            para exibir suas informações.
-          */}
-          {reservas.map((reserva, index) => (
-            <tr key={index}>
-              <td>{reserva.cliente}</td>
-              <td>{reserva.destino}</td>
-              <td>{reserva.data}</td>
-              <td>{reserva.status}</td>
+    <div className="admin-reservas-container">
+      <h1>Gerenciamento de Reservas</h1>
+      
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">{success}</p>}
+
+      <div className="reservas-table-container">
+        <table className="reservas-table">
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Cliente</th>
+              <th>Pacote</th>
+              <th>Data da Reserva</th>
+              <th>Status</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {reservas.length > 0 ? (
+              reservas.map(reserva => (
+                <tr key={reserva.id_Reserva}>
+                  <td>{reserva.id_Reserva}</td>
+                  {/* Usamos o 'optional chaining' (?.) para evitar erros se o usuário ou pacote não vierem carregados */}
+                  <td>{reserva.usuario?.nome || 'N/A'}</td>
+                  <td>{reserva.pacote?.titulo || 'N/A'}</td>
+                  <td>{formatarData(reserva.data_Reserva)}</td>
+                  <td>
+                    {/* O select permite a alteração direta do status */}
+                    <select 
+                      value={reserva.status} 
+                      onChange={(e) => handleStatusChange(reserva.id_Reserva, e.target.value)}
+                      className={`status-select status-${reserva.status?.toLowerCase()}`}
+                    >
+                      <option value="Pendente">Pendente</option>
+                      <option value="Confirmada">Confirmada</option>
+                      <option value="Cancelada">Cancelada</option>
+                    </select>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="5" className="no-reservas-message">
+                  Nenhuma reserva encontrada.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

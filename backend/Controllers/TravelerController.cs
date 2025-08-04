@@ -9,7 +9,9 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebApplication1.backend.DTOs;
+using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
@@ -23,18 +25,23 @@ namespace WebApplication1.Controllers
     {
         private readonly IRepository<Traveler, int> _repository;
         private readonly IMapper _mapper;
+        private readonly ApplicationDbContext _appDbContext;
+
 
         // Construtor com injeção de dependência do repositório e do AutoMapper
-        public TravelerController(IRepository<Traveler, int> repository, IMapper mapper)
+
+        public TravelerController(IRepository<Traveler, int> repository, IMapper mapper, ApplicationDbContext appDbContext)
         {
             _repository = repository;
             _mapper = mapper;
+            _appDbContext = appDbContext;
         }
+
 
         // GET: api/traveler
         // Retorna todos os viajantes cadastrados
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<TravelerDto>>> GetAll()
         {
             var travelers = await _repository.GetAllAsync();
@@ -59,14 +66,33 @@ namespace WebApplication1.Controllers
         // POST: api/traveler
         // Cria um novo viajante
         [HttpPost]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult> Create(CreateTravelerDto dto)
         {
-            var traveler = _mapper.Map<Traveler>(dto);
-            await _repository.AddAsync(traveler);
+            try
+            {
 
-            return CreatedAtAction(nameof(GetById), new { id = traveler.Id_Viajante }, dto);
+
+
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var traveler = _mapper.Map<Traveler>(dto);
+                await _repository.AddAsync(traveler);
+
+                Console.WriteLine($"Tentando salvar viajante: {traveler.Nome}, {traveler.Documento}, {traveler.Data_Nascimento}, {traveler.Id_Usuario}");
+
+
+                var result = _mapper.Map<TravelerDto>(traveler);
+                return CreatedAtAction(nameof(GetById), new { id = traveler.Id_Viajante }, result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Erro interno ao cadastrar viajante: {ex.Message}");
+            }
         }
+
+
 
         // PUT: api/traveler/{id}
         // Atualiza um viajante existente
@@ -97,5 +123,42 @@ namespace WebApplication1.Controllers
             await _repository.DeleteAsync(id);
             return NoContent(); // 204 - Exclusão bem-sucedida
         }
+
+       
+
+        // Removed the duplicate method definition for GetByUsuario
+        [HttpGet("usuario/{idUsuario}")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<ActionResult<IEnumerable<TravelerDto>>> GetByUsuario(string idUsuario)
+        {
+            try
+            {
+                Console.WriteLine($"Buscando viajantes do usuário: {idUsuario}");
+
+                var travelers = await _appDbContext.Travelers
+                    .Where(t => t.Id_Usuario == idUsuario)
+                    .ToListAsync();
+
+                if (travelers == null || !travelers.Any())
+                    return Ok(new List<TravelerDto>()); // Retorna lista vazia sem erro
+
+                var result = _mapper.Map<IEnumerable<TravelerDto>>(travelers);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro ao buscar viajantes: {ex.Message}");
+                return StatusCode(500, $"Erro interno ao buscar viajantes: {ex.Message}");
+            }
+        }
+
+
+
+
+
     }
+
+
+
+
 }
