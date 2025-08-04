@@ -7,17 +7,31 @@ const Footer = () => {
     <footer className="rodape">
       {/* Criei esta seção para os ícones das minhas redes sociais. */}
       <div className="social">
-        <a href="#"><img src="/imagens/facebook.png" alt="Facebook" /></a>
-        <a href="#"><img src="/imagens/instagram.png" alt="Instagram" /></a>
-        <a href="#"><img src="/imagens/whatsapp.png" alt="WhatsApp" /></a>
+        <a href="#"><img src="https://th.bing.com/th/id/R.e790c25db5e52838040686612b1a732c?rik=uVuLX4sResGMKA&riu=http%3a%2f%2fpngimg.com%2fuploads%2ffacebook_logos%2ffacebook_logos_PNG19757.png&ehk=JL234rPBfx%2bf3tobhEVbPdNgJiWOhk251WyRwRAg940%3d&risl=&pid=ImgRaw&r=0" alt="Facebook" width={40} /></a>
+        <a href="#"><img src="https://logodownload.org/wp-content/uploads/2017/04/instagram-logo-3.png" alt="Instagram" width={40}/></a>
+        <a href="#"><img src="https://logospng.org/download/whatsapp/logo-whatsapp-verde-icone-ios-android-2048.png" alt="WhatsApp" width={40}/></a>
       </div>
       
       {/* Esta seção é para mostrar as formas de pagamento que eu aceito. */}
       <div className="pagamentos">
-        <img src="/imagens/visa.png" alt="Visa" />
-        <img src="/imagens/mastercard.png" alt="MasterCard" />
-        <img src="/imagens/pix.png" alt="Pix" />
-      </div>
+  <img
+    src="https://logos-world.net/wp-content/uploads/2020/04/Visa-Emblem.jpg"
+    alt="Visa"
+    width={40}
+    style={{ marginRight: '16px' }}
+  />
+  <img
+    src="https://logosmarcas.net/wp-content/uploads/2020/09/Mastercard-Simbolo.jpg"
+    alt="MasterCard"
+    width={40}
+    style={{ marginRight: '16px' }}
+  />
+  <img
+    src="https://www.showmetech.com.br/wp-content/uploads/2023/01/novas-regras-do-pix-showmetech-6.png"
+    alt="Pix"
+    width={40}
+  />
+</div>
 
       {/* Por fim, o aviso de copyright. */}
       <p>© 2025 Travel Agency</p>
