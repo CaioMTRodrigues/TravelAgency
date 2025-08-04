@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Adicionado para consultas diretas
-using WebApplication1.Data;         // Adicionado para o DbContext
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
@@ -20,7 +20,7 @@ namespace WebApplication1.Controllers
         private readonly IRepository<Package, int> _repository;
         private readonly IMapper _mapper;
         private readonly PackageService _service;
-        private readonly ApplicationDbContext _context; 
+        private readonly ApplicationDbContext _context;
 
         public PackageController(IRepository<Package, int> repository, IMapper mapper,
             PackageService service, ApplicationDbContext context)
@@ -28,10 +28,9 @@ namespace WebApplication1.Controllers
             _repository = repository;
             _mapper = mapper;
             _service = service;
-            _context = context; 
+            _context = context;
         }
 
-        // GET: api/package
         [HttpGet]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<PackageDto>>> GetAll()
@@ -41,15 +40,14 @@ namespace WebApplication1.Controllers
             return Ok(result);
         }
 
-        // GET: api/package/destaques
         [HttpGet("destaques")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PackageDto>>> GetDestaques()
         {
             var destaquePackages = await _context.Packages
-                .Where(p => p.Destaque == true) // Filtra apenas os pacotes em destaque
+                .Where(p => p.Destaque == true)
                 .OrderByDescending(p => p.Id_Pacote)
-                .Take(6) // Limita a 6 destaques
+                .Take(6)
                 .ToListAsync();
 
             var result = _mapper.Map<IEnumerable<PackageDto>>(destaquePackages);
@@ -66,11 +64,13 @@ namespace WebApplication1.Controllers
                 return NotFound();
             }
 
-            // Limita a 6 destaques: se já houver 6 e estivermos a adicionar um novo
-            var currentDestaques = await _context.Packages.CountAsync(p => p.Destaque && p.Id_Pacote != id);
-            if (destaque && currentDestaques >= 6)
+            if (destaque == true)
             {
-                return BadRequest("Limite de 6 pacotes em destaque atingido. Remova um destaque existente para adicionar um novo.");
+                var currentDestaques = await _context.Packages.CountAsync(p => p.Destaque == true);
+                if (currentDestaques >= 6)
+                {
+                    return BadRequest("Limite de 6 pacotes em destaque atingido. Remova um destaque existente para adicionar um novo.");
+                }
             }
 
             package.Destaque = destaque;
@@ -78,7 +78,6 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
 
-        // GET: api/package/{id}
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<PackageDto>> GetById(int id)
@@ -91,24 +90,14 @@ namespace WebApplication1.Controllers
             return Ok(dto);
         }
 
-        // POST: api/package
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(CreatePackageDto dto)
         {
-            try
-            {
-                var package = await _service.CreateAsync(dto);
-                return CreatedAtAction(nameof(GetById), new { id = package.Id_Pacote }, dto);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Erro ao cadastrar pacote: {ex.Message}");
-                return BadRequest(new { message = ex.Message });
-            }
+            var package = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = package.Id_Pacote }, dto);
         }
 
-        // PUT: api/package/{id}
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Update(int id, CreatePackageDto dto)
@@ -123,7 +112,6 @@ namespace WebApplication1.Controllers
             return NoContent();
         }
 
-        // DELETE: api/package/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
