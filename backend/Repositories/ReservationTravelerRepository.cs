@@ -7,8 +7,10 @@
 // -----------------------------------------------------------------------------
 
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.backend.DTOs;
 using WebApplication1.backend.Entities;
 using WebApplication1.Data;
+using WebApplication1.Exceptions;
 
 namespace WebApplication1.Repositories
 {
@@ -39,11 +41,24 @@ namespace WebApplication1.Repositories
         }
 
         // Adiciona um novo vínculo entre reserva e viajante
-        public async Task AddAsync(ReservationTraveler entity)
+        public async Task AddAsync(CreateReservationTravelerDto dto)
         {
-            await _appDbContext.ReservationTravelers.AddAsync(entity);
+            var reservaExiste = await _appDbContext.Reservations.AnyAsync(r => r.Id_Reserva == dto.Id_Reserva);
+            var viajanteExiste = await _appDbContext.Travelers.AnyAsync(v => v.Id_Viajante == dto.Id_Viajante);
+
+            if (!reservaExiste || !viajanteExiste)
+                throw new BusinessException("Reserva ou Viajante não encontrados.");
+
+            var reservaViajante = new ReservationTraveler
+            {
+                Id_Reserva = dto.Id_Reserva,
+                Id_Viajante = dto.Id_Viajante
+            };
+
+            _appDbContext.ReservationTravelers.Add(reservaViajante);
             await _appDbContext.SaveChangesAsync();
         }
+
 
         // Remove um vínculo existente
         public async Task RemoveAsync(ReservationTraveler entity)
@@ -52,6 +67,7 @@ namespace WebApplication1.Repositories
             await _appDbContext.SaveChangesAsync();
         }
 
+        // Verifica se o vínculo já existe (evita duplicidade)
         // Verifica se o vínculo já existe (evita duplicidade)
         public async Task<bool> ExistsAsync(int idReserva, int idViajante)
         {

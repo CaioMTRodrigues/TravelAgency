@@ -33,7 +33,7 @@ namespace WebApplication1.Controllers
 
         // MÉTODO ATUALIZADO COM A CORREÇÃO
         [HttpGet]
-        [Authorize(Roles = "Admin, User")]
+        
         public async Task<ActionResult<IEnumerable<PackageDto>>> GetAll()
         {
             // Usamos o _context diretamente para garantir que os dados mais recentes são lidos,

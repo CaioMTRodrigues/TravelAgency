@@ -30,6 +30,8 @@ export const cadastrarReserva = async (dados) => {
     return response.data;
   } catch (error) {
     console.error("Erro ao cadastrar reserva:", error.response?.data);
-    throw error.response?.data?.message || "Erro ao cadastrar reserva.";
+    throw new Error(
+      error.response?.data?.message || "Erro ao cadastrar reserva."
+    );
   }
 };

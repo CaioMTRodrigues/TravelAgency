@@ -17,13 +17,13 @@ public class CreateTravelerDto
         public string Nome { get; set; }
 
         [Required(ErrorMessage = "O documento é obrigatório.")]
-        [CpfOuPassaporte]
+        //[CpfOuPassaporte]
         public string Documento { get; set; }
 
         [Required(ErrorMessage = "A data de nascimento é obrigatória.")]
         public DateTime Data_Nascimento { get; set; }
 
         [Required(ErrorMessage = "O ID do usuário é obrigatório.")]
-        public int Id_Usuario { get; set; }
+        public string Id_Usuario { get; set; }
     }
 }

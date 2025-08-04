@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 // CORREÇÃO: Importamos a nova função para buscar um pacote por ID.
@@ -20,6 +21,28 @@ const CadastroReserva = () => {
         telefone: '',
         numPessoas: 1,
     });
+=======
+// src/pages/CadastroReserva.jsx
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ModalViajante from "../components/ModalViajante";
+import { listarPacotes } from "../services/pacoteService";
+import { cadastrarReserva } from "../services/reservaService";
+import { vincularViajanteReserva } from "../services/reservationTravelerService";
+
+import "./CadastroReserva.css";
+
+const CadastroReserva = () => {
+  const [pacotes, setPacotes] = useState([]);
+  const [idPacote, setIdPacote] = useState("");
+  const [dataReserva, setDataReserva] = useState(new Date().toISOString().slice(0, 10));
+  const [erro, setErro] = useState("");
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [viajanteSelecionado, setViajanteSelecionado] = useState(null);
+  const navigate = useNavigate();
+
+  const idUsuario = localStorage.getItem("idUsuario");
+>>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
 
     useEffect(() => {
         const fetchPacoteDetails = async () => {
@@ -42,6 +65,7 @@ const CadastroReserva = () => {
         setDadosReserva(prevState => ({ ...prevState, [name]: value }));
     };
 
+<<<<<<< HEAD
     const handleSubmit = (e) => {
         e.preventDefault();
         // Aqui viria a lógica para enviar os dados da reserva para a API
@@ -52,6 +76,30 @@ const CadastroReserva = () => {
 
     if (loading) {
         return <Spinner />;
+=======
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const reserva = await cadastrarReserva({
+        id_Usuario: idUsuario,
+        id_Pacote: parseInt(idPacote),
+        data_Reserva: dataReserva,
+      });
+
+      if (viajanteSelecionado) {
+        console.log("Enviando vínculo:", {
+  id_Reserva: reserva.id_Reserva,
+  id_Viajante: viajanteSelecionado?.id_Viajante,
+});
+
+
+        await vincularViajanteReserva(reserva.id_Reserva, viajanteSelecionado.id_Viajante);
+      }
+
+      navigate("/minhas-reservas");
+    } catch (err) {
+      setErro(err.message || "Erro ao cadastrar reserva.");
+>>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
     }
 
     if (error) {
@@ -62,6 +110,7 @@ const CadastroReserva = () => {
         return <div className="error-message-full-page">Pacote não encontrado.</div>;
     }
 
+<<<<<<< HEAD
     return (
         <div className="cadastro-reserva-container">
             <div className="reserva-summary">
@@ -99,6 +148,27 @@ const CadastroReserva = () => {
             </div>
         </div>
     );
+=======
+        <button type="button" onClick={() => setMostrarModal(true)}>
+          Cadastrar Acompanhante
+        </button>
+
+        <button type="submit">Confirmar Reserva</button>
+      </form>
+
+      {mostrarModal && (
+        <ModalViajante
+          idUsuario={idUsuario}
+          onSelecionar={(v) => {
+            setViajanteSelecionado(v);
+            setMostrarModal(false);
+          }}
+          onFechar={() => setMostrarModal(false)}
+        />
+      )}
+    </div>
+  );
+>>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
 };
 
 export default CadastroReserva;

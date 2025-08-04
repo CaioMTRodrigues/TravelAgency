@@ -61,7 +61,7 @@ namespace WebApplication1.Controllers
                 return Conflict("Esse vínculo já existe.");
 
             var entity = _mapper.Map<ReservationTraveler>(dto);
-            await _repository.AddAsync(entity);
+            await _repository.AddAsync(dto);
 
             return CreatedAtAction(nameof(GetByIds), new { idReserva = dto.Id_Reserva, idViajante = dto.Id_Viajante }, dto);
         }

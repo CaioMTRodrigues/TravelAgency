@@ -6,6 +6,9 @@ import { FaSignature, FaFileAlt, FaMapMarkedAlt, FaClock, FaCalendarAlt, FaDolla
 import Spinner from '../../components/Spinner';
 import './CadastroPacote.css';
 
+import axios from "axios";
+
+
 const CadastroPacote = () => {
   const { id } = useParams(); // Pega o ID da URL. Será 'undefined' se for a página de cadastro.
   const navigate = useNavigate();
@@ -147,6 +150,7 @@ const CadastroPacote = () => {
           {error && <p className="error-message">{error}</p>}
           {success && <p className="success-message">{success}</p>}
 
+<<<<<<< HEAD
           {/* O texto do botão também muda dinamicamente */}
           <button type="submit" className="submit-button">
             {isEditing ? 'Salvar Alterações' : 'Cadastrar Pacote'}
@@ -173,6 +177,43 @@ const CadastroPacote = () => {
           </div>
         </div>
       </div>
+=======
+        {/* Campo de imagem */}
+        <div className="form-group">
+  <label htmlFor="imagemUpload">Imagem do Pacote*</label>
+  <input
+    type="file"
+    id="imagemUpload"
+    accept="image/*"
+    onChange={async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const formDataImagem = new FormData();
+      formDataImagem.append("arquivo", file);
+
+      try {
+        const response = await axios.post("http://localhost:5000/api/imagens/upload", formDataImagem);
+        const urlImagem = `http://localhost:5000/api/imagens/${response.data.nome}`;
+        setFormData({ ...formData, imagemUrl: urlImagem });
+        setSucesso("Imagem enviada com sucesso!");
+      } catch (err) {
+        console.log(err);
+        setErro("Erro ao enviar imagem.");
+      }
+    }}
+  />
+</div>
+
+
+        {erro && <p className="login-error-message">{erro}</p>}
+        {sucesso && <p className="login-success-message">{sucesso}</p>}
+
+        <button type="submit" className="login-button">
+          Cadastrar Pacote
+        </button>
+      </form>
+>>>>>>> ed5609c3610fdbae2380527195cde0ed1cb397c8
     </div>
   );
 };
