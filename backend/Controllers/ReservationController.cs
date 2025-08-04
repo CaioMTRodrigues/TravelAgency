@@ -1,10 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using WebApplication1.Data;         
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Services;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
 {
@@ -14,12 +19,56 @@ namespace WebApplication1.Controllers
     {
         private readonly IMapper _mapper;
         private readonly ReservationService _reservationService;
+        private readonly ApplicationDbContext _context; // Adicionada a injeção do DbContext
 
-        public ReservationController(IMapper mapper, ReservationService reservationService)
+        public ReservationController(IMapper mapper, ReservationService reservationService, ApplicationDbContext context)
         {
             _mapper = mapper;
             _reservationService = reservationService;
+            _context = context;
         }
+
+        // --- MÉTODOS PARA O PAINEL DE ADMIN ---
+
+        // GET: api/reservation/admin
+        [HttpGet("admin")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<ReservationDto>>> GetAllAdmin()
+        {
+            var reservations = await _context.Reservations
+                .Include(r => r.Pacote)
+                .Include(r => r.Usuario)
+                .OrderByDescending(r => r.Data_Reserva)
+                .ToListAsync();
+
+            var result = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
+            return Ok(result);
+        }
+
+        // PUT: api/reservation/{id}/status
+        [HttpPut("{id}/status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateReservationStatusDto statusDto)
+        {
+            var reservation = await _context.Reservations.FindAsync(id);
+
+            if (reservation == null)
+            {
+                return NotFound();
+            }
+
+            if (System.Enum.TryParse<StatusReserva>(statusDto.Status, true, out var newStatus))
+            {
+                reservation.Status = newStatus;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+
+            return BadRequest("Status inválido.");
+        }
+
+
+        // --- MÉTODOS EXISTENTES FORAM MANTIDOS ABAIXO ---
 
         // GET: api/reservation
         [HttpGet]
@@ -92,5 +141,11 @@ namespace WebApplication1.Controllers
             await _reservationService.RegistrarPagamentosAsync(id, pagamentos);
             return Ok(new { message = "Pagamentos registrados com sucesso!" });
         }
+    }
+
+    // DTO auxiliar para receber o novo status
+    public class UpdateReservationStatusDto
+    {
+        public string Status { get; set; }
     }
 }
