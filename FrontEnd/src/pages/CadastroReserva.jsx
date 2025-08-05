@@ -1,67 +1,121 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+
+// Serviços e Componentes
 import { getPacoteById } from '../services/pacoteService';
 import { cadastrarReserva } from "../services/reservaService";
-import { vincularViajanteReserva } from "../services/reservationTravelerService";
+import { listarViajantesDoUsuario, cadastrarViajante, vincularViajanteReserva } from "../services/viajanteService";
 import Spinner from '../components/Spinner';
-import ModalViajante from "../components/ModalViajante";
+import NovoViajanteForm from "../components/NovoViajanteForm";
+
+// Ícones e Estilos
+import { FaUser, FaPhone, FaUsers, FaTrash, FaLock, FaSearch, FaPlus, FaPlaneDeparture, FaQrcode } from 'react-icons/fa';
 import './CadastroReserva.css';
 
 const CadastroReserva = () => {
-    const { id } = useParams(); // ID do pacote vindo da URL
+    const { id } = useParams();
     const navigate = useNavigate();
-    const idUsuario = localStorage.getItem("idUsuario"); // Pega o ID do usuário logado
+    const idUsuario = localStorage.getItem("idUsuario");
 
-    // Estado para o pacote
+    // Estados do componente
     const [pacote, setPacote] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [dadosComprador, setDadosComprador] = useState({ nomeCompleto: '', telefone: '' });
+    const [formErrors, setFormErrors] = useState({});
+    const [saveData, setSaveData] = useState(true);
 
-    // Dados do formulário da reserva
-    const [dadosReserva, setDadosReserva] = useState({
-        nomeCompleto: '',
-        email: '',
-        telefone: '',
-        numPessoas: 1,
-    });
-    
-    // Estado para a lógica de acompanhantes
-    const [mostrarModal, setMostrarModal] = useState(false);
-    const [viajanteSelecionado, setViajanteSelecionado] = useState(null);
+    // Estados dos acompanhantes e da busca
+    const [acompanhantes, setAcompanhantes] = useState([]);
+    const [viajantesDisponiveis, setViajantesDisponiveis] = useState([]);
+    const [buscaAcompanhante, setBuscaAcompanhante] = useState('');
+    const [mostrarFormNovoViajante, setMostrarFormNovoViajante] = useState(false);
 
-    // Efeito para buscar os detalhes do pacote
+    const [isProcessing, setIsProcessing] = useState(false);
+
     useEffect(() => {
-        const fetchPacoteDetails = async () => {
-            if (!id) {
-                setError('ID do pacote não fornecido.');
-                setLoading(false);
+        const savedData = localStorage.getItem(`compradorData_${idUsuario}`);
+        if (savedData) {
+            setDadosComprador(JSON.parse(savedData));
+        }
+
+        const fetchData = async () => {
+            if (!id || !idUsuario) {
+                setError('Informações de pacote ou usuário ausentes.');
                 return;
             }
             try {
-                const data = await getPacoteById(id);
-                setPacote(data);
+                const [pacoteData, viajantesData] = await Promise.all([
+                    getPacoteById(id),
+                    listarViajantesDoUsuario(idUsuario)
+                ]);
+                setPacote(pacoteData);
+                setViajantesDisponiveis(viajantesData);
             } catch (err) {
-                setError('Não foi possível carregar os detalhes do pacote. Por favor, tente novamente.');
-            } finally {
-                setLoading(false);
+                setError('Não foi possível carregar os dados. Tente novamente.');
             }
         };
+        fetchData();
+    }, [id, idUsuario]);
 
-        fetchPacoteDetails();
-    }, [id]);
+    const viajantesFiltrados = useMemo(() => {
+        if (!buscaAcompanhante) return [];
+        return viajantesDisponiveis
+            .filter(v => v.nome.toLowerCase().includes(buscaAcompanhante.toLowerCase()))
+            .slice(0, 5);
+    }, [buscaAcompanhante, viajantesDisponiveis]);
+
+    const handleAdicionarAcompanhante = (viajante) => {
+        if (!acompanhantes.some(a => a.id_Viajante === viajante.id_Viajante)) {
+            setAcompanhantes([...acompanhantes, viajante]);
+            setViajantesDisponiveis(viajantesDisponiveis.filter(v => v.id_Viajante !== viajante.id_Viajante));
+            setBuscaAcompanhante('');
+        }
+    };
+
+    const handleRemoverAcompanhante = (viajante) => {
+        setAcompanhantes(acompanhantes.filter(a => a.id_Viajante !== viajante.id_Viajante));
+        setViajantesDisponiveis(prev => [...prev, viajante].sort((a,b) => a.nome.localeCompare(b.nome)));
+    };
+
+    const handleNovoAcompanhanteCadastrado = async (novoViajante) => {
+        try {
+            const viajanteCadastrado = await cadastrarViajante(novoViajante);
+            handleAdicionarAcompanhante(viajanteCadastrado);
+            setMostrarFormNovoViajante(false);
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || err.message || "Erro ao cadastrar novo acompanhante.";
+            console.error(errorMessage);
+        }
+    };
+
+    const validateField = (name, value) => {
+        if (name === "nomeCompleto" && !value) return "O nome completo é obrigatório.";
+        if (name === "telefone" && value.replace(/\D/g, '').length < 10) return "O telefone parece estar incompleto.";
+        return "";
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setDadosReserva(prevState => ({ ...prevState, [name]: value }));
+        setDadosComprador(prevState => ({ ...prevState, [name]: value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        if (!idUsuario) {
-            setError("Você precisa estar logado para fazer uma reserva.");
+        const nomeError = validateField("nomeCompleto", dadosComprador.nomeCompleto);
+        const telefoneError = validateField("telefone", dadosComprador.telefone);
+        if (nomeError || telefoneError) {
+            setFormErrors({ nomeCompleto: nomeError, telefone: telefoneError });
             return;
+        }
+
+        setIsProcessing(true);
+
+        if (saveData) {
+            localStorage.setItem(`compradorData_${idUsuario}`, JSON.stringify(dadosComprador));
+        } else {
+            localStorage.removeItem(`compradorData_${idUsuario}`);
         }
 
         try {
@@ -69,83 +123,120 @@ const CadastroReserva = () => {
                 id_Usuario: idUsuario,
                 id_Pacote: parseInt(id),
                 data_Reserva: new Date().toISOString(),
-                // O status e número da reserva já são definidos no backend
+                status: 'Pendente'
             });
 
-            if (viajanteSelecionado) {
-                await vincularViajanteReserva(reservaCriada.id_Reserva, viajanteSelecionado.id_Viajante);
+            if (acompanhantes.length > 0) {
+                await Promise.all(acompanhantes.map(v => vincularViajanteReserva(reservaCriada.id_Reserva, v.id_Viajante)));
             }
             
-            alert('Reserva enviada com sucesso!');
-            navigate('/minhas-reservas');
+            // Simulação de redirecionamento para pagamento (ou outra página)
+            alert("Reserva confirmada! Redirecionando para a próxima etapa.");
+            navigate('/minhas-reservas'); // Ou para a página de pagamento no futuro
 
         } catch (err) {
-            setError(err.message || "Ocorreu um erro ao cadastrar a reserva.");
+            setError(err.message || "Ocorreu um erro ao processar sua reserva.");
+            setIsProcessing(false);
         }
     };
 
-    if (loading) {
-        return <Spinner />;
-    }
-
-    if (error) {
-        return <div className="error-message-full-page">{error}</div>;
-    }
-
-    if (!pacote) {
-        return <div className="error-message-full-page">Pacote não encontrado.</div>;
-    }
+    if (error) return <div className="error-message-full-page">{error}</div>;
+    if (!pacote) return <Spinner />;
 
     return (
         <div className="cadastro-reserva-container">
-            <div className="reserva-summary">
-                <h2>Resumo do Pacote</h2>
-                <img src={pacote.imagemUrl || 'https://placehold.co/600x400/005A9C/white?text=Destino'} alt={pacote.titulo} />
-                <h3>{pacote.titulo}</h3>
-                <p>{pacote.destino}</p>
-                <p className="price">Valor por pessoa: <strong>R$ {pacote.valor.toFixed(2)}</strong></p>
-                <p><strong>Duração:</strong> {pacote.duracaoDias} dias</p>
-            </div>
-            <div className="reserva-form-container">
-                <h2>Complete sua Reserva</h2>
-                <form onSubmit={handleSubmit} className="reserva-form">
-                    <div className="form-group">
-                        <label>Nome Completo</label>
-                        <input type="text" name="nomeCompleto" value={dadosReserva.nomeCompleto} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input type="email" name="email" value={dadosReserva.email} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>Telefone</label>
-                        <input type="tel" name="telefone" value={dadosReserva.telefone} onChange={handleChange} required />
-                    </div>
-                    <div className="form-group">
-                        <label>Número de Viajantes</label>
-                        <input type="number" name="numPessoas" value={dadosReserva.numPessoas} onChange={handleChange} min="1" required />
+            <div className="reserva-coluna-esquerda">
+                <form id="reserva-form" onSubmit={handleSubmit} noValidate>
+                    <div className="card-form">
+                        <h2><FaUser /> Dados do Titular</h2>
+                        <div className="form-group">
+                            <label htmlFor="nomeCompleto">Nome Completo</label>
+                            <input type="text" id="nomeCompleto" name="nomeCompleto" value={dadosComprador.nomeCompleto} onChange={handleChange} required />
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="telefone">Telefone</label>
+                            <input type="tel" id="telefone" name="telefone" placeholder="(xx) xxxxx-xxxx" value={dadosComprador.telefone} onChange={handleChange} required />
+                        </div>
+                        <div className="form-group-checkbox">
+                            <input type="checkbox" id="saveData" checked={saveData} onChange={(e) => setSaveData(e.target.checked)} />
+                            <label htmlFor="saveData">Salvar dados para a próxima compra</label>
+                        </div>
                     </div>
 
-                    <button type="button" onClick={() => setMostrarModal(true)}>
-                        Adicionar Acompanhante
-                    </button>
-                    {viajanteSelecionado && <p>Acompanhante selecionado: {viajanteSelecionado.nome}</p>}
-
-                    <div className="total-price">
-                        Valor Total: <strong>R$ {(pacote.valor * dadosReserva.numPessoas).toFixed(2)}</strong>
+                    <div className="card-form">
+                        <h2><FaUsers /> Acompanhantes</h2>
+                        <div className="acompanhantes-busca-container">
+                             <div className="busca-input-wrapper">
+                                <FaSearch className="busca-icon" />
+                                <input type="text" placeholder="Buscar acompanhante salvo..." value={buscaAcompanhante} onChange={(e) => setBuscaAcompanhante(e.target.value)} />
+                            </div>
+                            {viajantesFiltrados.length > 0 && (
+                                <div className="busca-resultados">
+                                    {viajantesFiltrados.map(v => ( <div key={v.id_Viajante} className="resultado-item" onClick={() => handleAdicionarAcompanhante(v)}>{v.nome}</div> ))}
+                                </div>
+                            )}
+                        </div>
+                        <button type="button" className="btn-novo-viajante" onClick={() => setMostrarFormNovoViajante(true)}>
+                            <FaPlus /> Cadastrar Novo Viajante
+                        </button>
                     </div>
-                    <button type="submit" className="submit-button">Confirmar Reserva</button>
                 </form>
             </div>
-            
-            {mostrarModal && (
-                <ModalViajante
+
+            <div className="reserva-coluna-direita">
+                <div className="ticket-summary">
+                    <div className="ticket-header">
+                        <FaPlaneDeparture />
+                        <h4>Voucher da sua Viagem</h4>
+                    </div>
+                    <div className="ticket-body">
+                        <img src={pacote.imagemUrl} alt={pacote.titulo} className="ticket-imagem" />
+                        <h3>{pacote.titulo}</h3>
+                        <p className="ticket-destino">{pacote.destino}</p>
+
+                        <div className="ticket-section">
+                            <h4>Viajantes</h4>
+                            <div className="viajantes-list">
+                                <p><FaUser /> {dadosComprador.nomeCompleto || "Nome do Titular"}</p>
+                                {acompanhantes.map(v => <p key={v.id_Viajante}><FaUser /> {v.nome}</p>)}
+                            </div>
+                        </div>
+
+                        <div className="ticket-section">
+                            <h4>Resumo de Custos</h4>
+                            <div className="summary-detalhe">
+                                <span>{1 + acompanhantes.length} Viajante(s) x R$ {pacote.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+                                <strong>R$ {(pacote.valor * (1 + acompanhantes.length)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                            </div>
+                        </div>
+
+                        <div className="ticket-total">
+                            <span>Valor Total</span>
+                            <strong>R$ {(pacote.valor * (1 + acompanhantes.length)).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+                        </div>
+                    </div>
+                    <div className="ticket-footer">
+                        <div className="qr-placeholder">
+                            <FaQrcode />
+                        </div>
+                        <p>Este é um resumo da sua viagem. A confirmação ocorrerá após o pagamento.</p>
+                    </div>
+                </div>
+
+                <button type="submit" form="reserva-form" className="submit-button" disabled={isProcessing}>
+                    {isProcessing ? <Spinner /> : 'Seguir para Pagamento'}
+                </button>
+                <div className="secure-payment-info">
+                    <FaLock />
+                    <span>Ambiente de Pagamento 100% Seguro</span>
+                </div>
+            </div>
+
+            {mostrarFormNovoViajante && (
+                <NovoViajanteForm
                     idUsuario={idUsuario}
-                    onSelecionar={(v) => {
-                        setViajanteSelecionado(v);
-                        setMostrarModal(false);
-                    }}
-                    onFechar={() => setMostrarModal(false)}
+                    onCadastrar={handleNovoAcompanhanteCadastrado}
+                    onCancelar={() => setMostrarFormNovoViajante(false)}
                 />
             )}
         </div>
