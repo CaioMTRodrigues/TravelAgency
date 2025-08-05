@@ -115,6 +115,8 @@ builder.Services.AddControllers(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddSingleton<PaymentService>();
+
 // ❌ Desativa validação automática do ModelState
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

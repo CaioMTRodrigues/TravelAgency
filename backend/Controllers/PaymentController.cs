@@ -1,18 +1,12 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 19/07/2025
-// 📁 Arquivo: PaymentController
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Controller responsável por gerenciar pagamentos
-// -----------------------------------------------------------------------------
-
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
+using WebApplication1.Services; // Importa o PaymentService e ReservationService
 
 namespace WebApplication1.Controllers
 {
@@ -22,12 +16,20 @@ namespace WebApplication1.Controllers
     {
         private readonly IRepository<Payment, int> _repository;
         private readonly IMapper _mapper;
+        private readonly PaymentService _paymentService;
+        private readonly ReservationService _reservationService;
 
-        // Construtor com injeção de dependência do repositório e do AutoMapper
-        public PaymentController(IRepository<Payment, int> repository, IMapper mapper)
+        // Construtor com injeção de dependência do repositório, do AutoMapper e dos novos serviços
+        public PaymentController(
+            IRepository<Payment, int> repository,
+            IMapper mapper,
+            PaymentService paymentService,
+            ReservationService reservationService)
         {
             _repository = repository;
             _mapper = mapper;
+            _paymentService = paymentService;
+            _reservationService = reservationService;
         }
 
         // GET: api/payment
@@ -56,15 +58,64 @@ namespace WebApplication1.Controllers
         }
 
         // POST: api/payment
-        // Cria um novo pagamento
+        // Cria um novo pagamento (endpoint existente para criação manual/administrativa)
         [HttpPost]
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User")] // Pode ser ajustado para Admin se a criação for apenas interna
         public async Task<ActionResult> Create(CreatePaymentDto dto)
         {
             var payment = _mapper.Map<Payment>(dto);
             await _repository.AddAsync(payment);
 
             return CreatedAtAction(nameof(GetById), new { id = payment.Id_Pagamento }, dto);
+        }
+
+        // NOVO ENDPOINT: POST: api/payment/create-payment-intent
+        // Cria uma intenção de pagamento no Stripe e retorna o client_secret para o front-end
+        [HttpPost("create-payment-intent")]
+        // MODIFICAÇÃO AQUI: Permite tanto a role "User" quanto "Admin"
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> CreatePaymentIntent([FromBody] PaymentRequestDto paymentRequest)
+        {
+            try
+            {
+                // 1. Validar e buscar a reserva
+                var reservation = await _reservationService.ObterPorIdAsync(paymentRequest.ReservationId);
+                if (reservation == null)
+                {
+                    throw new NotFoundException("Reserva", paymentRequest.ReservationId);
+                }
+
+                // 2. Criar o PaymentIntent no Stripe
+                var paymentIntent = await _paymentService.CreatePaymentIntentAsync(reservation.ValorPacote, paymentRequest.Currency);
+
+                // 3. Registrar o pagamento no seu banco de dados
+                var newPayment = new Payment
+                {
+                    Id_Reserva = reservation.Id_Reserva,
+                    Valor = reservation.ValorPacote,
+                    Data_Pagamento = DateTime.UtcNow,
+                    Status = StatusPagamento.Pendente,
+                    Tipo = TipoPagamento.Cartao_Credito,
+                    StripePaymentIntentId = paymentIntent.Id
+                };
+
+                await _repository.AddAsync(newPayment);
+
+                // 4. Retorna o client_secret e o ID do pagamento recém-criado
+                return Ok(new { clientSecret = paymentIntent.ClientSecret, paymentId = newPayment.Id_Pagamento });
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (StripeException e)
+            {
+                return BadRequest(new { error = e.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Ocorreu um erro interno ao processar o pagamento.", details = ex.Message });
+            }
         }
 
         // PUT: api/payment/{id}
