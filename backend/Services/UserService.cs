@@ -162,7 +162,7 @@ public class UserService
         await _userManager.UpdateAsync(user);
 
         var encodedToken = WebUtility.UrlEncode(user.PasswordResetToken);
-        var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/reset-password?token={encodedToken}";
+        var resetLink = $"{_configuration["AppSettings:FrontendUrl"]}/redefinir-senha?token={encodedToken}";
 
         await _emailService.EnviarEmailRecuperacaoSenhaAsync(user.Email, resetLink);
 

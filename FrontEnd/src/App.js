@@ -20,6 +20,8 @@ import AvaliacoesClientes from './pages/avaliacoesClientes';
 import Quiz from './pages/Quiz';
 import Cadastro from './pages/Cadastro';
 import Login from './pages/Login';
+import EsqueciSenha from './pages/EsqueciSenha';
+import RedefinirSenha from './pages/RedefinirSenha';
 import MinhasReservas from './pages/MinhasReservas';
 import CadastroReserva from './pages/CadastroReserva';
 import AdminDashboard from './pages/Admin/AdminDashboard';
@@ -60,6 +62,8 @@ const AppContent = () => {
             {/* Rotas de Autenticação (mantidas para acesso direto via URL, se desejado) */}
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             
             {/* Rotas de Usuário Logado */}
             <Route path="/minhas-reservas" element={<MinhasReservas />} />
