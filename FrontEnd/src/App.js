@@ -44,7 +44,7 @@ import AdminAvaliacoes from './pages/Admin/AdminAvaliacoes';
 
 // Sua chave pública de teste do Stripe
 // Substitua 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY' pela sua chave real (pk_test_...)
-//const stripePromise = loadStripe('pk_test_51RsXohK875ivmNhbboO4tRfgOn33YOsnhf2bop3Qft8eV5jS5xT7Fjb0NFPYQifCsmZZ6EjLNDJJ4PFufslri1xv008wVtOnkt'); // Exemplo de chave, substitua pela sua!
+const stripePromise = loadStripe('pk_test_51RsXohK875ivmNhbboO4tRfgOn33YOsnhf2bop3Qft8eV5jS5xT7Fjb0NFPYQifCsmZZ6EjLNDJJ4PFufslri1xv008wVtOnkt'); // Exemplo de chave, substitua pela sua!
 
 // Componente Wrapper para passar o estado do modal ao Header
 const AppContent = () => {
