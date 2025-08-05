@@ -13,6 +13,7 @@ import AdminRoute from './components/AdminRoute';
 import Modal from './components/Modal'; // Importando o Modal
 import AuthModal from './components/AuthModal'; // Importando o conteúdo do Modal
 import FormasPagamento from './components/FormasPagamento'; // Importa o novo componente de pagamento
+import ProtectedRoute from './components/ProtectedRoute'; // Adicione esta linha
 
 // Páginas
 import HomePage from './pages/HomePage';
@@ -82,8 +83,18 @@ const AppContent = () => {
             <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             
             {/* Rotas de Usuário Logado */}
-            <Route path="/minhas-reservas" element={<MinhasReservas />} />
-            <Route path="/reservar/:id" element={<CadastroReserva />} />
+            <Route 
+                path="/minhas-reservas" 
+                element={<ProtectedRoute><MinhasReservas /></ProtectedRoute>} 
+            />
+            <Route 
+                path="/reservar/:id" 
+                element={<ProtectedRoute><CadastroReserva /></ProtectedRoute>} 
+            />
+            <Route 
+                path="/pagamento/:id" 
+                element={<ProtectedRoute><FormasPagamento /></ProtectedRoute>} 
+            />
             {/* Nova rota para o formulário de pagamento do Stripe */}
             <Route path="/pagamento/:id" element={<FormasPagamento />} />
 
