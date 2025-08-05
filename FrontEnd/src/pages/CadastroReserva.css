@@ -12,7 +12,7 @@
 /* Coluna da esquerda (formulários) */
 .reserva-coluna-esquerda {
     flex: 1;
-    min-width: 350px;
+    min-width: min(350px, 100vw - 40px);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -21,7 +21,7 @@
 /* Coluna da direita (voucher) */
 .reserva-coluna-direita {
     flex: 1.2;
-    min-width: 400px;
+    min-width: min(400px, 100vw - 40px);
     position: sticky;
     top: 20px;
 }

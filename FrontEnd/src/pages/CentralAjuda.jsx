@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+// Header e Footer removidos - já são renderizados globalmente no App.js
 import Modal from "../components/Modal";
 import AuthModal from "../components/AuthModal";
 import AccordionItem from "../components/AccordionItem"; // Eu importo o componente de Acordeão que criei.
@@ -34,8 +33,6 @@ const CentralAjuda = () => {
   return (
     // Eu uso a classe 'home' para garantir que o layout com o rodapé fixo funcione aqui também.
     <div className="home">
-      <Header onLoginClick={openModal} />
-
       <main className="help-center-container">
         <h1 className="help-center-title">Central de Ajuda</h1>
         <p className="help-center-subtitle">
@@ -94,8 +91,6 @@ const CentralAjuda = () => {
           ))}
         </div>
       </main>
-
-      <Footer />
 
       {/* O modal de login também fica aqui, pronto para ser aberto. */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>

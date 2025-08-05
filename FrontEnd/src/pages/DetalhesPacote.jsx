@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+// Header e Footer removidos - já são renderizados globalmente no App.js
 import Modal from '../components/Modal';
 import AuthModal from '../components/AuthModal';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -218,25 +217,20 @@ const DetalhesPacote = () => {
     if (!pacote) {
         return (
             <div className="home">
-                <Header onLoginClick={openModal} />
                 <main style={{ padding: '40px', textAlign: 'center' }}>
                     <h2>Carregando detalhes do pacote...</h2>
                 </main>
-                <Footer />
             </div>
         );
     }
 
     return (
-        <div className="home">
-            <Header onLoginClick={openModal} />
-
-            <main className="package-detail-page">
-                <div className="detail-header" style={{ backgroundImage: `url(${pacote.imagem})` }}>
-                    <div className="detail-header-overlay">
-                        <h1>{pacote.nome}</h1>
-                    </div>
+        <div className="package-detail-page">
+            <div className="detail-header" style={{ backgroundImage: `url(${pacote.imagem})` }}>
+                <div className="detail-header-overlay">
+                    <h1>{pacote.nome}</h1>
                 </div>
+            </div>
 
                 <div className="detail-content">
                     <div className="detail-main-info">
@@ -299,9 +293,6 @@ const DetalhesPacote = () => {
                         <button className="buy-package-button">COMPRAR PACOTE AGORA</button>
                     </div>
                 </div>
-            </main>
-
-            <Footer />
 
             <Modal isOpen={isModalOpen} onClose={closeModal}>
                 <AuthModal />

@@ -21,6 +21,14 @@ body {
   background-color: #f4f4f4;
 }
 
+/* 
+ * Regra de segurança para prevenir scroll horizontal 
+ * Aplica box-sizing consistente em todos os elementos
+ */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 /*
  * Esta é a classe principal que envolve cada página.
  * Eu a transformo em um container flexível vertical (column),
@@ -63,6 +71,7 @@ main {
   height: 70px; /* Altura do cabeçalho */
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px; /* Adiciona padding para evitar encostar nas bordas */
 }
 
 .menu-left, .menu-right {
@@ -392,11 +401,11 @@ main {
 }
 
 .custom-arrow.slick-next {
-  right: -50px;
+  right: 10px;
 }
 
 .custom-arrow.slick-prev {
-  left: -50px;
+  left: 10px;
 }
 
 /* Adiciono responsividade para telas menores */
@@ -459,6 +468,8 @@ main {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  padding: 20px; /* Adiciona padding para dar espaço nas bordas */
+  overflow-y: auto; /* Permite scroll vertical */
 }
 
 /* A caixa branca do modal. */
@@ -470,6 +481,9 @@ main {
   position: relative;
   width: 90%;
   max-width: 450px;
+  max-height: calc(100vh - 40px); /* Limita altura para não ultrapassar a tela */
+  overflow-y: auto; /* Permite scroll interno se necessário */
+  margin: auto; /* Centraliza verticalmente quando há scroll */
 }
 
 /* O botão de fechar (X) no canto do modal. */
@@ -524,7 +538,7 @@ main {
 .login-form form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px; /* Reduzido de 15px para 12px para economizar espaço */
 }
 
 .login-form .form-group {
@@ -534,7 +548,7 @@ main {
 
 .login-form label {
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 6px; /* Reduzido de 8px para 6px */
   color: #333;
 }
 
@@ -636,6 +650,28 @@ main {
   font-size: 0.9rem;
   margin-bottom: 20px;
   text-align: center;
+}
+
+/* Responsividade para modals em telas menores */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: 20px; /* Reduz padding em telas pequenas */
+    margin: 10px; /* Adiciona margem nas bordas */
+  }
+  
+  .login-form {
+    padding: 20px; /* Reduz padding interno */
+    margin: 20px auto; /* Reduz margem */
+  }
+  
+  .login-form form {
+    gap: 10px; /* Ainda menor gap em mobile */
+  }
+  
+  .login-form label {
+    margin-bottom: 4px; /* Menor espaçamento em mobile */
+  }
 }
 
 
@@ -1021,6 +1057,76 @@ main {
 .destination-card-overlay p {
   margin: 0;
   font-size: 1rem;
+}
+
+/* Estilos específicos para as setas do carrossel de destinos */
+.destination-carousel-row .custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 90, 156, 0.8);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.destination-carousel-row .custom-arrow:hover {
+  background: rgba(0, 90, 156, 1);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.destination-carousel-row .custom-arrow-next {
+  right: 10px;
+}
+
+.destination-carousel-row .custom-arrow-prev {
+  left: 10px;
+}
+
+/* Estilos para o carrossel de banner da página inicial */
+.banner-carousel {
+  position: relative;
+}
+
+.banner-carousel .custom-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 60px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.banner-carousel .custom-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.banner-carousel .custom-arrow-next {
+  right: 20px;
+}
+
+.banner-carousel .custom-arrow-prev {
+  left: 20px;
 }
 
 

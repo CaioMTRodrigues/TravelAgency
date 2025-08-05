@@ -16,6 +16,7 @@ const BannerCarousel = () => {
   // e 'autoplay: true' faz ele passar as imagens sozinho.
   const settings = {
     dots: true,
+    arrows: true, // Habilita as setas de navegação
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -23,7 +24,10 @@ const BannerCarousel = () => {
     autoplay: true,
     autoplaySpeed: 5000, // 5 segundos por imagem
     fade: true,
-    cssEase: 'linear'
+    cssEase: 'linear',
+    // Setas personalizadas com classes CSS
+    nextArrow: <div className="custom-arrow custom-arrow-next">›</div>,
+    prevArrow: <div className="custom-arrow custom-arrow-prev">‹</div>,
   };
 
   // Criei uma lista (array) com as imagens que importei lá em cima.

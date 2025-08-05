@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Mantendo HTTP na porta 5000 como padrão do projeto
+  baseURL: "https://localhost:5001/api", // Corrigido para HTTPS na porta 5001
   headers: {
     "Content-Type": "application/json",
   },
