@@ -25,6 +25,8 @@ const CadastroPacote = () => {
   const [loading, setLoading] = useState(isEditing);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [camposComErro, setCamposComErro] = useState([]);
+
 
   useEffect(() => {
     if (isEditing) {
@@ -75,34 +77,69 @@ const CadastroPacote = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
+  e.preventDefault();
+  setError('');
+  setSuccess('');
+  setCamposComErro([]); // limpa erros anteriores
 
-    for (const key in pacote) {
-      if (pacote[key] === '' && key !== 'id_pacote') {
-        setError('Todos os campos são obrigatórios.');
-        return;
-      }
+  const camposComErroTemp = [];
+
+  // Verifica campos obrigatórios
+  for (const key in pacote) {
+    if (pacote[key] === '' && key !== 'id_pacote') {
+      camposComErroTemp.push(key);
+    }
+  }
+
+  // Verifica valor
+  if (parseFloat(pacote.valor) <= 0) {
+    camposComErroTemp.push('valor');
+  }
+
+  // Se houver erros, exibe mensagem e aplica estilos
+  if (camposComErroTemp.length > 0) {
+    setCamposComErro(camposComErroTemp);
+    setError('Todos os campos são obrigatórios e o valor deve ser maior que zero.');
+    return;
+  }
+
+  try {
+    if (isEditing) {
+      await atualizarPacote(id, pacote);
+      setSuccess('Pacote atualizado com sucesso! Redirecionando...');
+    } else {
+      await cadastrarPacote(pacote);
+      setSuccess('Pacote cadastrado com sucesso! Redirecionando...');
     }
 
-    try {
-      if (isEditing) {
-        await atualizarPacote(id, pacote);
-        setSuccess('Pacote atualizado com sucesso! Redirecionando...');
-      } else {
-        await cadastrarPacote(pacote);
-        setSuccess('Pacote cadastrado com sucesso! Redirecionando...');
-      }
-      
-      setTimeout(() => {
-        navigate('/admin/pacotes');
-      }, 2000);
+    setTimeout(() => {
+      navigate('/admin/pacotes');
+    }, 2000);
 
-    } catch (err) {
-      setError(err.message || `Ocorreu um erro ao ${isEditing ? 'atualizar' : 'cadastrar'} o pacote.`);
+  } catch (err) {
+    if (err.response && err.response.data) {
+      const { message, errors } = err.response.data;
+      const mensagens = Object.values(errors || {}).flat();
+      const mensagemFinal = mensagens.length > 0 ? mensagens[0] : message;
+
+      setError(mensagemFinal);
+
+      // Exemplo: se for erro de datas, destaca os campos
+      const camposErroDetectados = [];
+      if (mensagemFinal.toLowerCase().includes('data')) {
+        camposErroDetectados.push('dataInicio', 'dataFim');
+      }
+      if (mensagemFinal.toLowerCase().includes('valor')) {
+        camposErroDetectados.push('valor');
+      }
+
+      setCamposComErro(camposErroDetectados);
+    } else {
+      setError('Erro inesperado ao processar o pacote.');
     }
-  };
+  }
+};
+
 
   if (loading) {
     return <Spinner />;
@@ -130,19 +167,43 @@ const CadastroPacote = () => {
               <label><FaClock /> Duração (dias)</label>
               <input type="number" name="duracaoDias" value={pacote.duracaoDias} onChange={handleChange} placeholder="Ex: 7" />
             </div>
+            
             <div className="form-group">
               <label><FaDollarSign /> Valor (R$)</label>
-              <input type="number" name="valor" value={pacote.valor} onChange={handleChange} placeholder="Ex: 1500.00" step="0.01" />
+              <input
+  type="number"
+  name="valor"
+  value={pacote.valor}
+  onChange={handleChange}
+  placeholder="Ex: 1500.00"
+  step="0.01"
+  className={camposComErro.includes('valor') ? 'input-error' : ''}
+/>
+
             </div>
           </div>
           <div className="form-group-inline">
             <div className="form-group">
               <label><FaCalendarAlt /> Data de Início</label>
-              <input type="date" name="dataInicio" value={pacote.dataInicio} onChange={handleChange} />
+              <input
+  type="date"
+  name="dataInicio"
+  value={pacote.dataInicio}
+  onChange={handleChange}
+  className={camposComErro.includes('dataInicio') ? 'input-error' : ''}
+/>
+
             </div>
             <div className="form-group">
               <label><FaCalendarAlt /> Data de Fim</label>
-              <input type="date" name="dataFim" value={pacote.dataFim} onChange={handleChange} />
+              <input
+  type="date"
+  name="dataFim"
+  value={pacote.dataFim}
+  onChange={handleChange}
+  className={camposComErro.includes('dataFim') ? 'input-error' : ''}
+/>
+
             </div>
           </div>
           <div className="form-group">
@@ -175,9 +236,10 @@ const CadastroPacote = () => {
           <div className="package-info-preview">
             <h3 className="package-name-preview">{pacote.titulo || 'Título do Pacote'}</h3>
             <p className="package-description-preview">{pacote.descricao || 'A descrição do seu pacote aparecerá aqui.'}</p>
-            <p className="package-price-preview">
-              {pacote.valor ? `R$ ${parseFloat(pacote.valor).toFixed(2)}` : 'R$ 0.00'}
-            </p>
+            <p className={`package-price-preview ${parseFloat(pacote.valor) <= 0 ? 'input-error' : ''}`}>
+  {pacote.valor ? `R$ ${parseFloat(pacote.valor).toFixed(2)}` : 'R$ 0.00'}
+</p>
+
             <button className="btn-details-preview" disabled>Ver Detalhes</button>
           </div>
         </div>

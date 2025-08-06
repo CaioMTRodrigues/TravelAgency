@@ -9,16 +9,24 @@
 }
 
 .form-column {
-  flex: 2;
+  flex: 2
+  
 }
 
 .preview-column {
-  flex: 1;
+  
+flex: 1;
   background-color: #fff;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-  align-self: flex-start; /* Alinha no topo */
+  align-self: flex-start;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  max-width: 350px; /* evita que ultrapasse o container */
+
+  
 }
 
 .form-title, .preview-title {
@@ -36,6 +44,7 @@
 .form-group {
   display: flex;
   flex-direction: column;
+  margin-bottom: 20px
 }
 
 .form-group label {
@@ -69,7 +78,8 @@
 
 .form-group-inline {
   display: flex;
-  gap: 20px;
+  gap: 50px;
+  
 }
 
 .form-group-inline .form-group {
@@ -154,4 +164,16 @@
   background-color: #005A9C;
   color: white;
   font-weight: 500;
+}
+
+/*  botao */
+
+.input-error {
+  border: 2px solid #dc3545;
+  background-color: #f8d7da;
+}
+
+.texto-vermelho {
+  color: red;
+  font-weight: bold;
 }
