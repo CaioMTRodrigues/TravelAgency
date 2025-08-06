@@ -62,7 +62,6 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("forgot-password")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> ForgotPassword([FromBody] PasswordRecoveryRequestDto dto)
         {
             await _userService.ForgotPasswordAsync(dto.Email);
@@ -70,7 +69,6 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("reset-password")]
-        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> ResetPassword([FromBody] PasswordResetDto dto)
         {
             var result = await _userService.ResetPasswordAsync(dto.Token, dto.NewPassword);

@@ -1,37 +1,38 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 19/07/2025
-// 📁 Arquivo: PaymentController
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Controller responsável por gerenciar pagamentos
-// -----------------------------------------------------------------------------
-
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
+using WebApplication1.Services;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")] // Define a rota como: api/payment
+    [Route("api/[controller]")]
     public class PaymentController : ControllerBase
     {
         private readonly IRepository<Payment, int> _repository;
         private readonly IMapper _mapper;
+        private readonly PayPalService _payPalService;
+        private readonly ReservationService _reservationService;
 
-        // Construtor com injeção de dependência do repositório e do AutoMapper
-        public PaymentController(IRepository<Payment, int> repository, IMapper mapper)
+        public PaymentController(
+            IRepository<Payment, int> repository,
+            IMapper mapper,
+            PayPalService payPalService,
+            ReservationService reservationService)
         {
             _repository = repository;
             _mapper = mapper;
+            _payPalService = payPalService;
+            _reservationService = reservationService;
         }
 
-        // GET: api/payment
-        // Retorna todos os pagamentos cadastrados
         [HttpGet]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<PaymentDto>>> GetAll()
@@ -41,8 +42,6 @@ namespace WebApplication1.Controllers
             return Ok(result);
         }
 
-        // GET: api/payment/{id}
-        // Retorna um pagamento específico pelo ID
         [HttpGet("{id}")]
         [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<PaymentDto>> GetById(int id)
@@ -55,20 +54,89 @@ namespace WebApplication1.Controllers
             return Ok(dto);
         }
 
-        // POST: api/payment
-        // Cria um novo pagamento
-        [HttpPost]
-        [Authorize(Roles = "User")]
-        public async Task<ActionResult> Create(CreatePaymentDto dto)
+        [HttpPost("create-paypal-order")]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> CreatePayPalOrder([FromBody] PaymentRequestDto paymentRequest)
         {
-            var payment = _mapper.Map<Payment>(dto);
-            await _repository.AddAsync(payment);
+            try
+            {
+                var reservation = await _reservationService.ObterPorIdAsync(paymentRequest.ReservationId);
+                if (reservation == null)
+                {
+                    throw new NotFoundException("Reserva", paymentRequest.ReservationId);
+                }
 
-            return CreatedAtAction(nameof(GetById), new { id = payment.Id_Pagamento }, dto);
+                var payPalOrderResponse = await _payPalService.CreateOrderAsync(reservation.ValorPacote, paymentRequest.Currency);
+
+                var newPayment = new Payment
+                {
+                    Id_Reserva = reservation.Id_Reserva,
+                    Valor = reservation.ValorPacote,
+                    Data_Pagamento = DateTime.UtcNow,
+                    Status = StatusPagamento.Pendente,
+                    Tipo = TipoPagamento.PayPal,
+                    PayPalOrderId = payPalOrderResponse.OrderId
+                };
+
+                await _repository.AddAsync(newPayment);
+
+                return Ok(new { orderId = payPalOrderResponse.OrderId });
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Ocorreu um erro interno ao criar a ordem de pagamento.", details = ex.Message });
+            }
         }
 
-        // PUT: api/payment/{id}
-        // Atualiza um pagamento existente
+        [HttpPost("capture-paypal-order")]
+        [Authorize(Roles = "User, Admin")]
+        public async Task<IActionResult> CapturePayPalOrder([FromBody] CaptureOrderRequestDto captureRequest)
+        {
+            try
+            {
+                bool isSuccess = await _payPalService.CaptureOrderAsync(captureRequest.OrderId);
+
+                if (isSuccess)
+                {
+                    // Usamos o método específico do nosso repositório para buscar o pagamento
+                    var payment = await ((PaymentRepository)_repository).GetByPayPalOrderIdAsync(captureRequest.OrderId);
+                    if (payment == null)
+                    {
+                        throw new NotFoundException("Pagamento", captureRequest.OrderId);
+                    }
+
+                    payment.Status = StatusPagamento.Aprovado;
+                    payment.Data_Pagamento = DateTime.UtcNow;
+                    await _repository.UpdateAsync(payment);
+
+                    return Ok(new { status = "Pagamento aprovado com sucesso." });
+                }
+                else
+                {
+                    // Se a captura falhar na API do PayPal, atualizamos nosso status para Falhou
+                    var payment = await ((PaymentRepository)_repository).GetByPayPalOrderIdAsync(captureRequest.OrderId);
+                    if (payment != null)
+                    {
+                        payment.Status = StatusPagamento.Falhou;
+                        await _repository.UpdateAsync(payment);
+                    }
+                    return BadRequest(new { error = "Não foi possível capturar o pagamento." });
+                }
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Ocorreu um erro interno ao capturar o pagamento.", details = ex.Message });
+            }
+        }
+
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Update(int id, CreatePaymentDto dto)
@@ -80,11 +148,9 @@ namespace WebApplication1.Controllers
             _mapper.Map(dto, existing);
             await _repository.UpdateAsync(existing);
 
-            return NoContent(); // 204 - Atualização bem-sucedida
+            return NoContent();
         }
 
-        // DELETE: api/payment/{id}
-        // Remove um pagamento pelo ID
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
@@ -94,7 +160,13 @@ namespace WebApplication1.Controllers
                 throw new NotFoundException("Pagamento", id);
 
             await _repository.DeleteAsync(id);
-            return NoContent(); // 204 - Exclusão bem-sucedida
+            return NoContent();
         }
+    }
+
+    // DTO auxiliar para o corpo da requisição de captura
+    public class CaptureOrderRequestDto
+    {
+        public string OrderId { get; set; }
     }
 }

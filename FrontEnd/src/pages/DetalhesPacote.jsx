@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-
-import Footer from '../components/Footer';
+// Header e Footer removidos - já são renderizados globalmente no App.js
 import Modal from '../components/Modal';
 import AuthModal from '../components/AuthModal';
 import Spinner from '../components/Spinner';
@@ -89,30 +88,23 @@ const DetalhesPacote = () => {
     }).format(valorConvertido);
   };
 
-  if (loading) return <Spinner />;
+    if (!pacote) {
+        return (
+            <div className="home">
+                <main style={{ padding: '40px', textAlign: 'center' }}>
+                    <h2>Carregando detalhes do pacote...</h2>
+                </main>
+            </div>
+        );
+    }
 
-  if (!pacote) {
     return (
-      <div className="home">
-        
-        <main style={{ padding: '40px', textAlign: 'center' }}>
-          <h2>Pacote não encontrado.</h2>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  return (
-    <div className="home">
-      
-
-      <main className="package-detail-page">
-        <div className="detail-header" style={{ backgroundImage: `url(${pacote.imagemUrl})` }}>
-          <div className="detail-header-overlay">
-            <h1>{pacote.titulo}</h1>
-          </div>
-        </div>
+        <div className="package-detail-page">
+            <div className="detail-header" style={{ backgroundImage: `url(${pacote.imagem})` }}>
+                <div className="detail-header-overlay">
+                    <h1>{pacote.nome}</h1>
+                </div>
+            </div>
 
         <div className="detail-content">
           <div className="detail-main-info">
@@ -172,12 +164,9 @@ const DetalhesPacote = () => {
               <p className="price-value">{converterMoeda(pacote.valor)}</p>
             </div>
 
-            <button className="buy-package-button">COMPRAR PACOTE AGORA</button>
-          </div>
-        </div>
-      </main>
-
-      
+                        <button className="buy-package-button">COMPRAR PACOTE AGORA</button>
+                    </div>
+                </div>
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <AuthModal />

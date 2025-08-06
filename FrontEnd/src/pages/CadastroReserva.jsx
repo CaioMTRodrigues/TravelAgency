@@ -123,16 +123,15 @@ const CadastroReserva = () => {
                 id_Usuario: idUsuario,
                 id_Pacote: parseInt(id),
                 data_Reserva: new Date().toISOString(),
-                status: 'Pendente'
+                status: 'Pendente' // O status será atualizado para 'Pago' após o sucesso do Stripe
             });
 
             if (acompanhantes.length > 0) {
                 await Promise.all(acompanhantes.map(v => vincularViajanteReserva(reservaCriada.id_Reserva, v.id_Viajante)));
             }
             
-            // Simulação de redirecionamento para pagamento (ou outra página)
-            alert("Reserva confirmada! Redirecionando para a próxima etapa.");
-            navigate('/minhas-reservas'); // Ou para a página de pagamento no futuro
+            // REDIRECIONAMENTO PARA A PÁGINA DE PAGAMENTO COM O ID DA RESERVA
+            navigate(`/pagamento/${reservaCriada.id_Reserva}`);
 
         } catch (err) {
             setError(err.message || "Ocorreu um erro ao processar sua reserva.");

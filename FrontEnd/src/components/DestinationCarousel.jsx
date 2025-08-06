@@ -8,10 +8,14 @@ const DestinationCarousel = ({ title, icon, destinations = [] }) => {
   // Estas são as configurações do meu carrossel (quantos cards mostrar, etc.)
   const settings = {
     dots: false, // Não mostra os pontinhos de navegação
+    arrows: true, // Habilita as setas de navegação
     infinite: false, // O carrossel não volta ao início quando chega no fim
     speed: 500,
     slidesToShow: 4, // Mostra 4 cards por vez em telas grandes
     slidesToScroll: 1,
+    // Setas personalizadas com classes CSS
+    nextArrow: <div className="custom-arrow custom-arrow-next">›</div>,
+    prevArrow: <div className="custom-arrow custom-arrow-prev">‹</div>,
     // A parte 'responsive' ajusta quantos slides aparecem em telas menores.
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 3 } },

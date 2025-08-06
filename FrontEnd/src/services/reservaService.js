@@ -25,13 +25,25 @@ export const atualizarStatusReserva = async (id, status) => {
 
 // Sua função existente para cadastrar uma nova reserva
 export const cadastrarReserva = async (dados) => {
-  try {
-    const response = await api.post("/reservation", dados);
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao cadastrar reserva:", error.response?.data);
-    throw new Error(
-      error.response?.data?.message || "Erro ao cadastrar reserva."
-    );
-  }
+    try {
+        const response = await api.post("/reservation", dados);
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao cadastrar reserva:", error.response?.data);
+        throw new Error(
+            error.response?.data?.message || "Erro ao cadastrar reserva."
+        );
+    }
+};
+
+// NOVA FUNÇÃO: Buscar reserva por ID
+// Esta função é necessária para obter os detalhes da reserva na página de pagamento
+export const getReservaById = async (id) => {
+    try {
+        const response = await api.get(`/reservation/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error(`Erro ao buscar reserva com ID ${id}:`, error);
+        throw error;
+    }
 };

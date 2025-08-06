@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+// Header e Footer removidos - já são renderizados globalmente no App.js
 import Modal from '../components/Modal';
 import AuthModal from '../components/AuthModal';
 import { Link } from 'react-router-dom';
@@ -163,7 +162,6 @@ const Quiz = () => {
 
   return (
     <div className="home">
-      <Header onLoginClick={openModal} />
       <main className="quiz-page">
         <div className="quiz-container">
           {showResult ? (
@@ -195,7 +193,6 @@ const Quiz = () => {
           )}
         </div>
       </main>
-      <Footer />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <AuthModal />
       </Modal>

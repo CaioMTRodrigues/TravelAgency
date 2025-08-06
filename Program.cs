@@ -43,6 +43,12 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<PackageService>();
 
+// --- ALTERAÇÃO AQUI ---
+// Adicionando o novo PayPalService e configurando o HttpClient para ele.
+builder.Services.AddHttpClient<PayPalService>();
+builder.Services.AddScoped<PayPalService>();
+// --- FIM DA ALTERAÇÃO ---
+
 // 🔐 Identity
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -98,8 +104,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         policy => policy.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
 });
 
 // ✅ Autorização
@@ -114,6 +120,12 @@ builder.Services.AddControllers(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
+// --- ALTERAÇÃO AQUI ---
+// Removendo o registro do serviço de pagamento antigo (Stripe)
+// builder.Services.AddSingleton<PaymentService>(); // LINHA REMOVIDA
+// --- FIM DA ALTERAÇÃO ---
+
 
 // ❌ Desativa validação automática do ModelState
 builder.Services.Configure<ApiBehaviorOptions>(options =>

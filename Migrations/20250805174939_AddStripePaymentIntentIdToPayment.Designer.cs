@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApplication1.Data;
 
@@ -11,9 +12,11 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250805174939_AddStripePaymentIntentIdToPayment")]
+    partial class AddStripePaymentIntentIdToPayment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -346,23 +349,23 @@ namespace WebApplication1.Migrations
                     b.Property<int>("Id_Reserva")
                         .HasColumnType("int");
 
-                    b.Property<string>("PayPalOrderId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Tipo")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18, 2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id_Pagamento");
 
                     b.HasIndex("Id_Reserva");
 
-                    b.ToTable("Pagamentos");
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>
@@ -523,14 +526,14 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Entities.Payment", b =>
                 {
-                    b.HasOne("WebApplication1.Entities.Reservation", "Reservation")
+                    b.HasOne("WebApplication1.Entities.Reservation", "Reserva")
                         .WithMany("Pagamentos")
                         .HasForeignKey("Id_Reserva")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_Payments_Reservations_Id_Reserva");
 
-                    b.Navigation("Reservation");
+                    b.Navigation("Reserva");
                 });
 
             modelBuilder.Entity("WebApplication1.Entities.Reservation", b =>

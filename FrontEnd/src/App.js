@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import './assets/styles/App.css';
 
+// Importações do Stripe
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
 // Componentes
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminRoute from './components/AdminRoute';
 import Modal from './components/Modal'; // Importando o Modal
 import AuthModal from './components/AuthModal'; // Importando o conteúdo do Modal
+import FormasPagamento from './components/FormasPagamento'; // Importa o novo componente de pagamento
+import ProtectedRoute from './components/ProtectedRoute'; // Adicione esta linha
 
 // Páginas
 import HomePage from './pages/HomePage';
@@ -20,13 +26,26 @@ import AvaliacoesClientes from './pages/avaliacoesClientes';
 import Quiz from './pages/Quiz';
 import Cadastro from './pages/Cadastro';
 import Login from './pages/Login';
+import EsqueciSenha from './pages/EsqueciSenha';
+import RedefinirSenha from './pages/RedefinirSenha';
 import MinhasReservas from './pages/MinhasReservas';
 import CadastroReserva from './pages/CadastroReserva';
+
+// Páginas Admin
 import AdminDashboard from './pages/Admin/AdminDashboard';
 import AdminPacotes from './pages/Admin/AdminPacotes';
 import CadastroPacote from './pages/Admin/CadastroPacote';
 import AdminReservas from './pages/Admin/AdminReservas';
 import AdminAvaliacoes from './pages/Admin/AdminAvaliacoes';
+
+// *******************************************************************
+// FIM DAS DECLARAÇÕES IMPORT.
+// AGORA PODEM VIR OUTRAS CONSTANTES GLOBAIS OU FUNÇÕES DE SETUP.
+// *******************************************************************
+
+// Sua chave pública de teste do Stripe
+// Substitua 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY' pela sua chave real (pk_test_...)
+const stripePromise = loadStripe('pk_test_51RsXohK875ivmNhbboO4tRfgOn33YOsnhf2bop3Qft8eV5jS5xT7Fjb0NFPYQifCsmZZ6EjLNDJJ4PFufslri1xv008wVtOnkt'); // Exemplo de chave, substitua pela sua!
 
 // Componente Wrapper para passar o estado do modal ao Header
 const AppContent = () => {
@@ -60,10 +79,24 @@ const AppContent = () => {
             {/* Rotas de Autenticação (mantidas para acesso direto via URL, se desejado) */}
             <Route path="/login" element={<Login />} />
             <Route path="/cadastro" element={<Cadastro />} />
+            <Route path="/esqueci-senha" element={<EsqueciSenha />} />
+            <Route path="/redefinir-senha" element={<RedefinirSenha />} />
             
             {/* Rotas de Usuário Logado */}
-            <Route path="/minhas-reservas" element={<MinhasReservas />} />
-            <Route path="/reservar/:id" element={<CadastroReserva />} />
+            <Route 
+                path="/minhas-reservas" 
+                element={<ProtectedRoute><MinhasReservas /></ProtectedRoute>} 
+            />
+            <Route 
+                path="/reservar/:id" 
+                element={<ProtectedRoute><CadastroReserva /></ProtectedRoute>} 
+            />
+            <Route 
+                path="/pagamento/:id" 
+                element={<ProtectedRoute><FormasPagamento /></ProtectedRoute>} 
+            />
+            {/* Nova rota para o formulário de pagamento do Stripe */}
+            <Route path="/pagamento/:id" element={<FormasPagamento />} />
 
             {/* Rotas Protegidas para Administradores */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
@@ -86,7 +119,10 @@ const AppContent = () => {
 function App() {
   return (
     <Router>
-      <AppContent />
+      {/* O componente Elements do Stripe deve envolver os componentes que usam o Stripe */}
+      <Elements stripe={stripePromise}>
+        <AppContent />
+      </Elements>
     </Router>
   );
 }

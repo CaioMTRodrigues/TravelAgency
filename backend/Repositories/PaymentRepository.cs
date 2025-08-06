@@ -1,12 +1,6 @@
-﻿// -----------------------------------------------------------------------------
-// 🧠 Autor: Ericson Sérgio Costa Soares
-// 📅 Criado em: 19/07/2025
-// 📁 Arquivo: PaymentRepository
-// 📦 Projeto: TravelAgency
-// 🚀 Descrição: Repositório para operações CRUD da entidade Payment
-// -----------------------------------------------------------------------------
-
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApplication1.Data;
 using WebApplication1.Entities;
 
@@ -14,50 +8,54 @@ namespace WebApplication1.Repositories
 {
     public class PaymentRepository : IRepository<Payment, int>
     {
-        private readonly ApplicationDbContext _appDbContext;
+        private readonly ApplicationDbContext _context;
 
-        // Injeta o contexto do banco de dados
-        public PaymentRepository(ApplicationDbContext appDbContext)
+        public PaymentRepository(ApplicationDbContext context)
         {
-            _appDbContext = appDbContext;
+            _context = context;
         }
 
-        // Retorna todos os pagamentos cadastrados
         public async Task<IEnumerable<Payment>> GetAllAsync()
         {
-            return await _appDbContext.Payments.ToListAsync();
+            return await _context.Payments.ToListAsync();
         }
 
-        // Busca um pagamento pelo ID
-        public async Task<Payment?> GetByIdAsync(int id)
+        public async Task<Payment> GetByIdAsync(int id)
         {
-            return await _appDbContext.Payments.FindAsync(id);
+            return await _context.Payments.FindAsync(id);
         }
 
-        // Adiciona um novo pagamento
         public async Task AddAsync(Payment entity)
         {
-            await _appDbContext.Payments.AddAsync(entity);
-            await _appDbContext.SaveChangesAsync();
+            await _context.Payments.AddAsync(entity);
+            await _context.SaveChangesAsync();
         }
 
-        // Atualiza um pagamento existente
         public async Task UpdateAsync(Payment entity)
         {
-            _appDbContext.Payments.Update(entity);
-            await _appDbContext.SaveChangesAsync();
+            _context.Entry(entity).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
         }
 
-        // Remove um pagamento pelo ID
         public async Task DeleteAsync(int id)
         {
-            var payment = await GetByIdAsync(id);
-
-            if (payment != null)
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
             {
-                _appDbContext.Payments.Remove(payment);
-                await _appDbContext.SaveChangesAsync();
+                _context.Payments.Remove(entity);
+                await _context.SaveChangesAsync();
             }
         }
+
+        // --- MÉTODO NOVO AQUI ---
+        /// <summary>
+        /// Busca um pagamento no banco de dados pelo ID da ordem do PayPal.
+        /// </summary>
+        public async Task<Payment> GetByPayPalOrderIdAsync(string orderId)
+        {
+            return await _context.Payments
+                .FirstOrDefaultAsync(p => p.PayPalOrderId == orderId);
+        }
+        // --- FIM DO NOVO MÉTODO ---
     }
 }

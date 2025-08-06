@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+// Header e Footer removidos - já são renderizados globalmente no App.js
 import Modal from "../components/Modal";
 import AuthModal from "../components/AuthModal";
 import { FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaHourglassHalf, FaTag } from "react-icons/fa";
@@ -32,8 +31,6 @@ import "./../assets/styles/styles.css";const MinhasReservas = () => {
 
   return (
     <div className="home">
-      <Header onLoginClick={openModal} />
-
       <main className="my-reservations-page">
         <div className="reservations-header">
           <h1>Minhas Reservas</h1>
@@ -73,8 +70,6 @@ import "./../assets/styles/styles.css";const MinhasReservas = () => {
           </div>
         )}
       </main>
-
-      <Footer />
 
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <AuthModal />
