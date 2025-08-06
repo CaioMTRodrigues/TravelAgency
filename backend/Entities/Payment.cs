@@ -1,44 +1,59 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace WebApplication1.Entities
 {
-    // Enum para os tipos de pagamento disponíveis
+    // Enum para os tipos de pagamento
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum TipoPagamento
     {
-        Cartao_Credito,    // Pagamento via cartão de crédito 
-        Cartao_Debito,     // Pagamento via cartoa de débito
-        Pix,               // Pagamento instantâneo via Pix
-        Boleto             // Pagamento via boleto bancário
+        Cartao_Credito,
+        Boleto,
+        Transferencia_Bancaria,
+        PayPal // <-- ADICIONADO AQUI
     }
 
-    // Enum para os status possíveis de um pagamento
+    // Enum para os status do pagamento
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum StatusPagamento
     {
-        Pago,       // Pagamento concluído com sucesso
-        Pendente,   // Pagamento ainda não realizado
-        Cancelado   // Pagamento cancelado
+        Pendente,
+        Aprovado, // <-- ADICIONADO AQUI
+        Falhou,   // <-- ADICIONADO AQUI
+        Cancelado
     }
 
+    [Table("Pagamentos")]
     public class Payment
     {
         [Key]
         public int Id_Pagamento { get; set; }
 
-        public TipoPagamento Tipo { get; set; }
-        public StatusPagamento Status { get; set; }
+        [Required]
+        [ForeignKey("Reservation")]
+        public int Id_Reserva { get; set; }
+        public virtual Reservation Reservation { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(18, 2)")]
         public decimal Valor { get; set; }
+
+        [Required]
         public DateTime Data_Pagamento { get; set; }
 
-        public int Id_Reserva { get; set; }
+        [Required]
+        public StatusPagamento Status { get; set; }
 
-        // NOVA PROPRIEDADE: Armazena o ID do PaymentIntent do Stripe
-        // Pode ser nulo caso o pagamento não seja via Stripe ou antes de ser processado
-        public string? StripePaymentIntentId { get; set; }
+        [Required]
+        public TipoPagamento Tipo { get; set; }
 
-        [ForeignKey("Id_Reserva")]
-        public Reservation Reserva { get; set; }
+        // Campo para armazenar o ID da ordem do PayPal
+        public string? PayPalOrderId { get; set; }
+
+        // O campo do Stripe pode ser removido ou mantido para referência histórica, se necessário.
+        // Se for removê-lo, lembre-se de criar uma nova migração.
+        // public string? StripePaymentIntentId { get; set; }
     }
 }
-
