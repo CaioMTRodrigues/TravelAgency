@@ -102,10 +102,14 @@ builder.Services.AddScoped<JwtService>(provider =>
 // 🌍 CORS
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll",
-        policy => policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader());
+    options.AddPolicy("AllowMyReactApp",
+        policy =>
+        {
+            // Permite especificamente a origem do seu frontend
+            policy.WithOrigins("http://localhost:3000")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
 });
 
 // ✅ Autorização
@@ -120,12 +124,6 @@ builder.Services.AddControllers(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
-
-// --- ALTERAÇÃO AQUI ---
-// Removendo o registro do serviço de pagamento antigo (Stripe)
-// builder.Services.AddSingleton<PaymentService>(); // LINHA REMOVIDA
-// --- FIM DA ALTERAÇÃO ---
-
 
 // ❌ Desativa validação automática do ModelState
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -156,7 +154,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 // 🌐 Pipeline de requisições
-app.UseCors("AllowAll");
+app.UseCors("AllowMyReactApp");
 
 if (app.Environment.IsDevelopment())
 {

@@ -2,10 +2,6 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import './assets/styles/App.css';
 
-// Importações do Stripe
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
-
 // Componentes
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -42,10 +38,6 @@ import AdminAvaliacoes from './pages/Admin/AdminAvaliacoes';
 // FIM DAS DECLARAÇÕES IMPORT.
 // AGORA PODEM VIR OUTRAS CONSTANTES GLOBAIS OU FUNÇÕES DE SETUP.
 // *******************************************************************
-
-// Sua chave pública de teste do Stripe
-// Substitua 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY' pela sua chave real (pk_test_...)
-const stripePromise = loadStripe('pk_test_51RsXohK875ivmNhbboO4tRfgOn33YOsnhf2bop3Qft8eV5jS5xT7Fjb0NFPYQifCsmZZ6EjLNDJJ4PFufslri1xv008wVtOnkt'); // Exemplo de chave, substitua pela sua!
 
 // Componente Wrapper para passar o estado do modal ao Header
 const AppContent = () => {
@@ -120,9 +112,7 @@ function App() {
   return (
     <Router>
       {/* O componente Elements do Stripe deve envolver os componentes que usam o Stripe */}
-      <Elements stripe={stripePromise}>
         <AppContent />
-      </Elements>
     </Router>
   );
 }
