@@ -10,12 +10,12 @@ import "./assets/styles/App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AdminRoute from "./components/AdminRoute";
-import Modal from "./components/Modal"; 
-import AuthModal from "./components/AuthModal"; 
+import Modal from "./components/Modal";
+import AuthModal from "./components/AuthModal";
 import FormasPagamento from "./components/FormasPagamento";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// Páginas (imports mantidos como no seu arquivo original)
+// Páginas
 import HomePage from "./pages/HomePage";
 import Pacotes from "./pages/Pacotes";
 import DetalhesPacote from "./pages/DetalhesPacote";
@@ -36,16 +36,18 @@ import CadastroPacote from "./pages/Admin/CadastroPacote";
 import AdminReservas from "./pages/Admin/AdminReservas";
 import AdminAvaliacoes from "./pages/Admin/AdminAvaliacoes";
 
+// --- NOVAS PÁGINAS IMPORTADAS ---
+import SobreNos from './pages/SobreNos';
+import TermosServico from './pages/TermosServico';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+
 // Componente Wrapper para passar o estado do modal ao Header
 const AppContent = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  // Este estado agora controla qual tela o modal vai mostrar: 'login' ou 'register'
-  const [modalView, setModalView] = useState('login'); 
+  const [modalView, setModalView] = useState('login');
 
   const openModal = (view) => {
-    // Define qual tela será exibida
-    setModalView(view); 
-    // Abre o modal
+    setModalView(view);
     setModalOpen(true);
   };
 
@@ -55,18 +57,13 @@ const AppContent = () => {
 
   return (
     <div className="App">
-      {/* *** CORREÇÃO APLICADA AQUI ***
-        - onLoginClick agora chama openModal com 'login'
-        - onRegisterClick agora chama openModal com 'register'
-      */}
       <Header
         onLoginClick={() => openModal('login')}
         onRegisterClick={() => openModal('register')}
       />
       <main>
         <Routes>
-          {/* ... (todas as suas rotas permanecem iguais) ... */}
-           {/* Rotas Públicas */}
+          {/* Rotas Públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/pacotes" element={<Pacotes />} />
           <Route path="/pacotes/:id" element={<DetalhesPacote />} />
@@ -76,7 +73,12 @@ const AppContent = () => {
           <Route path="/avaliacoes" element={<AvaliacoesClientes />} />
           <Route path="/quiz" element={<Quiz />} />
 
-          {/* Rotas de Autenticação (mantidas para acesso direto via URL, se desejado) */}
+          {/* --- NOVAS ROTAS ADICIONADAS --- */}
+          <Route path="/sobre-nos" element={<SobreNos />} />
+          <Route path="/termos-servico" element={<TermosServico />} />
+          <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+
+          {/* Rotas de Autenticação */}
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/esqueci-senha" element={<EsqueciSenha />} />
@@ -99,7 +101,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/pagamento/:id"
             element={
@@ -108,9 +109,7 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Nova rota para o formulário de pagamento do Stripe */}
-          <Route path="/pagamento/:id" element={<FormasPagamento />} />
-
+          
           {/* Rotas Protegidas para Administradores */}
           <Route
             path="/admin"
@@ -164,7 +163,6 @@ const AppContent = () => {
       </main>
       <Footer />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        {/* Passa a tela inicial para o AuthModal */}
         <AuthModal initialView={modalView} />
       </Modal>
     </div>

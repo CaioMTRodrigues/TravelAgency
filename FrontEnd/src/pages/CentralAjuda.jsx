@@ -1,102 +1,81 @@
-import React, { useState } from "react";
-// Header e Footer removidos - já são renderizados globalmente no App.js
-import Modal from "../components/Modal";
-import AuthModal from "../components/AuthModal";
-import AccordionItem from "../components/AccordionItem"; // Eu importo o componente de Acordeão que criei.
-import { FaCreditCard, FaPlaneDeparture, FaPhoneAlt } from "react-icons/fa";
+import React from "react";
+import AccordionItem from "../components/AccordionItem";
+import { FaRegCreditCard, FaRegLifeRing, FaRegUserCircle, FaRegFileAlt } from 'react-icons/fa';
 import "./../assets/styles/styles.css";
 
-// Este é o meu componente para a página da Central de Ajuda.
 const CentralAjuda = () => {
-  // Eu preciso do estado do modal aqui também, para que o botão de login no Header funcione nesta página.
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
-  // Criei uma lista com as perguntas e respostas do FAQ.
-  // Fica mais organizado e fácil de dar manutenção. No futuro, isso pode vir de uma API.
-  const faqs = [
+  const faqsReservas = [
     {
       title: "Como faço para reservar uma viagem?",
-      content: "O processo é simples! Basta navegar até a página de 'Pacotes', escolher o destino que mais lhe agrada, e clicar no botão para ver os detalhes e iniciar a reserva. Você será guiado passo a passo."
+      content: "É muito simples! Navegue até a página de 'Pacotes', escolha o destino dos seus sonhos, clique em 'Ver Detalhes' e siga as instruções na tela. Você precisará selecionar os viajantes e prosseguir para o pagamento."
     },
+    {
+      title: "Como sei se minha reserva foi confirmada?",
+      content: "Após a confirmação do pagamento, sua reserva mudará para o status 'Confirmada'. Você receberá um e-mail com todos os detalhes e também poderá ver o status atualizado na sua área de 'Minhas Reservas'."
+    }
+  ];
+
+  const faqsPagamentos = [
     {
       title: "Quais são as formas de pagamento aceitas?",
-      content: "Oferecemos diversas opções para sua comodidade. Aceitamos os principais cartões de crédito, com possibilidade de parcelamento, pagamento via PIX para aprovação imediata e também boleto bancário."
+      content: "Aceitamos pagamentos seguros via PayPal, que inclui saldo da conta e os principais cartões de crédito. No futuro, planejamos adicionar mais opções como PIX e boleto bancário."
     },
     {
-      title: "É possível alterar ou cancelar minha reserva?",
-      content: "Sim. As políticas de alteração e cancelamento podem variar de acordo com o pacote escolhido. Você pode consultar as condições específicas e solicitar alterações diretamente no seu painel de 'Minhas Reservas' após o login."
+      title: "O site é seguro para inserir meus dados de pagamento?",
+      content: "Sim, totalmente seguro. Todos os pagamentos são processados diretamente pelo PayPal, uma das plataformas mais seguras do mundo. Nós não armazenamos os dados do seu cartão de crédito."
+    }
+  ];
+
+  const faqsAlteracoes = [
+    {
+      title: "Posso alterar ou cancelar minha reserva?",
+      content: "As políticas de alteração e cancelamento variam conforme o pacote e a antecedência da solicitação. Para verificar as condições e solicitar uma alteração, acesse 'Minhas Reservas' e encontre a opção correspondente."
+    },
+    {
+      title: "Como solicito um reembolso?",
+      content: "Se sua reserva for elegível para reembolso de acordo com nossas políticas, o processo será iniciado automaticamente após o cancelamento. O prazo para o estorno pode variar dependendo da forma de pagamento."
     }
   ];
 
   return (
-    // Eu uso a classe 'home' para garantir que o layout com o rodapé fixo funcione aqui também.
-    <div className="home">
-      <main className="help-center-container">
-        <h1 className="help-center-title">Central de Ajuda</h1>
-        <p className="help-center-subtitle">
-          Olá! Como podemos te ajudar hoje?
-        </p>
+    <main className="help-center-container">
+      <h1 className="help-center-title">Central de Ajuda</h1>
+      <p className="help-center-subtitle">
+        Olá! Como podemos te ajudar hoje? Encontre respostas rápidas abaixo.
+      </p>
 
-        {/* Esta é a lista dos tópicos de ajuda que se expandem com o mouse. */}
-        <div className="help-topics-list">
-          <div className="help-topic-box">
-            <div className="topic-header">
-              <FaCreditCard size={28} />
-              <h3>Pagamentos</h3>
-            </div>
-            <div className="topic-content">
-              <p>Informações sobre parcelamento, PIX e outras formas de pagar.</p>
-              <a href="#">Saiba mais</a>
-            </div>
+      <div className="faq-section">
+        <h2><FaRegCreditCard /> Pagamentos</h2>
+        {faqsPagamentos.map((faq, index) => (
+          <AccordionItem key={index} title={faq.title} content={faq.content} />
+        ))}
+      </div>
+
+      <div className="faq-section">
+        <h2><FaRegLifeRing /> Reservas</h2>
+        {faqsReservas.map((faq, index) => (
+          <AccordionItem key={index} title={faq.title} content={faq.content} />
+        ))}
+      </div>
+
+      <div className="faq-section">
+        <h2><FaRegFileAlt /> Alterações e Cancelamentos</h2>
+        {faqsAlteracoes.map((faq, index) => (
+          <AccordionItem key={index} title={faq.title} content={faq.content} />
+        ))}
+      </div>
+
+      <div className="contact-section">
+          <h2><FaRegUserCircle /> Ainda precisa de ajuda?</h2>
+          <p>Se não encontrou o que procurava, nossa equipe está pronta para ajudar.</p>
+          <div className="contact-details">
+              <p><strong>E-mail:</strong> suporte@travelagency.com</p>
+              <p><strong>Telefone:</strong> (11) 4002-8922</p>
+              <p><strong>Horário de Atendimento:</strong> Seg a Sex, das 9h às 18h.</p>
           </div>
-
-          <div className="help-topic-box">
-            <div className="topic-header">
-              <FaPlaneDeparture size={28} />
-              <h3>Sua Viagem</h3>
-            </div>
-            <div className="topic-content">
-              <p>Detalhes sobre alteração, cancelamento e documentos.</p>
-              <a href="#">Saiba mais</a>
-            </div>
-          </div>
-
-          <div className="help-topic-box">
-            <div className="topic-header">
-              <FaPhoneAlt size={28} />
-              <h3>Fale Conosco</h3>
-            </div>
-            <div className="topic-content">
-              <p>Entre em contato com nossa equipe de especialistas.</p>
-              <a href="#">Saiba mais</a>
-            </div>
-          </div>
-        </div>
-
-        {/*
-          Esta é a seção do FAQ (Perguntas Frequentes).
-          Ela é centralizada na página para dar mais destaque.
-        */}
-        <div id="faq" className="faq-section">
-          <h2>Dúvidas Frequentes</h2>
-          {/*
-            Aqui eu uso o '.map()' para percorrer a minha lista de 'faqs'.
-            Para cada item, eu renderizo o meu componente 'AccordionItem',
-            passando a pergunta e a resposta para ele.
-          */}
-          {faqs.map((faq, index) => (
-            <AccordionItem key={index} title={faq.title} content={faq.content} />
-          ))}
-        </div>
-      </main>
-
-      {/* O modal de login também fica aqui, pronto para ser aberto. */}
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AuthModal />
-      </Modal>
-    </div>
+      </div>
+    </main>
   );
 };
 
