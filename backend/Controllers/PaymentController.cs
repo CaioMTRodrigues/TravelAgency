@@ -54,8 +54,9 @@ namespace WebApplication1.Controllers
             return Ok(dto);
         }
 
+        
         [HttpPost("create-paypal-order")]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> CreatePayPalOrder([FromBody] PaymentRequestDto paymentRequest)
         {
             try
@@ -93,7 +94,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost("capture-paypal-order")]
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin, USer")]
         public async Task<IActionResult> CapturePayPalOrder([FromBody] CaptureOrderRequestDto captureRequest)
         {
             try

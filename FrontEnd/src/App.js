@@ -92,7 +92,7 @@ const AppContent = () => {
             }
           />
           <Route
-            path="/reservar/:id_pacote"
+            path="/reservar/:id"
             element={
               <ProtectedRoute>
                 <CadastroReserva />
