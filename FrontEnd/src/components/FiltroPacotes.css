@@ -1,83 +1,171 @@
-.filtro-pacotes {
-  padding: 40px;
-  background-color: #f9f9f9;
+/* --- CONTAINER PRINCIPAL --- */
+.filtro-pacotes-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px; /* Adiciona um respiro nas laterais */
+}
+
+/* --- CARD DE FILTROS --- */
+.filtros-card {
+  background: white;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  margin-bottom: 50px; /* Aumenta a distância para os resultados */
+  margin-top: -100px; /* Efeito para sobrepor o banner da página */
+  position: relative;
+  z-index: 2;
+}
+
+.filtros-card h2 {
   text-align: center;
-}
-
-.filtro-pacotes h2 {
-  font-size: 2rem;
-  margin-bottom: 20px;
+  margin-top: 0;
+  margin-bottom: 25px;
   color: #333;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
-.filtros {
+.filtros-wrapper {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  margin-bottom: 30px;
-  flex-wrap: wrap;
+  gap: 20px;
+  flex-wrap: wrap; /* Permite que os filtros quebrem para a linha de baixo em telas menores */
 }
 
-.filtros input {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.filtro-item label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filtro-item input {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   font-size: 1rem;
-  width: 200px;
+  width: 250px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+/* Efeito de foco para os inputs */
+.filtro-item input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* --- MENSAGENS DE ERRO E FEEDBACK --- */
+.error-message {
+    color: #d9534f;
+    font-weight: 500;
+}
+
+.filtro-error {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.nenhum-pacote-encontrado {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #777;
+  padding: 60px 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+/* --- GRID DE PACOTES --- */
 .pacotes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  /* Cria colunas flexíveis com um tamanho mínimo de 300px */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px; /* Aumenta o espaçamento entre os cards */
 }
 
+/* --- CARD DE PACOTE INDIVIDUAL --- */
 .package-card {
   background-color: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: left;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column; /* Essencial para alinhar o botão no final */
+  overflow: hidden; /* Garante que a imagem não saia dos cantos arredondados */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.package-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
 }
 
 .package-card img {
   width: 100%;
-  height: 180px;
+  height: 200px; /* Aumenta a altura da imagem */
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 15px;
 }
 
-.package-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+/* Div para agrupar todo o conteúdo abaixo da imagem */
+.package-card-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Faz esta div ocupar o espaço disponível */
+}
+
+.package-card-content h3 {
+  font-size: 1.4rem;
+  margin-top: 0;
+  margin-bottom: 15px;
   color: #222;
 }
 
-.package-card p {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin: 6px 0;
-  color: #555;
+.package-info {
+  margin-bottom: 15px;
+  flex-grow: 1; /* Ocupa o espaço, empurrando o botão para baixo */
 }
 
-.package-card button {
-  margin-top: 10px;
-  padding: 10px 15px;
+.package-card-content p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.package-card-content .icon {
+  color: #007bff;
+  font-size: 1rem;
+}
+
+.package-card-content button {
+  margin-top: auto; /* Cola o botão no final do flex container */
+  padding: 12px 15px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 500;
   transition: background-color 0.3s ease;
 }
 
-.package-card button:hover {
+.package-card-content button:hover {
   background-color: #0056b3;
-}
-
-.icon {
-  color: #007bff;
-  font-size: 1rem;
 }

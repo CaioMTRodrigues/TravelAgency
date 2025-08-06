@@ -26,7 +26,7 @@ const HomePage = () => {
       
       <FeaturedPackages />
       
-      <FiltroPacotes />
+      {/* O <FiltroPacotes /> foi removido desta seção */}
       
       <AjudaFlutuante />
     </>
