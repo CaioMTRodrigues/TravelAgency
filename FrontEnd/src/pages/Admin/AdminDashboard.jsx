@@ -2,24 +2,31 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBoxOpen, FaTasks, FaStar, FaPlusCircle, FaListAlt, FaCommentDots } from 'react-icons/fa';
 import { getDashboardStats } from '../../services/dashboardService';
+import { exportReservationsReport } from '../../services/reportService';
 import Spinner from '../../components/Spinner';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
+  // --- ESTADOS EXISTENTES ---
   const [stats, setStats] = useState({
     totalPackages: 0,
     pendingReservations: 0,
     newReviews: 0,
   });
   const [loading, setLoading] = useState(true);
+  
+  // --- NOVOS ESTADOS PARA O RELATÓRIO ---
+  const [reportStartDate, setReportStartDate] = useState('');
+  const [reportEndDate, setReportEndDate] = useState('');
+  const [reportFormat, setReportFormat] = useState('csv');
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [reportError, setReportError] = useState('');
 
+  // --- LÓGICA EXISTENTE PARA BUSCAR STATS ---
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const data = await getDashboardStats();
-        // *** CORREÇÃO APLICADA AQUI ***
-        // Garantimos que os nomes das propriedades correspondem exatamente
-        // ao que o backend envia (geralmente camelCase em JSON).
         setStats({
             totalPackages: data.totalPackages,
             pendingReservations: data.pendingReservations,
@@ -35,6 +42,43 @@ const AdminDashboard = () => {
     fetchStats();
   }, []);
 
+  // --- NOVA FUNÇÃO PARA GERAR O RELATÓRIO ---
+  const handleGenerateReport = async () => {
+    if (!reportStartDate || !reportEndDate) {
+      setReportError('Por favor, selecione a data de início e de fim.');
+      return;
+    }
+    if (new Date(reportStartDate) > new Date(reportEndDate)) {
+      setReportError('A data de início não pode ser maior que a data de fim.');
+      return;
+    }
+
+    setReportError('');
+    setIsReportLoading(true);
+
+    try {
+      const blob = await exportReservationsReport(reportStartDate, reportEndDate, reportFormat);
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const fileName = `relatorio_reservas_${new Date().toISOString().slice(0, 10)}.${reportFormat}`;
+      link.setAttribute('download', fileName);
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      setReportError(error.message || 'Ocorreu um erro desconhecido ao gerar o relatório.');
+    } finally {
+      setIsReportLoading(false);
+    }
+  };
+
   const recentActivities = [
     { id: 1, type: 'reserva', text: 'Nova reserva para o pacote "Rio de Janeiro" por Carlos Silva.' },
     { id: 2, type: 'avaliacao', text: 'Ana Oliveira deixou uma avaliação de 5 estrelas para "Paris, França".' },
@@ -49,6 +93,7 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <h1 className="dashboard-title">Painel do Administrador</h1>
       
+      {/* --- SEÇÃO DE ESTATÍSTICAS (SEM ALTERAÇÕES) --- */}
       <div className="stats-container">
         <div className="stat-card">
           <FaBoxOpen className="stat-icon" style={{ color: '#007bff' }} />
@@ -73,6 +118,47 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* --- NOVA SEÇÃO DE EXPORTAÇÃO DE RELATÓRIOS --- */}
+      <div className="admin-reports-container">
+        <h2 className="section-title">Exportar Relatório de Reservas</h2>
+        <div className="report-filters">
+          <div className="filter-group">
+            <label htmlFor="start-date">Data de Início:</label>
+            <input
+              type="date"
+              id="start-date"
+              value={reportStartDate}
+              onChange={(e) => setReportStartDate(e.target.value)}
+            />
+          </div>
+          <div className="filter-group">
+            <label htmlFor="end-date">Data de Fim:</label>
+            <input
+              type="date"
+              id="end-date"
+              value={reportEndDate}
+              onChange={(e) => setReportEndDate(e.target.value)}
+            />
+          </div>
+          <div className="filter-group">
+            <label htmlFor="format">Formato:</label>
+            <select
+              id="format"
+              value={reportFormat}
+              onChange={(e) => setReportFormat(e.target.value)}
+            >
+              <option value="csv">CSV</option>
+              <option value="pdf">PDF</option>
+            </select>
+          </div>
+          <button onClick={handleGenerateReport} disabled={isReportLoading}>
+            {isReportLoading ? <Spinner size="small" /> : 'Gerar Relatório'}
+          </button>
+        </div>
+        {reportError && <p className="error-message">{reportError}</p>}
+      </div>
+
+      {/* --- SEÇÃO DE AÇÕES RÁPIDAS (SEM ALTERAÇÕES) --- */}
       <div className="actions-container">
         <h2 className="section-title">Ações Rápidas</h2>
         <div className="actions-grid">
@@ -95,6 +181,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* --- SEÇÃO DE ATIVIDADE RECENTE (SEM ALTERAÇÕES) --- */}
       <div className="recent-activity-container">
         <h2 className="section-title">Atividade Recente</h2>
         <ul className="activity-list">
