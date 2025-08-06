@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { FaBoxOpen, FaTasks, FaStar, FaPlusCircle, FaListAlt, FaCommentDots } from 'react-icons/fa';
 import { getDashboardStats } from '../../services/dashboardService';
 import { exportReservationsReport } from '../../services/reportService';
+import { listarTodasReservas } from '../../services/reservaService'; // Importação adicionada
+import { listarTodasAvaliacoes } from '../../services/avaliacaoService'; // Importação adicionada
 import Spinner from '../../components/Spinner';
 import './AdminDashboard.css';
 
@@ -14,7 +16,10 @@ const AdminDashboard = () => {
     newReviews: 0,
   });
   const [loading, setLoading] = useState(true);
-  
+
+  // --- NOVO ESTADO PARA ATIVIDADES RECENTES ---
+  const [recentActivities, setRecentActivities] = useState([]);
+
   // --- NOVOS ESTADOS PARA O RELATÓRIO ---
   const [reportStartDate, setReportStartDate] = useState('');
   const [reportEndDate, setReportEndDate] = useState('');
@@ -22,16 +27,41 @@ const AdminDashboard = () => {
   const [isReportLoading, setIsReportLoading] = useState(false);
   const [reportError, setReportError] = useState('');
 
-  // --- LÓGICA EXISTENTE PARA BUSCAR STATS ---
+  // --- LÓGICA ATUALIZADA PARA BUSCAR STATS E ATIVIDADES ---
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const data = await getDashboardStats();
+        const statsData = await getDashboardStats();
         setStats({
-            totalPackages: data.totalPackages,
-            pendingReservations: data.pendingReservations,
-            newReviews: data.newReviews
+            totalPackages: statsData.totalPackages,
+            pendingReservations: statsData.pendingReservations,
+            newReviews: statsData.newReviews
         });
+
+        // Buscando dados reais para as atividades recentes
+        const allReservas = await listarTodasReservas();
+        const allAvaliacoes = await listarTodasAvaliacoes();
+
+        // Combinando reservas e avaliações em um único array
+        const combinedActivities = [
+          ...allReservas.map(r => ({
+            id: `res-${r.id_Reserva}`,
+            type: 'reserva',
+            date: new Date(r.data_Reserva),
+            text: `Nova reserva para o pacote "${r.pacote?.titulo || 'N/A'}" por ${r.usuario?.name || 'N/A'}.`
+          })),
+          ...allAvaliacoes.map(a => ({
+            id: `eva-${a.id_Avaliacao}`,
+            type: 'avaliacao',
+            date: new Date(a.data),
+            text: `${a.usuario?.name || 'Anônimo'} deixou uma avaliação de ${a.nota} estrelas para "${a.pacote?.titulo || 'N/A'}".`
+          }))
+        ];
+
+        // Ordenando por data (do mais recente para o mais antigo) e pegando os 5 primeiros
+        const sortedActivities = combinedActivities.sort((a, b) => b.date - a.date).slice(0, 5);
+        setRecentActivities(sortedActivities);
+
       } catch (error) {
         console.error("Falha ao carregar o dashboard", error);
       } finally {
@@ -39,10 +69,11 @@ const AdminDashboard = () => {
       }
     };
 
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
-  // --- NOVA FUNÇÃO PARA GERAR O RELATÓRIO ---
+
+  // --- FUNÇÃO PARA GERAR O RELATÓRIO ---
   const handleGenerateReport = async () => {
     if (!reportStartDate || !reportEndDate) {
       setReportError('Por favor, selecione a data de início e de fim.');
@@ -79,12 +110,6 @@ const AdminDashboard = () => {
     }
   };
 
-  const recentActivities = [
-    { id: 1, type: 'reserva', text: 'Nova reserva para o pacote "Rio de Janeiro" por Carlos Silva.' },
-    { id: 2, type: 'avaliacao', text: 'Ana Oliveira deixou uma avaliação de 5 estrelas para "Paris, França".' },
-    { id: 3, type: 'reserva', text: 'Nova reserva para o pacote "Gramado" por Juliana Pereira.' },
-  ];
-
   if (loading) {
     return <Spinner />;
   }
@@ -93,7 +118,7 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <h1 className="dashboard-title">Painel do Administrador</h1>
       
-      {/* --- SEÇÃO DE ESTATÍSTICAS (SEM ALTERAÇÕES) --- */}
+      {/* --- SEÇÃO DE ESTATÍSTICAS --- */}
       <div className="stats-container">
         <div className="stat-card">
           <FaBoxOpen className="stat-icon" style={{ color: '#007bff' }} />
@@ -118,7 +143,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* --- NOVA SEÇÃO DE EXPORTAÇÃO DE RELATÓRIOS --- */}
+      {/* --- SEÇÃO DE EXPORTAÇÃO DE RELATÓRIOS --- */}
       <div className="admin-reports-container">
         <h2 className="section-title">Exportar Relatório de Reservas</h2>
         <div className="report-filters">
@@ -158,7 +183,7 @@ const AdminDashboard = () => {
         {reportError && <p className="error-message">{reportError}</p>}
       </div>
 
-      {/* --- SEÇÃO DE AÇÕES RÁPIDAS (SEM ALTERAÇÕES) --- */}
+      {/* --- SEÇÃO DE AÇÕES RÁPIDAS --- */}
       <div className="actions-container">
         <h2 className="section-title">Ações Rápidas</h2>
         <div className="actions-grid">
@@ -181,15 +206,19 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* --- SEÇÃO DE ATIVIDADE RECENTE (SEM ALTERAÇÕES) --- */}
+      {/* --- SEÇÃO DE ATIVIDADE RECENTE (AGORA DINÂMICA) --- */}
       <div className="recent-activity-container">
         <h2 className="section-title">Atividade Recente</h2>
         <ul className="activity-list">
-          {recentActivities.map(activity => (
-            <li key={activity.id} className={`activity-item ${activity.type}`}>
-              {activity.text}
-            </li>
-          ))}
+          {recentActivities.length > 0 ? (
+            recentActivities.map(activity => (
+              <li key={activity.id} className={`activity-item ${activity.type}`}>
+                {activity.text}
+              </li>
+            ))
+          ) : (
+            <p>Nenhuma atividade recente.</p>
+          )}
         </ul>
       </div>
     </div>
