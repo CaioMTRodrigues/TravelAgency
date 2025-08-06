@@ -1,7 +1,6 @@
 import React from 'react';
 
 // Componentes da HomePage
-import AjudaFlutuante from '../components/AjudaFlutuante';
 import BannerCarousel from '../components/BannerCarousel';
 import FeaturedPackages from '../components/FeaturedPackages';
 import FiltroPacotes from "../components/FiltroPacotes";
@@ -25,10 +24,8 @@ const HomePage = () => {
       </div>
       
       <FeaturedPackages />
-      
-      <FiltroPacotes />
-      
-      <AjudaFlutuante />
+
+    
     </>
   );
 };

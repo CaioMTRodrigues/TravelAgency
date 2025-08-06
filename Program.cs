@@ -42,6 +42,7 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ReservationService>();
 builder.Services.AddScoped<PackageService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // --- ALTERAÇÃO AQUI ---
 // Adicionando o novo PayPalService e configurando o HttpClient para ele.

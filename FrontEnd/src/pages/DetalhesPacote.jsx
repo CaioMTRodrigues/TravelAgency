@@ -1,46 +1,60 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-// Header e Footer removidos - já são renderizados globalmente no App.js
-import Modal from '../components/Modal';
-import AuthModal from '../components/AuthModal';
+import { useParams, useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
+import axios from 'axios'; // Importação do Axios para chamadas de API
+
+// Importações do React Leaflet para o mapa
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { FaPlane, FaHotel, FaMapMarkedAlt, FaUtensils, FaWifi, FaCar, FaSun } from 'react-icons/fa';
+import L from 'leaflet'; // Importa a biblioteca Leaflet para corrigir o ícone do marcador
+
+// Importação dos ícones e do CSS
+import {
+  FaPlane, FaHotel, FaMapMarkedAlt, FaUtensils, FaWifi, FaCar,
+  FaInfoCircle, FaClock, FaCalendarAlt, FaCreditCard, FaRegCompass
+} from 'react-icons/fa';
 import './../assets/styles/styles.css';
 import { getPacoteById } from '../services/pacoteService';
 
-// Dados mockados padrão
-const hotelMock = {
-  nome: "Copacabana Palace, A Belmond Hotel",
-  estrelas: 5,
-  linkBooking: "https://www.booking.com/hotel/br/copacabana-palace-a-belmond-rio-de-janeiro.pt-br.html",
+// Corrige o problema do ícone padrão do marcador do Leaflet não aparecer
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
+
+// Dados de voo e hotel padronizados para valores fixos
+const hotelPadrao = {
+  nome: "Hotel Premium",
+  estrelas: 4,
   cafeIncluso: true,
   wifi: true,
   garagem: true,
-  coordenadas: { lat: -22.9673, lng: -43.1779 }
 };
 
-const vooMock = {
-  companhia: "Azul Linhas Aéreas",
-  numero: "AD4001",
-  saida: "Aeroporto de Guarulhos (GRU)",
-  chegada: "Aeroporto Santos Dumont (SDU)",
-  previsaoSaida: "08:00",
-  previsaoChegada: "09:05"
+const vooPadrao = {
+  companhia: "LATAM Airlines",
+  numero: "LA3001",
+  saida: "Aeroporto de Origem (Não incluso)",
+  chegada: "Aeroporto de Destino (Não incluso)",
 };
 
-// Componente do Mapa
-const MapComponent = ({ center, hotelName }) => {
+// Componente do Mapa (agora mais robusto)
+const MapComponent = ({ center, popupText }) => {
+  // Se o centro não for encontrado, exibe a mensagem de indisponibilidade
+  if (!center) {
+    return <p>Localização não disponível.</p>;
+  }
   const position = [center.lat, center.lng];
   return (
-    <MapContainer center={position} zoom={15} scrollWheelZoom={false} className="map-container-small">
+    <MapContainer center={position} zoom={11} scrollWheelZoom={false} className="map-container-small">
       <TileLayer
-        attribution='&copy; <a href="https://wwwetmap.org/copyright contributors'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <Marker position={position}>
-        <Popup>{hotelName}</Popup>
+        <Popup>{popupText}</Popup>
       </Marker>
     </MapContainer>
   );
@@ -48,25 +62,45 @@ const MapComponent = ({ center, hotelName }) => {
 
 const DetalhesPacote = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [pacote, setPacote] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [error, setError] = useState('');
   const [moeda, setMoeda] = useState('BRL');
+  const [destinationCoords, setDestinationCoords] = useState(null);
 
   useEffect(() => {
     const fetchPacote = async () => {
+      window.scrollTo(0, 0);
       try {
-        const pacoteEncontrado = await getPacoteById(id);
+        setLoading(true);
+        const pacoteData = await getPacoteById(id);
+        setPacote(pacoteData);
 
-        const pacoteCompletado = {
-          ...pacoteEncontrado,
-          hotel: pacoteEncontrado.hotel || hotelMock,
-          voo: pacoteEncontrado.voo || vooMock
-        };
+        // --- LÓGICA DO MAPA ATUALIZADA ---
+        // Se o pacote tiver um destino, busca as coordenadas dele
+        if (pacoteData && pacoteData.destino) {
+          try {
+            const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(pacoteData.destino)}`);
+            if (response.data && response.data.length > 0) {
+              const { lat, lon } = response.data[0];
+              setDestinationCoords({ lat: parseFloat(lat), lng: parseFloat(lon) });
+            } else {
+              // Se a API não encontrar o local, define as coordenadas como nulas
+              console.warn(`Coordenadas não encontradas para: ${pacoteData.destino}`);
+              setDestinationCoords(null);
+            }
+          } catch (geoError) {
+            console.error("Erro ao buscar coordenadas:", geoError);
+            setDestinationCoords(null);
+          }
+        }
+        // --- FIM DA LÓGICA DO MAPA ---
 
-        setPacote(pacoteCompletado);
-      } catch (error) {
-        console.error("Erro ao buscar detalhes do pacote:", error);
+      } catch (err) {
+        console.error("Erro ao buscar detalhes do pacote:", err);
+        setError("Não foi possível carregar os detalhes do pacote. Tente novamente mais tarde.");
       } finally {
         setLoading(false);
       }
@@ -74,9 +108,6 @@ const DetalhesPacote = () => {
 
     fetchPacote();
   }, [id]);
-
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
 
   const converterMoeda = (valor) => {
     const taxas = { BRL: 1, USD: 0.18, EUR: 0.17 };
@@ -88,89 +119,88 @@ const DetalhesPacote = () => {
     }).format(valorConvertido);
   };
 
-    if (!pacote) {
-        return (
-            <div className="home">
-                <main style={{ padding: '40px', textAlign: 'center' }}>
-                    <h2>Carregando detalhes do pacote...</h2>
-                </main>
-            </div>
-        );
-    }
+  const handleReservarClick = () => {
+    navigate(`/reservar/${pacote.id_Pacote}`);
+  };
 
-    return (
-        <div className="package-detail-page">
-            <div className="detail-header" style={{ backgroundImage: `url(${pacote.imagem})` }}>
-                <div className="detail-header-overlay">
-                    <h1>{pacote.nome}</h1>
-                </div>
-            </div>
+  if (loading) {
+    return <Spinner />;
+  }
 
-        <div className="detail-content">
-          <div className="detail-main-info">
-            <div className="detail-info-section">
-              <h2><FaMapMarkedAlt /> Sobre o Destino</h2>
-<p>{pacote.descricao || 'Descrição não disponível.'}</p>
+  if (error) {
+    return <div className="error-message" style={{ padding: '40px', textAlign: 'center' }}>{error}</div>;
+  }
 
-            </div>
+  if (!pacote) {
+    return <div className="error-message" style={{ padding: '40px', textAlign: 'center' }}>Pacote não encontrado.</div>;
+  }
 
-            <div className="detail-info-section">
-              <h2><FaSun /> Melhor Época para Visitar</h2>
-              <p>{pacote.info?.melhorEpoca || 'Informações não disponíveis.'}</p>
-            </div>
+  return (
+    <div className="package-detail-page">
+      <div className="detail-header" style={{ backgroundImage: `url(${pacote.imagemUrl})` }}>
+        <div className="detail-header-overlay">
+          <h1>{pacote.titulo}</h1>
+        </div>
+      </div>
 
-            {pacote.hotel?.coordenadas && (
-              <div className="detail-info-section">
-                <h2><FaMapMarkedAlt /> Localização do Hotel</h2>
-                <MapComponent center={pacote.hotel.coordenadas} hotelName={pacote.hotel.nome} />
-              </div>
-            )}
+      <div className="detail-content">
+        <div className="detail-main-info">
+          <div className="detail-info-section">
+            <h2><FaRegCompass /> Sobre o Destino</h2>
+            <p>{pacote.descricao || 'Descrição não disponível.'}</p>
           </div>
 
-          <div className="detail-sidebar">
-            <div className="detail-card">
-              <h3><FaPlane /> Informações do Voo</h3>
-              <p><strong>Companhia:</strong> {pacote.voo.companhia}</p>
-              <p><strong>Voo:</strong> {pacote.voo.numero}</p>
-              <p><strong>Saída:</strong> {pacote.voo.saida} ({pacote.voo.previsaoSaida})</p>
-              <p><strong>Chegada:</strong> {pacote.voo.chegada} ({pacote.voo.previsaoChegada})</p>
-            </div>
+          <div className="detail-info-section">
+            <h2><FaInfoCircle /> Informações da Viagem</h2>
+            <h4><FaCalendarAlt /> Período da Viagem</h4>
+            <p>De {new Date(pacote.dataInicio).toLocaleDateString('pt-BR')} até {new Date(pacote.dataFim).toLocaleDateString('pt-BR')}</p>
+            <h4><FaClock /> Duração</h4>
+            <p>{pacote.duracaoDias} dias</p>
+          </div>
 
-            <div className="detail-card">
-              <h3><FaHotel /> Informações do Hotel</h3>
-              <p><strong>Hotel:</strong> {pacote.hotel.nome}</p>
-              <p><strong>Classificação:</strong> {"⭐".repeat(pacote.hotel.estrelas)}</p>
-              <div className="hotel-amenities">
-                <span className={pacote.hotel.cafeIncluso ? 'available' : 'unavailable'}><FaUtensils /> Café da Manhã</span>
-                <span className={pacote.hotel.wifi ? 'available' : 'unavailable'}><FaWifi /> Wi-Fi</span>
-                <span className={pacote.hotel.garagem ? 'available' : 'unavailable'}><FaCar /> Garagem</span>
+          <div className="detail-info-section">
+            <h2><FaMapMarkedAlt /> Localização no Mapa</h2>
+            <MapComponent center={destinationCoords} popupText={pacote.destino} />
+          </div>
+        </div>
+
+        <div className="detail-sidebar">
+          <div className="detail-card">
+            <h3><FaPlane /> Informações do Voo</h3>
+            <p><strong>Companhia:</strong> {vooPadrao.companhia}</p>
+            <p><strong>Voo:</strong> {vooPadrao.numero}</p>
+            <p><strong>Saída:</strong> {vooPadrao.saida}</p>
+            <p><strong>Chegada:</strong> {vooPadrao.chegada}</p>
+          </div>
+
+          <div className="detail-card">
+            <h3><FaHotel /> Informações do Hotel</h3>
+            <p><strong>Hotel:</strong> {hotelPadrao.nome}</p>
+            <p><strong>Classificação:</strong> {"⭐".repeat(hotelPadrao.estrelas)}</p>
+            <div className="hotel-amenities">
+              <span className={hotelPadrao.cafeIncluso ? 'available' : 'unavailable'}><FaUtensils /> Café da Manhã</span>
+              <span className={hotelPadrao.wifi ? 'available' : 'unavailable'}><FaWifi /> Wi-Fi</span>
+              <span className={hotelPadrao.garagem ? 'available' : 'unavailable'}><FaCar /> Garagem</span>
+            </div>
+          </div>
+
+          <div className="price-box">
+            <div className="price-header">
+              <span className="price-label">Valor por pessoa</span>
+              <div className="currency-converter">
+                <button onClick={() => setMoeda('BRL')} className={moeda === 'BRL' ? 'active' : ''}>R$</button>
+                <button onClick={() => setMoeda('USD')} className={moeda === 'USD' ? 'active' : ''}>$</button>
+                <button onClick={() => setMoeda('EUR')} className={moeda === 'EUR' ? 'active' : ''}>€</button>
               </div>
-              {pacote.hotel.linkBooking && (
-                <a href={pacote.hotel.linkBooking} target="_blank" rel="noopener noreferrer" className="booking-link">
-                  Ver no Booking.com
-                </a>
-              )}
             </div>
-
-            <div className="price-box">
-              <div className="price-header">
-                <span className="price-label">A partir de</span>
-                <div className="currency-converter">
-                  <button onClick={() => setMoeda('BRL')} className={moeda === 'BRL' ? 'active' : ''}>BRL</button>
-                  <button onClick={() => setMoeda('USD')} className={moeda === 'USD' ? 'active' : ''}>USD</button>
-                  <button onClick={() => setMoeda('EUR')} className={moeda === 'EUR' ? 'active' : ''}>EUR</button>
-                </div>
-              </div>
-              <p className="price-value">{converterMoeda(pacote.valor)}</p>
-            </div>
-
-                        <button className="buy-package-button">COMPRAR PACOTE AGORA</button>
-                    </div>
-                </div>
-
-      <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AuthModal />
-      </Modal>
+            <p className="price-value">{converterMoeda(pacote.valor)}</p>
+          </div>
+          
+          <button onClick={handleReservarClick} className="buy-package-button">
+            <FaCreditCard /> RESERVAR AGORA
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

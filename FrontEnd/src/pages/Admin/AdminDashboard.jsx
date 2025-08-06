@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaBoxOpen, FaTasks, FaStar, FaPlusCircle, FaListAlt, FaCommentDots } from 'react-icons/fa';
 import { getDashboardStats } from '../../services/dashboardService';
+import { exportReservationsReport } from '../../services/reportService';
+import { listarTodasReservas } from '../../services/reservaService'; // Importação adicionada
+import { listarTodasAvaliacoes } from '../../services/avaliacaoService'; // Importação adicionada
 import Spinner from '../../components/Spinner';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
+  // --- ESTADOS EXISTENTES ---
   const [stats, setStats] = useState({
     totalPackages: 0,
     pendingReservations: 0,
@@ -13,18 +17,51 @@ const AdminDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
+  // --- NOVO ESTADO PARA ATIVIDADES RECENTES ---
+  const [recentActivities, setRecentActivities] = useState([]);
+
+  // --- NOVOS ESTADOS PARA O RELATÓRIO ---
+  const [reportStartDate, setReportStartDate] = useState('');
+  const [reportEndDate, setReportEndDate] = useState('');
+  const [reportFormat, setReportFormat] = useState('csv');
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [reportError, setReportError] = useState('');
+
+  // --- LÓGICA ATUALIZADA PARA BUSCAR STATS E ATIVIDADES ---
   useEffect(() => {
-    const fetchStats = async () => {
+    const fetchDashboardData = async () => {
       try {
-        const data = await getDashboardStats();
-        // *** CORREÇÃO APLICADA AQUI ***
-        // Garantimos que os nomes das propriedades correspondem exatamente
-        // ao que o backend envia (geralmente camelCase em JSON).
+        const statsData = await getDashboardStats();
         setStats({
-            totalPackages: data.totalPackages,
-            pendingReservations: data.pendingReservations,
-            newReviews: data.newReviews
+            totalPackages: statsData.totalPackages,
+            pendingReservations: statsData.pendingReservations,
+            newReviews: statsData.newReviews
         });
+
+        // Buscando dados reais para as atividades recentes
+        const allReservas = await listarTodasReservas();
+        const allAvaliacoes = await listarTodasAvaliacoes();
+
+        // Combinando reservas e avaliações em um único array
+        const combinedActivities = [
+          ...allReservas.map(r => ({
+            id: `res-${r.id_Reserva}`,
+            type: 'reserva',
+            date: new Date(r.data_Reserva),
+            text: `Nova reserva para o pacote "${r.pacote?.titulo || 'N/A'}" por ${r.usuario?.name || 'N/A'}.`
+          })),
+          ...allAvaliacoes.map(a => ({
+            id: `eva-${a.id_Avaliacao}`,
+            type: 'avaliacao',
+            date: new Date(a.data),
+            text: `${a.usuario?.name || 'Anônimo'} deixou uma avaliação de ${a.nota} estrelas para "${a.pacote?.titulo || 'N/A'}".`
+          }))
+        ];
+
+        // Ordenando por data (do mais recente para o mais antigo) e pegando os 5 primeiros
+        const sortedActivities = combinedActivities.sort((a, b) => b.date - a.date).slice(0, 5);
+        setRecentActivities(sortedActivities);
+
       } catch (error) {
         console.error("Falha ao carregar o dashboard", error);
       } finally {
@@ -32,14 +69,46 @@ const AdminDashboard = () => {
       }
     };
 
-    fetchStats();
+    fetchDashboardData();
   }, []);
 
-  const recentActivities = [
-    { id: 1, type: 'reserva', text: 'Nova reserva para o pacote "Rio de Janeiro" por Carlos Silva.' },
-    { id: 2, type: 'avaliacao', text: 'Ana Oliveira deixou uma avaliação de 5 estrelas para "Paris, França".' },
-    { id: 3, type: 'reserva', text: 'Nova reserva para o pacote "Gramado" por Juliana Pereira.' },
-  ];
+
+  // --- FUNÇÃO PARA GERAR O RELATÓRIO ---
+  const handleGenerateReport = async () => {
+    if (!reportStartDate || !reportEndDate) {
+      setReportError('Por favor, selecione a data de início e de fim.');
+      return;
+    }
+    if (new Date(reportStartDate) > new Date(reportEndDate)) {
+      setReportError('A data de início não pode ser maior que a data de fim.');
+      return;
+    }
+
+    setReportError('');
+    setIsReportLoading(true);
+
+    try {
+      const blob = await exportReservationsReport(reportStartDate, reportEndDate, reportFormat);
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      const fileName = `relatorio_reservas_${new Date().toISOString().slice(0, 10)}.${reportFormat}`;
+      link.setAttribute('download', fileName);
+      
+      document.body.appendChild(link);
+      link.click();
+      
+      link.parentNode.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      setReportError(error.message || 'Ocorreu um erro desconhecido ao gerar o relatório.');
+    } finally {
+      setIsReportLoading(false);
+    }
+  };
 
   if (loading) {
     return <Spinner />;
@@ -49,6 +118,7 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <h1 className="dashboard-title">Painel do Administrador</h1>
       
+      {/* --- SEÇÃO DE ESTATÍSTICAS --- */}
       <div className="stats-container">
         <div className="stat-card">
           <FaBoxOpen className="stat-icon" style={{ color: '#007bff' }} />
@@ -73,6 +143,47 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* --- SEÇÃO DE EXPORTAÇÃO DE RELATÓRIOS --- */}
+      <div className="admin-reports-container">
+        <h2 className="section-title">Exportar Relatório de Reservas</h2>
+        <div className="report-filters">
+          <div className="filter-group">
+            <label htmlFor="start-date">Data de Início:</label>
+            <input
+              type="date"
+              id="start-date"
+              value={reportStartDate}
+              onChange={(e) => setReportStartDate(e.target.value)}
+            />
+          </div>
+          <div className="filter-group">
+            <label htmlFor="end-date">Data de Fim:</label>
+            <input
+              type="date"
+              id="end-date"
+              value={reportEndDate}
+              onChange={(e) => setReportEndDate(e.target.value)}
+            />
+          </div>
+          <div className="filter-group">
+            <label htmlFor="format">Formato:</label>
+            <select
+              id="format"
+              value={reportFormat}
+              onChange={(e) => setReportFormat(e.target.value)}
+            >
+              <option value="csv">CSV</option>
+              <option value="pdf">PDF</option>
+            </select>
+          </div>
+          <button onClick={handleGenerateReport} disabled={isReportLoading}>
+            {isReportLoading ? <Spinner size="small" /> : 'Gerar Relatório'}
+          </button>
+        </div>
+        {reportError && <p className="error-message">{reportError}</p>}
+      </div>
+
+      {/* --- SEÇÃO DE AÇÕES RÁPIDAS --- */}
       <div className="actions-container">
         <h2 className="section-title">Ações Rápidas</h2>
         <div className="actions-grid">
@@ -95,14 +206,19 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+      {/* --- SEÇÃO DE ATIVIDADE RECENTE (AGORA DINÂMICA) --- */}
       <div className="recent-activity-container">
         <h2 className="section-title">Atividade Recente</h2>
         <ul className="activity-list">
-          {recentActivities.map(activity => (
-            <li key={activity.id} className={`activity-item ${activity.type}`}>
-              {activity.text}
-            </li>
-          ))}
+          {recentActivities.length > 0 ? (
+            recentActivities.map(activity => (
+              <li key={activity.id} className={`activity-item ${activity.type}`}>
+                {activity.text}
+              </li>
+            ))
+          ) : (
+            <p>Nenhuma atividade recente.</p>
+          )}
         </ul>
       </div>
     </div>

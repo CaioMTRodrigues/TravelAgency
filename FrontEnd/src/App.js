@@ -3,7 +3,6 @@ import {
   BrowserRouter as Router,
   Route,
   Routes,
-  useLocation,
 } from "react-router-dom";
 import "./assets/styles/App.css";
 
@@ -11,10 +10,10 @@ import "./assets/styles/App.css";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AdminRoute from "./components/AdminRoute";
-import Modal from "./components/Modal"; // Importando o Modal
-import AuthModal from "./components/AuthModal"; // Importando o conteúdo do Modal
-import FormasPagamento from "./components/FormasPagamento"; // Importa o novo componente de pagamento
-import ProtectedRoute from "./components/ProtectedRoute"; // Adicione esta linha
+import Modal from "./components/Modal";
+import AuthModal from "./components/AuthModal";
+import FormasPagamento from "./components/FormasPagamento";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 // Páginas
 import HomePage from "./pages/HomePage";
@@ -31,23 +30,21 @@ import EsqueciSenha from "./pages/EsqueciSenha";
 import RedefinirSenha from "./pages/RedefinirSenha";
 import MinhasReservas from "./pages/MinhasReservas";
 import CadastroReserva from "./pages/CadastroReserva";
-
-// Páginas Admin
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminPacotes from "./pages/Admin/AdminPacotes";
 import CadastroPacote from "./pages/Admin/CadastroPacote";
 import AdminReservas from "./pages/Admin/AdminReservas";
 import AdminAvaliacoes from "./pages/Admin/AdminAvaliacoes";
 
-// *******************************************************************
-// FIM DAS DECLARAÇÕES IMPORT.
-// AGORA PODEM VIR OUTRAS CONSTANTES GLOBAIS OU FUNÇÕES DE SETUP.
-// *******************************************************************
+// --- NOVAS PÁGINAS IMPORTADAS ---
+import SobreNos from './pages/SobreNos';
+import TermosServico from './pages/TermosServico';
+import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
 
 // Componente Wrapper para passar o estado do modal ao Header
 const AppContent = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalView, setModalView] = useState("login"); // 'login' ou 'register'
+  const [modalView, setModalView] = useState('login');
 
   const openModal = (view) => {
     setModalView(view);
@@ -61,8 +58,8 @@ const AppContent = () => {
   return (
     <div className="App">
       <Header
-        onLoginClick={() => openModal("login")}
-        onRegisterClick={() => openModal("register")}
+        onLoginClick={() => openModal('login')}
+        onRegisterClick={() => openModal('register')}
       />
       <main>
         <Routes>
@@ -76,7 +73,12 @@ const AppContent = () => {
           <Route path="/avaliacoes" element={<AvaliacoesClientes />} />
           <Route path="/quiz" element={<Quiz />} />
 
-          {/* Rotas de Autenticação (mantidas para acesso direto via URL, se desejado) */}
+          {/* --- NOVAS ROTAS ADICIONADAS --- */}
+          <Route path="/sobre-nos" element={<SobreNos />} />
+          <Route path="/termos-servico" element={<TermosServico />} />
+          <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+
+          {/* Rotas de Autenticação */}
           <Route path="/login" element={<Login />} />
           <Route path="/cadastro" element={<Cadastro />} />
           <Route path="/esqueci-senha" element={<EsqueciSenha />} />
@@ -99,7 +101,6 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-
           <Route
             path="/pagamento/:id"
             element={
@@ -108,9 +109,7 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
-          {/* Nova rota para o formulário de pagamento do Stripe */}
-          <Route path="/pagamento/:id" element={<FormasPagamento />} />
-
+          
           {/* Rotas Protegidas para Administradores */}
           <Route
             path="/admin"
@@ -163,7 +162,6 @@ const AppContent = () => {
         </Routes>
       </main>
       <Footer />
-      {/* Renderiza o Modal globalmente */}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <AuthModal initialView={modalView} />
       </Modal>
@@ -174,7 +172,6 @@ const AppContent = () => {
 function App() {
   return (
     <Router>
-      {/* O componente Elements do Stripe deve envolver os componentes que usam o Stripe */}
       <AppContent />
     </Router>
   );

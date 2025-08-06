@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// CORREÇÃO: A função foi renomeada para 'listarTodosPacotes'.
 import { listarTodosPacotes } from "../services/pacoteService";
 import "./FiltroPacotes.css";
-import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag } from "react-icons/fa";
+// Importando todos os ícones necessários
+import { FaMapMarkerAlt, FaCalendarAlt, FaClock, FaTag, FaSearch, FaDollarSign } from "react-icons/fa";
 
 const FiltroPacotes = () => {
+  // --- TODA A SUA LÓGICA DE ESTADO E EFEITOS PERMANECE INTOCADA ---
   const [pacotes, setPacotes] = useState([]);
   const [filtroDestino, setFiltroDestino] = useState("");
   const [filtroPrecoMin, setFiltroPrecoMin] = useState("");
@@ -17,7 +18,6 @@ const FiltroPacotes = () => {
   useEffect(() => {
     const fetchPacotes = async () => {
       try {
-        // CORREÇÃO: Usando a função correta que foi importada.
         const dados = await listarTodosPacotes();
         setPacotes(dados);
       } catch (err) {
@@ -51,59 +51,83 @@ const FiltroPacotes = () => {
     return destinoMatch && precoMinMatch && precoMaxMatch;
   });
 
+  // --- O JSX FOI REESTRUTURADO VISUALMENTE ---
   return (
-    <section className="filtro-pacotes">
-      <h2>Buscar Pacotes</h2>
-
-      <div className="filtros">
-        <input
-          type="text"
-          placeholder="Destino..."
-          value={filtroDestino}
-          onChange={(e) => setFiltroDestino(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Preço mínimo..."
-          value={filtroPrecoMin}
-          onChange={(e) => setFiltroPrecoMin(e.target.value)}
-        />
-        <input
-          type="number"
-          placeholder="Preço máximo..."
-          value={filtroPrecoMax}
-          onChange={(e) => setFiltroPrecoMax(e.target.value)}
-        />
+    <section className="filtro-pacotes-container">
+      {/* Card de filtros com título e ícones */}
+      <div className="filtros-card">
+        <h2><FaSearch /> Encontre seu Pacote</h2>
+        <div className="filtros-wrapper">
+          <div className="filtro-item">
+            <label htmlFor="destino">Destino</label>
+            <input
+              id="destino"
+              type="text"
+              placeholder="Para onde vamos?"
+              value={filtroDestino}
+              onChange={(e) => setFiltroDestino(e.target.value)}
+            />
+          </div>
+          <div className="filtro-item">
+            <label htmlFor="precoMin"><FaDollarSign /> Preço Mínimo</label>
+            <input
+              id="precoMin"
+              type="number"
+              placeholder="R$ 1000"
+              value={filtroPrecoMin}
+              onChange={(e) => setFiltroPrecoMin(e.target.value)}
+            />
+          </div>
+          <div className="filtro-item">
+            <label htmlFor="precoMax"><FaDollarSign /> Preço Máximo</label>
+            <input
+              id="precoMax"
+              type="number"
+              placeholder="R$ 5000"
+              value={filtroPrecoMax}
+              onChange={(e) => setFiltroPrecoMax(e.target.value)}
+            />
+          </div>
+        </div>
+        {/* Mensagem de erro para o filtro movida para dentro do card */}
+        {erroFiltro && <p className="error-message filtro-error">{erroFiltro}</p>}
       </div>
 
+      {/* Exibição das mensagens de erro e resultados */}
       {erro && <p className="error-message">{erro}</p>}
-      {erroFiltro && <p className="error-message">{erroFiltro}</p>}
-
-      {pacotesFiltrados.length === 0 && !erroFiltro ? (
-        <p>Nenhum pacote encontrado com os filtros selecionados.</p>
+      
+      {pacotesFiltrados.length === 0 && !erroFiltro && !erro ? (
+        <p className="nenhum-pacote-encontrado">Nenhum pacote encontrado com os filtros selecionados.</p>
       ) : (
         <div className="pacotes-grid">
           {pacotesFiltrados.map((pacote) => (
             <div key={pacote.id_Pacote} className="package-card">
               <img src={pacote.imagemUrl} alt={pacote.titulo} />
-              <h3>{pacote.titulo}</h3>
-              <p>
-                <FaMapMarkerAlt className="icon" /> {pacote.destino}
-              </p>
-              <p>
-                <FaTag className="icon" /> R${pacote.valor.toFixed(2)}
-              </p>
-              <p>
-                <FaClock className="icon" /> {pacote.duracaoDias} dias
-              </p>
-              <p>
-                <FaCalendarAlt className="icon" />{" "}
-                {new Date(pacote.dataInicio).toLocaleDateString()} -{" "}
-                {new Date(pacote.dataFim).toLocaleDateString()}
-              </p>
-              <button onClick={() => navigate(`/pacotes/${pacote.id_Pacote}`)}>
-                Ver detalhes
-              </button>
+              <div className="package-card-content">
+                <h3>{pacote.titulo}</h3>
+                <p className="package-description">
+                  {/* Mantive a descrição aqui caso queira adicioná-la no futuro */}
+                </p>
+                <div className="package-info">
+                  <p>
+                    <FaMapMarkerAlt className="icon" /> {pacote.destino}
+                  </p>
+                  <p>
+                    <FaTag className="icon" /> R${pacote.valor.toFixed(2)}
+                  </p>
+                  <p>
+                    <FaClock className="icon" /> {pacote.duracaoDias} dias
+                  </p>
+                  <p>
+                    <FaCalendarAlt className="icon" />{" "}
+                    {new Date(pacote.dataInicio).toLocaleDateString()} -{" "}
+                    {new Date(pacote.dataFim).toLocaleDateString()}
+                  </p>
+                </div>
+                <button onClick={() => navigate(`/pacotes/${pacote.id_Pacote}`)}>
+                  Ver detalhes
+                </button>
+              </div>
             </div>
           ))}
         </div>
