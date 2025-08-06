@@ -153,6 +153,22 @@ namespace WebApplication1.Controllers
         }
 
 
+        [HttpGet("busca")]
+        public async Task<IActionResult> BuscarPorNome([FromQuery] string nome, [FromQuery] string idUsuario)
+        {
+            Console.WriteLine("Recebido nome para busca: " + nome);
+            Console.WriteLine("Recebido idUsuario para busca: " + idUsuario);
+
+            var viajantes = await _appDbContext.Travelers
+                .Where(v => v.Nome.Contains(nome) && v.Id_Usuario == idUsuario)
+                .ToListAsync();
+
+            var result = _mapper.Map<IEnumerable<TravelerDto>>(viajantes);
+            return Ok(result);
+        }
+
+
+
 
 
 

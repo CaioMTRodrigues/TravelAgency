@@ -1,305 +1,73 @@
-/* Estilo geral do contêiner da página de reserva */
+
 .cadastro-reserva-container {
-    display: flex;
-    flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 40px auto;
-    gap: 30px;
-    padding: 20px;
-    align-items: flex-start;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Coluna da esquerda (formulários) */
-.reserva-coluna-esquerda {
-    flex: 1;
-    min-width: min(350px, 100vw - 40px);
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+.cadastro-reserva-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #333;
 }
 
-/* Coluna da direita (voucher) */
-.reserva-coluna-direita {
-    flex: 1.2;
-    min-width: min(400px, 100vw - 40px);
-    position: sticky;
-    top: 20px;
+.etapa-viajantes, .etapa-pagamento {
+  margin-top: 20px;
 }
 
-/* Estilo dos cards de formulário na coluna da esquerda */
-.card-form {
-    background: #fff;
-    border-radius: 12px;
-    padding: 25px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+.etapa-viajantes h3, .etapa-pagamento h3 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #444;
 }
 
-.card-form h2 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-top: 0;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.lista-viajantes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.viajante-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.form-group label {
-    display: block;
-    font-weight: 500;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    color: #555;
+.viajante-item label {
+  font-size: 1rem;
+  color: #555;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
+.btn-primary, .btn-secondary {
+  padding: 10px 16px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
-.form-group-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 15px;
+.btn-primary {
+  background-color: #007bff;
+  color: white;
 }
 
-.form-group-checkbox label {
-    margin-bottom: 0;
-    font-size: 0.9rem;
-    font-weight: normal;
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
 }
 
-.form-group-checkbox input[type="checkbox"] {
-    width: auto;
-    accent-color: #005A9C;
+.btn-primary:disabled {
+  background-color: #a0c4ff;
+  cursor: not-allowed;
 }
 
-/* Estilos da nova busca de acompanhantes */
-.acompanhantes-busca-container {
-    position: relative;
-    margin-bottom: 10px;
-}
-
-.busca-input-wrapper {
-    display: flex;
-    align-items: center;
-    position: relative;
-}
-
-.busca-input-wrapper .busca-icon {
-    position: absolute;
-    left: 15px;
-    color: #aaa;
-}
-
-.busca-input-wrapper input {
-    flex-grow: 1;
-    padding: 12px 15px 12px 40px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 1rem;
-}
-
-.busca-resultados {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border: 1px solid #ddd;
-    border-top: none;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 10;
-}
-
-.resultado-item {
-    padding: 12px 15px;
-    cursor: pointer;
-}
-
-.resultado-item:hover {
-    background-color: #f1f1f1;
-}
-
-.btn-novo-viajante {
-    width: 100%;
-    margin-top: 15px;
-    padding: 12px;
-    background-color: #e9f5ff;
-    color: #005A9C;
-    border: 1px dashed #bde0fe;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.btn-novo-viajante:hover {
-    background-color: #dbeeff;
-}
-
-/* Estilo do Ticket/Voucher de Viagem */
-.ticket-summary {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
-    overflow: hidden;
-}
-
-.ticket-header {
-    background: linear-gradient(45deg, #005A9C, #007BFF);
-    color: white;
-    padding: 15px 25px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.ticket-header h4 {
-    margin: 0;
-    font-size: 1.1rem;
-}
-
-.ticket-body {
-    padding: 25px;
-}
-
-.ticket-imagem {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-
-.ticket-body h3 {
-    font-size: 1.8rem;
-    margin: 0;
-}
-
-.ticket-destino {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 25px;
-}
-
-.ticket-section {
-    padding: 20px 0;
-    border-top: 2px dashed #e0e0e0;
-}
-
-.ticket-section h4 {
-    margin: 0 0 15px 0;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.viajantes-list p {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 5px 0;
-    color: #333;
-}
-
-.summary-detalhe {
-    display: flex;
-    justify-content: space-between;
-    font-size: 1rem;
-    color: #444;
-}
-
-.ticket-total {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 20px;
-    border-top: 2px dashed #e0e0e0;
-}
-
-.ticket-total span {
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-.ticket-total strong {
-    font-size: 1.8rem;
-    color: #005A9C;
-}
-
-.ticket-footer {
-    background-color: #f8f9fa;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.qr-placeholder {
-    font-size: 4rem;
-    color: #ccc;
-}
-
-.ticket-footer p {
-    margin: 0;
-    font-size: 0.9rem;
-    color: #666;
-}
-
-/* Botão principal de submissão */
-.submit-button {
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(45deg, #28a745, #218838);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.submit-button:hover:not(:disabled) { 
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-}
-
-.submit-button:disabled {
-    background: #aaa;
-    cursor: not-allowed;
-}
-
-.secure-payment-info {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
-    margin-top: 15px;
-    font-size: 0.8rem;
-    color: #6c757d;
-}
-
-/* Responsividade */
-@media (max-width: 992px) {
-    .reserva-coluna-direita {
-        position: static;
-        width: 100%;
-    }
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
 }

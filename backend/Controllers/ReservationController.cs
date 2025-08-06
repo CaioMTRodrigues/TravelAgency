@@ -82,7 +82,7 @@ namespace WebApplication1.Controllers
 
         // GET: api/reservation/{id}
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<ReservationDto>> GetById(int id)
         {
             var reservation = await _reservationService.ObterPorIdAsync(id);

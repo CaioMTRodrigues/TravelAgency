@@ -50,7 +50,7 @@ public class UserService
             NormalizedUserName = userDto.Email.ToLower(), // opcional
             PhoneNumber = userDto.PhoneNumber,
             Document = userDto.Document,
-            Role = "Cliente",
+            Role = "User",
             EmailConfirmed = false,
             EmailConfirmationToken = token,
             TokenExpiration = expiracao

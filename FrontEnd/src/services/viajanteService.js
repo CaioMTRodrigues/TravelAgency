@@ -19,3 +19,10 @@ export const vincularViajanteReserva = async (idReserva, idViajante) => {
   });
   return response.data;
 };
+
+export const buscarViajantesPorNome = async (nomeParcial, idUsuario) => {
+  const response = await api.get(
+    `/traveler/busca?nome=${nomeParcial}&idUsuario=${idUsuario}`
+  );
+  return response.data;
+};
