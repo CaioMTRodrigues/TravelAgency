@@ -82,7 +82,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin, User")]
+        [AllowAnonymous]
         public async Task<ActionResult<PackageDto>> GetById(int id)
         {
             var package = await _repository.GetByIdAsync(id);

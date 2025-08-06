@@ -1131,7 +1131,7 @@ main {
 
 
 /* ==========================================================================
-   11. PÁGINA: DETALHES DO PACOTE
+   11. PÁGINA: DETALHES DO PACOTE (Atualizado)
    ========================================================================== */
 
 .package-detail-page {
@@ -1144,6 +1144,9 @@ main {
   background-position: center;
   position: relative;
   color: white;
+  display: flex; /* Adicionado para ajudar na centralização do overlay */
+  align-items: center;
+  justify-content: center;
 }
 
 .detail-header-overlay {
@@ -1152,20 +1155,26 @@ main {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.7) 100%);
   z-index: 1;
+  /* ========================================================================== */
+  /* ALTERAÇÃO 1: Estas linhas centralizam o título vertical e horizontalmente. */
+  /* ========================================================================== */
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 20px; /* Evita que o texto encoste nas bordas em telas menores */
 }
 
 .detail-header h1 {
   position: relative;
   z-index: 2;
   text-shadow: 0px 5px 15px rgba(0,0,0,0.5); 
-  font-size: 5rem;
+  font-size: 3rem; /* Tamanho ajustado para mobile */
   font-weight: 900;
+  text-align: center;
+  padding: 0 20px;
 }
 
 /* Layout de duas colunas para o conteúdo */
@@ -1176,8 +1185,9 @@ main {
   z-index: 3;
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 40px;
+  gap: 30px;
   align-items: start;
+  padding: 0 20px;
 }
 
 .detail-main-info {
@@ -1191,6 +1201,8 @@ main {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  position: sticky;
+  top: 90px; /* Header height + 20px */
 }
 
 .detail-info-section {
@@ -1206,26 +1218,29 @@ main {
   align-items: center;
   gap: 15px;
   color: #005A9C;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   border-bottom: 2px solid #f0f0f0;
   padding-bottom: 10px;
   margin-bottom: 20px;
+  margin-top: 0;
 }
 
 .detail-card h3 {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
 }
 
 .detail-info-section h4 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   color: #333;
   margin-top: 25px;
+  margin-bottom: 5px;
 }
 
 .detail-info-section p {
   color: #555;
   line-height: 1.7;
-  font-size: 1.05rem;
+  font-size: 1rem;
+  margin-top: 0;
 }
 
 .detail-card {
@@ -1263,19 +1278,12 @@ main {
   color: #007bff;
 }
 
-/* Nova caixa de preço */
 .price-box {
   background: #fff;
   border-radius: 15px;
   padding: 20px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.price-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
+  text-align: center;
 }
 
 .price-label {
@@ -1287,23 +1295,7 @@ main {
   font-size: 2.5rem;
   font-weight: 700;
   color: #005A9C;
-  margin: 0;
-}
-
-.currency-converter button {
-  background: #f0f0f0;
-  border: none;
-  padding: 5px 10px;
-  margin-left: 5px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-}
-
-.currency-converter button.active {
-  background: #005A9C;
-  color: white;
+  margin: 5px 0 0 0;
 }
 
 /* Botão de Compra */
@@ -1318,6 +1310,7 @@ main {
   font-weight: 700;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease;
+  text-transform: uppercase;
 }
 
 .buy-package-button:hover {
@@ -1325,13 +1318,17 @@ main {
   transform: scale(1.03);
 }
 
-/* Estilo para o contêiner do mapa (versão menor) */
-.map-container-small {
-  width: 100%;
-  height: 300px; /* A altura do mapa foi diminuída para 300px */
-  border-radius: 10px;
-  margin-top: 15px;
-  z-index: 1; /* Garante que o mapa não sobreponha outros elementos */
+/* Responsividade para a página de detalhes */
+@media (max-width: 992px) {
+  .detail-content {
+    grid-template-columns: 1fr;
+  }
+  .detail-sidebar {
+    position: static; /* Remove o 'sticky' em telas menores */
+  }
+  .detail-header h1 {
+    font-size: 2.5rem;
+  }
 }
 
 
