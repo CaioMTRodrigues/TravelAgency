@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
-import axios from 'axios'; // Importação do Axios para chamadas de API
+import axios from 'axios';
+import { isAuthenticated } from '../utils/authGuard'; // Importado para verificar o login
 
 // Importações do React Leaflet para o mapa
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -60,7 +61,7 @@ const MapComponent = ({ center, popupText }) => {
   );
 };
 
-const DetalhesPacote = () => {
+const DetalhesPacote = ({ openModal }) => { // Recebendo openModal como prop
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -120,7 +121,11 @@ const DetalhesPacote = () => {
   };
 
   const handleReservarClick = () => {
-    navigate(`/reservar/${pacote.id_Pacote}`);
+    if (isAuthenticated()) {
+      navigate(`/reservar/${pacote.id_Pacote}`);
+    } else {
+      openModal('login');
+    }
   };
 
   if (loading) {

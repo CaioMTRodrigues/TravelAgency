@@ -3,15 +3,18 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../assets/images/logo.png';
 import { isAuthenticated, getUserRole } from '../utils/authGuard';
 import { logout } from '../services/authService';
-import IconNav from './IconNav'; // Importamos o IconNav para usá-lo aqui dentro
+import IconNav from './IconNav';
 import '../assets/styles/styles.css'; 
 import { FaUserCircle } from 'react-icons/fa';
+
+// IMPORTANTE: Removida a função getUserName
 
 const Header = ({ onLoginClick, onRegisterClick }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated());
   const [userRole, setUserRole] = useState(getUserRole());
+  // Removido o estado para o nome do usuário
   const navigate = useNavigate();
-  const location = useLocation(); // Hook para saber a página atual
+  const location = useLocation();
 
   const isHomePage = location.pathname === '/';
 
@@ -19,9 +22,11 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
     const handleAuthChange = () => {
       setIsLoggedIn(isAuthenticated());
       setUserRole(getUserRole());
+      // Removida a atualização do nome do usuário
     };
 
     window.addEventListener('authChange', handleAuthChange);
+    
     return () => {
       window.removeEventListener('authChange', handleAuthChange);
     };
@@ -34,7 +39,6 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
   };
 
   return (
-    // Usamos um Fragment <> para agrupar o Header e o IconNav condicional
     <>
       <header className="menu">
         <div className="menu-container">
@@ -44,7 +48,6 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
             </Link>
           </div>
 
-          {/* Renderiza os links de texto apenas se NÃO for a HomePage */}
           {!isHomePage && (
             <nav className="menu-center">
               <Link to="/destinos">Destinos</Link>
@@ -57,7 +60,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
 
           <div className="menu-right">
             {isLoggedIn ? (
-              // Menu dropdown para utilizador logado
+              // Menu dropdown para utilizador logado, sem a mensagem de boas-vindas
               <div className="dropdown-menu-container">
                 <FaUserCircle size={32} style={{ color: 'white', cursor: 'pointer' }} />
                 <div className="dropdown-content">
@@ -76,11 +79,7 @@ const Header = ({ onLoginClick, onRegisterClick }) => {
         </div>
       </header>
       
-      {/* **CORREÇÃO PRINCIPAL**
-        O IconNav é renderizado aqui, mas apenas se estivermos na HomePage
-        e o utilizador NÃO estiver logado.
-      */}
-      {isHomePage && !isLoggedIn && <IconNav />}
+      {isHomePage && <IconNav />}
     </>
   );
 };
