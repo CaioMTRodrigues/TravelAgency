@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./assets/styles/App.css";
 
+// Contextos
+import { NotificationProvider } from "./contexts/NotificationContext";
+
 // Componentes
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -176,7 +179,9 @@ const AppContent = () => {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <NotificationProvider>
+        <AppContent />
+      </NotificationProvider>
     </Router>
   );
 }

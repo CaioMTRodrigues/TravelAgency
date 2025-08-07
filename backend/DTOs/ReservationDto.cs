@@ -16,8 +16,15 @@ namespace WebApplication1.DTOs
         public int Id_Reserva { get; set; }
         public DateTime Data_Reserva { get; set; }
         public StatusReserva Status { get; set; }
-        public string Numero_Reserva { get; set; }
-        public string Id_Usuario { get; set; }
+        public string? Numero_Reserva { get; set; }
+        public decimal ValorPacote { get; set; }
+        public string? Id_Usuario { get; set; }
         public int Id_Pacote { get; set; }
+        
+        // Dados do pacote incluídos
+        public PackageDto? Pacote { get; set; }
+        
+        // Dados do usuário (opcional)
+        public string? NomeUsuario { get; set; }
     }
 }

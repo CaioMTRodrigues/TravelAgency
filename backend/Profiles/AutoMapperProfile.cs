@@ -30,7 +30,9 @@ namespace WebApplication1.Profiles
             #endregion
 
             #region Reservation
-            CreateMap<Reservation, ReservationDto>();
+            CreateMap<Reservation, ReservationDto>()
+                .ForMember(dest => dest.Pacote, opt => opt.MapFrom(src => src.Pacote))
+                .ForMember(dest => dest.NomeUsuario, opt => opt.MapFrom(src => src.Usuario != null ? src.Usuario.Name : null));
             CreateMap<CreateReservationDto, Reservation>()
                 .ForMember(dest => dest.Id_Usuario, opt => opt.MapFrom(src => src.Id_Usuario))
                 .ForMember(dest => dest.Id_Pacote, opt => opt.MapFrom(src => src.Id_Pacote));

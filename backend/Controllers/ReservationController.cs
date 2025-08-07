@@ -67,8 +67,72 @@ namespace WebApplication1.Controllers
             return BadRequest("Status inválido.");
         }
 
+        // PUT: api/reservation/{id}/cancel - Endpoint para usuários cancelarem suas próprias reservas
+        [HttpPut("{id}/cancel")]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> CancelUserReservation(int id)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return BadRequest("ID do usuário não encontrado no token.");
+            }
+
+            var reservation = await _context.Reservations.FindAsync(id);
+
+            if (reservation == null)
+            {
+                return NotFound("Reserva não encontrada.");
+            }
+
+            // Verifica se a reserva pertence ao usuário logado (ou se é admin)
+            var userRole = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            if (userRole != "Admin" && reservation.Id_Usuario != userIdClaim)
+            {
+                return Forbid("Você não tem permissão para cancelar esta reserva.");
+            }
+
+            // Verifica se a reserva pode ser cancelada
+            if (reservation.Status == StatusReserva.Cancelada)
+            {
+                return BadRequest("Esta reserva já está cancelada.");
+            }
+
+            if (reservation.Status == StatusReserva.Concluida)
+            {
+                return BadRequest("Não é possível cancelar uma reserva concluída.");
+            }
+
+            reservation.Status = StatusReserva.Cancelada;
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Reserva cancelada com sucesso." });
+        }
+
 
         // --- MÉTODOS EXISTENTES FORAM MANTIDOS ABAIXO ---
+
+        // GET: api/reservation/user
+        [HttpGet("user")]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<ActionResult<IEnumerable<ReservationDto>>> GetUserReservations()
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                return BadRequest("ID do usuário não encontrado no token.");
+            }
+
+            var reservations = await _context.Reservations
+                .Include(r => r.Pacote)
+                .Include(r => r.Usuario)
+                .Where(r => r.Id_Usuario == userIdClaim)
+                .OrderByDescending(r => r.Data_Reserva)
+                .ToListAsync();
+
+            var result = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
+            return Ok(result);
+        }
 
         // GET: api/reservation
         [HttpGet]
@@ -146,6 +210,6 @@ namespace WebApplication1.Controllers
     // DTO auxiliar para receber o novo status
     public class UpdateReservationStatusDto
     {
-        public string Status { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }
