@@ -56,7 +56,7 @@ namespace WebApplication1.Data
             // Relacionamento: Reservation -> User (muitos para um)
             modelBuilder.Entity<Reservation>()
                 .HasOne(r => r.Usuario)
-                .WithMany()
+                .WithMany(u => u.Reservas)
                 .HasForeignKey(r => r.Id_Usuario)
                 .HasConstraintName("FK_Reservations_Users_Id_Usuario");
 

@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { loginUsuario } from "../services/authService";
 import { setToken } from "../utils/tokenUtils";
 
+import { toast } from "react-toastify";
+
+
 const Login = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -11,7 +14,11 @@ const Login = ({ onClose }) => {
     e.preventDefault();
 
     if (!email || !senha) {
-      setErro("Preencha todos os campos");
+      
+      
+
+      toast.warn("Preencha todos os campos");
+
       return;
     }
 
@@ -19,7 +26,9 @@ const Login = ({ onClose }) => {
       const result = await loginUsuario({ email, password: senha });
       setToken(result.token); // salva o token JWT
       setErro("");
-      alert("Login realizado com sucesso!");
+      
+toast.success("Login realizado com sucesso!");
+
       onClose(); // Fecha o modal após o login
       window.location.reload(); // Recarrega a página para refletir o estado de login
     } catch (err) {
