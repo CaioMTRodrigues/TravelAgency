@@ -18,6 +18,7 @@ const FormasPagamento = ({ reservationId, onPaymentSuccess }) => {
   const handleCreateOrder = async (data, actions) => {
     setError(null);
     if (!reservationId) {
+      
       setError("ID da Reserva não encontrado. Não é possível iniciar o pagamento.");
       return;
     }

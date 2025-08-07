@@ -56,7 +56,7 @@ const FeaturedPackages = () => {
               />
               <div className="package-info">
                 <h3 className="package-name">{pacote.titulo}</h3>
-                <p className="package-description">{pacote.descricao}</p>
+                
                 <p className="package-price">
                   {typeof pacote.valor === 'number'
                     ? `R$ ${pacote.valor.toFixed(2)}`

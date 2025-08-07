@@ -21,7 +21,7 @@ namespace WebApplication1.Services
             var assunto = "Confirmação de E-mail - TravelAgency";
 
 
-            var link = $"http://localhost:5000/api/user/confirmar-email?email={WebUtility.UrlEncode(destinatario)}&token={WebUtility.UrlEncode(token)}";
+            var link = $"https://localhost:5001/api/user/confirmar-email?email={WebUtility.UrlEncode(destinatario)}&token={WebUtility.UrlEncode(token)}";
 
 
             var corpo = $@"

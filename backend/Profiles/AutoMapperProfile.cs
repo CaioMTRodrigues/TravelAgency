@@ -33,7 +33,7 @@ namespace WebApplication1.Profiles
 
             CreateMap<Reservation, ReservationDto>()
                 .ForMember(dest => dest.NomeUsuario, opt => opt.MapFrom(src => src.Usuario.Name))
-                .ForMember(dest => dest.User, opt => opt.MapFrom(src => new UserLoginDTO
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => new UserDto
                 {
                     Id = src.Usuario.Id,
                     Email = src.Usuario.Email,

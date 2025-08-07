@@ -6,7 +6,7 @@ export const loginUsuario = async (userData) => {
   const response = await api.post("/User/login", userData);
   if (response.data.token) {
     localStorage.setItem("token", response.data.token);
-    localStorage.setItem("id_usuario", response.data.id_usuario);
+    localStorage.setItem("id_usuario", response.data.idUsuario);
   }
   return response.data;
 };

@@ -5,6 +5,10 @@ import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import Spinner from '../../components/Spinner';
 import './AdminPacotes.css';
 
+
+import { toast, ToastContainer } from 'react-toastify';
+
+
 const AdminPacotes = () => {
   const [pacotes, setPacotes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +21,10 @@ const AdminPacotes = () => {
       const data = await listarTodosPacotes();
       setPacotes(data);
     } catch (err) {
-      setError('Falha ao carregar os pacotes. Tente novamente mais tarde.');
+      
+toast.error('Falha ao carregar os pacotes. Tente novamente mais tarde.');
+
+      
     } finally {
       setLoading(false);
     }
@@ -33,7 +40,10 @@ const AdminPacotes = () => {
       setPacotes(pacotes.map(p => 
         p.id_Pacote === id ? { ...p, destaque: !statusAtual } : p
       ));
-      setSuccess('Status de destaque atualizado com sucesso!');
+      
+      toast.success('Status de destaque atualizado com sucesso!');
+
+      
     } catch (err) {
       setError(err.toString());
     }
@@ -44,10 +54,16 @@ const AdminPacotes = () => {
     if (window.confirm('Tem certeza que deseja excluir este pacote?')) {
       try {
         await excluirPacote(id);
-        setSuccess('Pacote excluído com sucesso!');
+        
+toast.success('Pacote excluído com sucesso!');
+
+        
         setPacotes(pacotes.filter(p => p.id_Pacote !== id));
       } catch (err) {
-        setError('Erro ao excluir o pacote.');
+        
+toast.error('Erro ao excluir o pacote.');
+
+        
       }
       setTimeout(() => { setSuccess(''); setError(''); }, 3000);
     }
