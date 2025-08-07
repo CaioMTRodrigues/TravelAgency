@@ -4,10 +4,23 @@ import { vincularViajanteReserva } from '../services/viajanteService';
 import { createStripeOrder, captureStripeOrder, listarFormasPagamento } from '../services/paymentService';
 import './EscolherFormaPagamento.css';
 
+// Importando os ícones
+import { FaCreditCard, FaRegCreditCard, FaMoneyBillWave } from 'react-icons/fa';
+
+// Um objeto para mapear os tipos de pagamento aos ícones
+const paymentIcons = {
+  'credit_card': <FaCreditCard className="payment-icon" />,
+  'debit_card': <FaRegCreditCard className="payment-icon" />,
+  'pix': <FaMoneyBillWave className="payment-icon" />
+  // Adicione outros tipos e ícones conforme necessário
+};
+
+
 const EscolherFormaPagamento = ({ onFechar }) => {
   const [selecionado, setSelecionado] = useState('');
   const [formasPagamento, setFormasPagamento] = useState([]);
   const [erro, setErro] = useState('');
+  const [processando, setProcessando] = useState(false); // Estado para evitar cliques duplos
 
   useEffect(() => {
     const fetchFormas = async () => {
@@ -23,10 +36,15 @@ const EscolherFormaPagamento = ({ onFechar }) => {
   }, []);
 
   const handleSelecionar = async (tipo) => {
+    if (processando) return; // Impede novos cliques enquanto uma operação está em andamento
+    setProcessando(true);
     setSelecionado(tipo);
+    setErro(''); // Limpa erros anteriores
+
     const reservaTemp = JSON.parse(localStorage.getItem("reservaTemp"));
     if (!reservaTemp) {
       setErro("Dados da reserva não encontrados.");
+      setProcessando(false);
       return;
     }
 
@@ -51,30 +69,40 @@ const EscolherFormaPagamento = ({ onFechar }) => {
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
       setErro("Erro ao processar pagamento. Tente novamente.");
+    } finally {
+        setProcessando(false); // Libera o botão para novas tentativas
     }
   };
 
   return (
     <div className="modal-overlay">
       <div className="modal-content">
+        <button className="close-button" onClick={onFechar}>X</button>
         <h2>Escolha a forma de pagamento</h2>
-        {erro && <p className="erro">{erro}</p>}
-        <div className="opcoes-pagamento">
+        {erro && <p className="error-message">{erro}</p>}
+
+        <div className="payment-options">
           {formasPagamento.length > 0 ? (
             formasPagamento.map((forma) => (
               <div
                 key={forma.tipo}
-                className={`opcao-pagamento ${selecionado === forma.tipo ? 'selecionado' : ''}`}
+                className={`payment-card ${selecionado === forma.tipo ? 'selected' : ''}`}
                 onClick={() => handleSelecionar(forma.tipo)}
               >
-                <span>{forma.label}</span>
+                {paymentIcons[forma.tipo] || <FaCreditCard className="payment-icon" /> /* Ícone padrão */}
+                <h3>{forma.label}</h3>
+                <button 
+                  className="payment-button"
+                  disabled={processando}
+                >
+                  {processando && selecionado === forma.tipo ? 'Processando...' : `Pagar com ${forma.label}`}
+                </button>
               </div>
             ))
           ) : (
-            <p>Carregando opções...</p>
+            <p>Carregando opções de pagamento...</p>
           )}
         </div>
-        <button onClick={onFechar}>Fechar</button>
       </div>
     </div>
   );
