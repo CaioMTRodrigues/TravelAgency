@@ -35,6 +35,9 @@ import CadastroPacote from "./pages/Admin/CadastroPacote";
 import AdminReservas from "./pages/Admin/AdminReservas";
 import AdminAvaliacoes from "./pages/Admin/AdminAvaliacoes";
 
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // --- NOVAS PÁGINAS IMPORTADAS ---
 import SobreNos from "./pages/SobreNos";
 import TermosServico from "./pages/TermosServico";
@@ -66,7 +69,10 @@ const AppContent = () => {
           {/* Rotas Públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/pacotes" element={<Pacotes />} />
-          <Route path="/pacotes/:id" element={<DetalhesPacote openModal={openModal} />} />
+          <Route
+            path="/pacotes/:id"
+            element={<DetalhesPacote openModal={openModal} />}
+          />
           <Route path="/destinos" element={<Destinos />} />
           <Route path="/ofertas" element={<Ofertas />} />
           <Route path="/central-ajuda" element={<CentralAjuda />} />

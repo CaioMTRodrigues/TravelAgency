@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using WebApplication1.Entities;
 
 public class User : IdentityUser
 {
@@ -11,4 +12,8 @@ public class User : IdentityUser
     public DateTime? TokenExpiration { get; set; }
     public string? PasswordResetToken { get; set; }
     public DateTime? PasswordResetTokenExpiration { get; set; }
+
+
+    public ICollection<Reservation> Reservas { get; set; }
+
 }

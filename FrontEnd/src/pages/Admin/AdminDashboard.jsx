@@ -48,7 +48,7 @@ const AdminDashboard = () => {
             id: `res-${r.id_Reserva}`,
             type: 'reserva',
             date: new Date(r.data_Reserva),
-            text: `Nova reserva para o pacote "${r.pacote?.titulo || 'N/A'}" por ${r.usuario?.name || 'N/A'}.`
+            text: `Nova reserva para o pacote "${r.pacote?.titulo || 'N/A'}" por ${r.nomeUsuario || 'N/A'}.`
           })),
           ...allAvaliacoes.map(a => ({
             id: `eva-${a.id_Avaliacao}`,

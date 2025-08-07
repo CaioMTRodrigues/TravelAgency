@@ -13,7 +13,11 @@ const Login = ({ onClose }) => {
     e.preventDefault();
 
     if (!email || !senha) {
-      setErro("Preencha todos os campos");
+      
+      
+
+      toast.warn("Preencha todos os campos");
+
       return;
     }
 
