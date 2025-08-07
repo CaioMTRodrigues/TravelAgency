@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./assets/styles/App.css";
 
 // Componentes
@@ -37,14 +33,15 @@ import AdminReservas from "./pages/Admin/AdminReservas";
 import AdminAvaliacoes from "./pages/Admin/AdminAvaliacoes";
 
 // --- NOVAS PÁGINAS IMPORTADAS ---
-import SobreNos from './pages/SobreNos';
-import TermosServico from './pages/TermosServico';
-import PoliticaPrivacidade from './pages/PoliticaPrivacidade';
+import SobreNos from "./pages/SobreNos";
+import TermosServico from "./pages/TermosServico";
+import PoliticaPrivacidade from "./pages/PoliticaPrivacidade";
+import EscolherFormaPagamento from "./pages/EscolherFormaPagamento";
 
 // Componente Wrapper para passar o estado do modal ao Header
 const AppContent = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [modalView, setModalView] = useState('login');
+  const [modalView, setModalView] = useState("login");
 
   const openModal = (view) => {
     setModalView(view);
@@ -58,8 +55,8 @@ const AppContent = () => {
   return (
     <div className="App">
       <Header
-        onLoginClick={() => openModal('login')}
-        onRegisterClick={() => openModal('register')}
+        onLoginClick={() => openModal("login")}
+        onRegisterClick={() => openModal("register")}
       />
       <main>
         <Routes>
@@ -76,7 +73,10 @@ const AppContent = () => {
           {/* --- NOVAS ROTAS ADICIONADAS --- */}
           <Route path="/sobre-nos" element={<SobreNos />} />
           <Route path="/termos-servico" element={<TermosServico />} />
-          <Route path="/politica-privacidade" element={<PoliticaPrivacidade />} />
+          <Route
+            path="/politica-privacidade"
+            element={<PoliticaPrivacidade />}
+          />
 
           {/* Rotas de Autenticação */}
           <Route path="/login" element={<Login />} />
@@ -102,14 +102,18 @@ const AppContent = () => {
             }
           />
           <Route
-            path="/pagamento/:id"
+            path="/pagamento/:idReserva"
             element={
               <ProtectedRoute>
-                <FormasPagamento />
+                <EscolherFormaPagamento />
               </ProtectedRoute>
             }
           />
-          
+          <Route
+            path="/pagamento/:idReserva"
+            element={<EscolherFormaPagamento />}
+          />
+
           {/* Rotas Protegidas para Administradores */}
           <Route
             path="/admin"

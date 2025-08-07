@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Corrigido para HTTPS na porta 5001
+  baseURL: "https://localhost:5001/api", // Corrigido para HTTPS na porta 5001
   headers: {
     "Content-Type": "application/json",
   },
@@ -14,10 +14,8 @@ api.interceptors.request.use(
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log(config);
     }
     return config;
-    console.log(config);
   },
   (error) => Promise.reject(error)
 );

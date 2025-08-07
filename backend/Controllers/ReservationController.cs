@@ -72,7 +72,7 @@ namespace WebApplication1.Controllers
 
         // GET: api/reservation
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<ActionResult<IEnumerable<ReservationDto>>> GetAll()
         {
             var reservations = await _reservationService.ObterTodasAsync();

@@ -1,41 +1,30 @@
+
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { InputMask } from '@react-input/mask';
 
-// Serviços e Componentes
 import { getPacoteById } from '../services/pacoteService';
-import { cadastrarReserva } from "../services/reservaService";
-import { listarViajantesDoUsuario, cadastrarViajante, vincularViajanteReserva } from "../services/viajanteService";
-import { createPayPalOrder as createCheckoutSession } from '../services/paymentService';
+import { listarViajantesDoUsuario, cadastrarViajante } from "../services/viajanteService";
 
-import Spinner from '../components/Spinner';
 import ModalViajante from "../components/ModalViajante";
+import EscolherFormaPagamento from "./EscolherFormaPagamento";
 
-// Ícones e Estilos
 import { FaUser, FaPhone, FaUsers, FaPlusCircle, FaTrash, FaLock } from 'react-icons/fa';
 import './CadastroReserva.css';
 
 const CadastroReserva = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
     const idUsuario = localStorage.getItem("idUsuario");
 
-    // Estados do componente
     const [pacote, setPacote] = useState(null);
     const [error, setError] = useState('');
-    
-    // Estados do formulário e validação
     const [dadosComprador, setDadosComprador] = useState({ nomeCompleto: '', telefone: '' });
     const [formErrors, setFormErrors] = useState({});
     const [saveData, setSaveData] = useState(true);
-
-    // Estados dos acompanhantes e modal
     const [acompanhantes, setAcompanhantes] = useState([]);
     const [viajantesDisponiveis, setViajantesDisponiveis] = useState([]);
-    const [mostrarModal, setMostrarModal] = useState(false); // <-- Variável correta
-    
-    // Estado de Carregamento para o botão
-    const [isProcessing, setIsProcessing] = useState(false);
+    const [mostrarModal, setMostrarModal] = useState(false);
+    const [mostrarPagamento, setMostrarPagamento] = useState(false);
 
     useEffect(() => {
         const savedData = localStorage.getItem(`compradorData_${idUsuario}`);
@@ -79,7 +68,7 @@ const CadastroReserva = () => {
             [name]: validateField(name, value)
         }));
     };
-    
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setDadosComprador(prevState => ({ ...prevState, [name]: value }));
@@ -90,15 +79,14 @@ const CadastroReserva = () => {
             }));
         }
     };
-    
-    // Lógica de Acompanhantes
+
     const adicionarAcompanhante = (viajante) => {
         if (!acompanhantes.some(a => a.id_Viajante === viajante.id_Viajante) && acompanhantes.length < 9) {
             setAcompanhantes([...acompanhantes, viajante]);
             setViajantesDisponiveis(viajantesDisponiveis.filter(v => v.id_Viajante !== viajante.id_Viajante));
         }
     };
-    
+
     const removerAcompanhante = (viajante) => {
         setAcompanhantes(acompanhantes.filter(a => a.id_Viajante !== viajante.id_Viajante));
         setViajantesDisponiveis(prev => [...prev, viajante].sort((a,b) => a.nome.localeCompare(b.nome)));
@@ -115,8 +103,7 @@ const CadastroReserva = () => {
         }
     };
 
-    // Submissão do Formulário
-    const handleSubmit = async (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         setError('');
 
@@ -127,51 +114,26 @@ const CadastroReserva = () => {
             return;
         }
 
-        setIsProcessing(true);
-
         if (saveData) {
             localStorage.setItem(`compradorData_${idUsuario}`, JSON.stringify(dadosComprador));
         } else {
             localStorage.removeItem(`compradorData_${idUsuario}`);
         }
-        
-        try {
-  const reservaCriada = await cadastrarReserva({
-    id_Usuario: idUsuario,
-    id_Pacote: parseInt(id),
-    data_Reserva: new Date().toISOString(),
-    status: 'Pendente'
-  });
 
-  await Promise.all(acompanhantes.map(v =>
-    vincularViajanteReserva(reservaCriada.id_Reserva, v.id_Viajante)
-  ));
+        const reservaTemp = {
+            idUsuario,
+            idPacote: parseInt(id),
+            dataReserva: new Date().toISOString(),
+            status: 'Pendente',
+            dadosComprador,
+            acompanhantes
+        };
 
-  const checkoutData = {
-    idReserva: reservaCriada.id_Reserva,
-    nomePacote: pacote.titulo,
-    valorUnitario: pacote.valor,
-    quantidade: 1 + acompanhantes.length,
-    idPacote: pacote.id_Pacote
-  };
-
-  // Aqui você pode redirecionar para uma página de confirmação ou pagamento
-  setIsProcessing(false);
-  
-const { orderId } = await createCheckoutSession(checkoutData);
-window.location.href = `https://www.paypal.com/checkoutnow?token=${orderId}`;
-
-
-} catch (err) {
-  setError(err.message || "Ocorreu um erro ao processar sua reserva.");
-  setIsProcessing(false);
-}
-
+        localStorage.setItem("reservaTemp", JSON.stringify(reservaTemp));
+        setMostrarPagamento(true);
     };
-    
-    if (!pacote) return <div>Carregando pacote...</div>;
 
-    if (error && !isProcessing) return <div className="error-message-full-page">{error}</div>;
+    if (!pacote) return <div>Carregando pacote...</div>;
 
     return (
         <div className="cadastro-reserva-container">
@@ -229,9 +191,9 @@ window.location.href = `https://www.paypal.com/checkoutnow?token=${orderId}`;
                             <button onClick={() => removerAcompanhante(viajante)} className="remove-btn"><FaTrash /></button>
                         </div>
                     ))}
-                     <div className="dropdown-acompanhantes">
+                    <div className="dropdown-acompanhantes">
                         <button className="add-button">
-                           <FaPlusCircle /> Adicionar Acompanhante
+                            <FaPlusCircle /> Adicionar Acompanhante
                         </button>
                         <div className="dropdown-content">
                             {viajantesDisponiveis.length > 0 ? (
@@ -266,12 +228,8 @@ window.location.href = `https://www.paypal.com/checkoutnow?token=${orderId}`;
                         <span>Valor Total</span>
                         <strong>R$ {(pacote.valor * (1 + acompanhantes.length)).toFixed(2)}</strong>
                     </div>
-                    <button type="submit" form="reserva-form" className="submit-button" disabled={isProcessing}>
-                        {isProcessing ? (
-                            <><div className="spinner-sm"></div> Processando...</>
-                        ) : (
-                            'Seguir para Pagamento'
-                        )}
+                    <button type="submit" form="reserva-form" className="submit-button">
+                        Seguir para Pagamento
                     </button>
                     <div className="secure-payment-info">
                         <FaLock />
@@ -279,9 +237,7 @@ window.location.href = `https://www.paypal.com/checkoutnow?token=${orderId}`;
                     </div>
                 </div>
             </div>
-            
-            {/* ================================================================== */}
-            {/* >> CORREÇÃO APLICADA AQUI << */}
+
             {mostrarModal && (
                 <ModalViajante
                     idUsuario={idUsuario}
@@ -290,7 +246,10 @@ window.location.href = `https://www.paypal.com/checkoutnow?token=${orderId}`;
                     onFechar={() => setMostrarModal(false)}
                 />
             )}
-            {/* ================================================================== */}
+
+            {mostrarPagamento && (
+                <EscolherFormaPagamento onFechar={() => setMostrarPagamento(false)} />
+            )}
         </div>
     );
 };

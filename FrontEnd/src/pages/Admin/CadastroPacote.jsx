@@ -66,8 +66,8 @@ const CadastroPacote = () => {
     formDataImagem.append("arquivo", file);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/imagens/upload", formDataImagem);
-      const urlImagem = `http://localhost:5000/api/imagens/${response.data.nome}`;
+      const response = await axios.post("https://localhost:5001/api/imagens/upload", formDataImagem);
+      const urlImagem = `https://localhost:5001/api/imagens/${response.data.nome}`;
       setPacote(prevState => ({ ...prevState, imagemUrl: urlImagem }));
       setSuccess("Imagem enviada com sucesso!");
     } catch (err) {

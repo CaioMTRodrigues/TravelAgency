@@ -1,3 +1,4 @@
+/*
 import api from "./api"; // Importa a instância do axios já configurada
 
 export const createPayPalOrder = async (reservationId) => {
@@ -30,3 +31,4 @@ export const capturePayPalOrder = async (orderId) => {
     throw error;
   }
 };
+*/

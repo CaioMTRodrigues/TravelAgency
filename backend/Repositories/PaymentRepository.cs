@@ -57,5 +57,11 @@ namespace WebApplication1.Repositories
                 .FirstOrDefaultAsync(p => p.PayPalOrderId == orderId);
         }
         // --- FIM DO NOVO MÉTODO ---
+
+        public async Task<Payment?> GetByStripePaymentIntentIdAsync(string intentId)
+        {
+            return await _context.Payments.FirstOrDefaultAsync(p => p.StripePaymentIntentId == intentId);
+        }
+
     }
 }

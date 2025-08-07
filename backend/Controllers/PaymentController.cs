@@ -1,14 +1,15 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Checkout;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebApplication1.DTOs;
 using WebApplication1.Entities;
 using WebApplication1.Exceptions;
 using WebApplication1.Repositories;
 using WebApplication1.Services;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace WebApplication1.Controllers
 {
@@ -54,7 +55,42 @@ namespace WebApplication1.Controllers
             return Ok(dto);
         }
 
-        
+        /*
+        [HttpPost("create-checkout-session")]
+        public async Task<IActionResult> CreateCheckoutSession([FromBody] PaymentRequestDto request)
+        {
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+        {
+            new SessionLineItemOptions
+            {
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    UnitAmount = (long)(request.Amount * 100), // valor em centavos
+                    Currency = "brl",
+                    ProductData = new SessionLineItemPriceDataProductDataOptions
+                    {
+                        Name = request.PackageName,
+                    },
+                },
+                Quantity = 1,
+            },
+        },
+                Mode = "payment",
+                SuccessUrl = "https://seusite.com/sucesso",
+                CancelUrl = "https://seusite.com/cancelado",
+            };
+
+            var service = new SessionService();
+            Session session = await service.CreateAsync(options);
+
+            return Ok(new { sessionId = session.Id });
+        }*/
+
+
+
         [HttpPost("create-paypal-order")]
         [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> CreatePayPalOrder([FromBody] PaymentRequestDto paymentRequest)
@@ -163,6 +199,83 @@ namespace WebApplication1.Controllers
             await _repository.DeleteAsync(id);
             return NoContent();
         }
+
+        /*      NOVOS ENDPOINTS           */
+
+        [HttpPost("create-stripe-order")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<IActionResult> CreateStripeOrder([FromBody] CreatePaymentDto dto)
+        {
+            try
+            {
+                var reservation = await _reservationService.ObterPorIdAsync(dto.Id_Reserva);
+                if (reservation == null)
+                    throw new NotFoundException("Reserva", dto.Id_Reserva);
+
+                var payment = new Payment
+                {
+                    Id_Reserva = dto.Id_Reserva,
+                    Valor = dto.Valor,
+                    Data_Pagamento = dto.Data_Pagamento,
+                    Status = StatusPagamento.Pendente,
+                    Tipo = dto.Tipo,
+                    StripePaymentIntentId = Guid.NewGuid().ToString() // Simulação
+                };
+
+                await _repository.AddAsync(payment);
+
+                return Ok(new { paymentIntentId = payment.StripePaymentIntentId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Erro ao criar pagamento simulado.", details = ex.Message });
+            }
+        }
+
+        [HttpPost("capture-stripe-order")]
+        [Authorize(Roles = "Admin, User")]
+        public async Task<IActionResult> CaptureStripeOrder([FromBody] StripeCaptureDto dto)
+        {
+            var payment = await ((PaymentRepository)_repository).GetByStripePaymentIntentIdAsync(dto.PaymentIntentId);
+            if (payment == null)
+                return NotFound(new { error = "Pagamento não encontrado." });
+
+            payment.Status = StatusPagamento.Aprovado;
+            payment.Data_Pagamento = DateTime.UtcNow;
+            await _repository.UpdateAsync(payment);
+
+            return Ok(new { status = "Pagamento simulado como aprovado." });
+        }
+
+        public class StripeCaptureDto
+        {
+            public string PaymentIntentId { get; set; }
+        }
+
+        [HttpGet("formas")]
+        [AllowAnonymous] // ou [Authorize] se quiser restringir
+        public ActionResult<IEnumerable<object>> GetFormasPagamento()
+        {
+            var formas = Enum.GetValues(typeof(TipoPagamento))
+                .Cast<TipoPagamento>()
+                .Select(tp => new
+                {
+                    tipo = tp.ToString(),
+                    label = tp switch
+                    {
+                        TipoPagamento.Cartao_Credito => "Cartão de Crédito",
+                        TipoPagamento.Boleto => "Boleto Bancário",
+                        TipoPagamento.Transferencia_Bancaria => "Transferência Bancária",
+                        //TipoPagamento.PayPal => "PayPal",
+                        _ => tp.ToString()
+                    }
+                });
+
+            return Ok(formas);
+        }
+
+
+
     }
 
     // DTO auxiliar para o corpo da requisição de captura
@@ -170,4 +283,8 @@ namespace WebApplication1.Controllers
     {
         public string OrderId { get; set; }
     }
+
+    
+
+
 }

@@ -1,64 +1,100 @@
-import api from "./api"; // Importa a instância do axios já configurada
-
-import axios from "axios";
+import api from "./api"; // Usa a instância do Axios com baseURL e token
 
 /**
- * Cria uma ordem de pagamento no PayPal através do nosso backend.
- * @param {number} reservationId - O ID da reserva para a qual o pagamento está sendo criado.
- * @returns {Promise<{orderId: string}>} - Uma promessa que resolve com o ID da ordem do PayPal.
+ * Cria uma ordem de pagamento no PayPal através do backend.
+ * @param {number} reservationId
+ * @returns {Promise<{orderId: string}>}
  */
-
 export const createPayPalOrder = async (reservationId) => {
   try {
-    const response = await api.post("/api/payment/create-paypal-order", {
+    const response = await api.post("/payment/create-paypal-order", {
       reservationId,
       currency: "BRL",
     });
-    return response.data; // { orderId: '...' }
+    return response.data;
   } catch (error) {
-    console.error("Erro ao criar ordem PayPal:", error);
+    console.error(
+      "Erro ao criar a ordem no PayPal:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 /**
- * Captura (finaliza) uma ordem de pagamento do PayPal após a aprovação do usuário.
- * @param {string} orderId - O ID da ordem do PayPal que foi aprovada.
- * @returns {Promise<any>} - Uma promessa que resolve com a resposta do backend.
+ * Captura (finaliza) uma ordem de pagamento do PayPal.
+ * @param {string} orderId
+ * @returns {Promise<any>}
  */
-
 export const capturePayPalOrder = async (orderId) => {
   try {
-    const response = await api.post("/api/payment/capture-paypal-order", {
+    const response = await api.post("/payment/capture-paypal-order", {
       orderId,
     });
     return response.data;
   } catch (error) {
-    console.error("Erro ao capturar ordem PayPal:", error);
+    console.error(
+      "Erro ao capturar a ordem no PayPal:",
+      error.response?.data || error.message
+    );
     throw error;
   }
 };
 
 /**
- * Cria uma sessão de checkout e retorna a URL para redirecionamento.
- * @param {object} checkoutData - Dados da reserva e pacote.
- * @returns {Promise<{url: string}>}
+ * Cria uma ordem de pagamento simulada com Stripe.
+ * @param {number} reservationId
+ * @param {string} currency
+ * @returns {Promise<{paymentIntentId: string}>}
  */
+export const createStripeOrder = async (reservationId, currency = "BRL") => {
+  try {
+    const response = await api.post("/payment/create-stripe-order", {
+      id_Reserva: reservationId,
+      valor: 199.99, // ou valor real do pacote
+      data_Pagamento: new Date().toISOString(),
+      tipo: "Cartao_Credito",
+      status: "Pendente",
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao criar ordem Stripe:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
 
-export const createCheckoutSession = async (checkoutData) => {
-  const token = localStorage.getItem("token");
-  const response = await axios.post(
-    "http://localhost:5000/api/payment/create-paypal-order",
-    {
-      reservationId: checkoutData.idReserva,
-      currency: "BRL",
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-  return response.data; // deve conter { orderId }
+/**
+ * Simula a captura de pagamento Stripe.
+ * @param {string} paymentIntentId
+ * @returns {Promise<any>}
+ */
+export const captureStripeOrder = async (paymentIntentId) => {
+  try {
+    const response = await api.post("/payment/capture-stripe-order", {
+      paymentIntentId,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao capturar pagamento Stripe:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const listarFormasPagamento = async () => {
+  try {
+    const response = await api.get("/payment/formas");
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Erro ao buscar formas de pagamento:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
 };

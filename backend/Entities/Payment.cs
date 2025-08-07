@@ -51,6 +51,7 @@ namespace WebApplication1.Entities
 
         // Campo para armazenar o ID da ordem do PayPal
         public string? PayPalOrderId { get; set; }
+        public string? StripePaymentIntentId { get; internal set; }
 
         // O campo do Stripe pode ser removido ou mantido para referência histórica, se necessário.
         // Se for removê-lo, lembre-se de criar uma nova migração.
