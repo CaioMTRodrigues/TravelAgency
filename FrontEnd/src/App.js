@@ -66,7 +66,7 @@ const AppContent = () => {
           {/* Rotas Públicas */}
           <Route path="/" element={<HomePage />} />
           <Route path="/pacotes" element={<Pacotes />} />
-          <Route path="/pacotes/:id" element={<DetalhesPacote />} />
+          <Route path="/pacotes/:id" element={<DetalhesPacote openModal={openModal} />} />
           <Route path="/destinos" element={<Destinos />} />
           <Route path="/ofertas" element={<Ofertas />} />
           <Route path="/central-ajuda" element={<CentralAjuda />} />
@@ -163,7 +163,7 @@ const AppContent = () => {
       </main>
       <Footer />
       <Modal isOpen={isModalOpen} onClose={closeModal}>
-        <AuthModal initialView={modalView} />
+        <AuthModal initialView={modalView} onClose={closeModal} />
       </Modal>
     </div>
   );

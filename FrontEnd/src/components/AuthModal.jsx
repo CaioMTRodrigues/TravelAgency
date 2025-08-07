@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'; // Adicione useEffect
+import React, { useState, useEffect } from 'react';
 import Login from '../pages/Login';
 import Cadastro from '../pages/Cadastro';
 
-// O componente agora recebe 'initialView' como uma propriedade
-const AuthModal = ({ initialView }) => { 
+// O componente agora recebe 'initialView' e 'onClose' como propriedades
+const AuthModal = ({ initialView, onClose }) => {
   // O estado inicial de isLoginView agora é definido pela propriedade
   const [isLoginView, setIsLoginView] = useState(initialView === 'login');
 
@@ -16,7 +16,8 @@ const AuthModal = ({ initialView }) => {
     <div className="auth-modal">
       {isLoginView ? (
         <>
-          <Login />
+          {/* Passando onClose para o componente Login */}
+          <Login onClose={onClose} />
           <p>
             Não tem uma conta?{' '}
             <button onClick={() => setIsLoginView(false)} className="auth-toggle-button">

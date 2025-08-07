@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { loginUsuario } from "../services/authService";
 import { setToken } from "../utils/tokenUtils";
 
-const Login = () => {
+const Login = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
@@ -20,7 +20,8 @@ const Login = () => {
       setToken(result.token); // salva o token JWT
       setErro("");
       alert("Login realizado com sucesso!");
-      window.location.href = "/"; // redireciona para a home
+      onClose(); // Fecha o modal após o login
+      window.location.reload(); // Recarrega a página para refletir o estado de login
     } catch (err) {
       const mensagem =
         typeof err === "string"
