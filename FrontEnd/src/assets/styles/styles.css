@@ -1480,6 +1480,18 @@ main {
   color: #555;
 }
 
+.btn-cancel:disabled {
+  background-color: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.btn-cancel:disabled:hover {
+  background-color: #e0e0e0;
+  transform: none;
+}
+
 /* Box para quando não há reservas */
 .no-reservations-box {
   text-align: center;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
 import { createPayPalOrder, capturePayPalOrder } from '../services/paymentService';
+import { useNotification } from '../contexts/NotificationContext';
 import { useNavigate } from 'react-router-dom';
 import Spinner from './Spinner';
 
@@ -11,6 +12,7 @@ const PAYPAL_CLIENT_ID = "AelSd52cjXFuK-aG2h6oH6In8vTSy_ktWgbmIA2FD-f_d4f1dWkb_H
 const FormasPagamento = ({ reservationId, onPaymentSuccess }) => {
   const [error, setError] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const { showSuccess, showError, showWarning } = useNotification();
   const navigate = useNavigate();
 
   // Chamado quando o usuário clica no botão do PayPal.
@@ -41,15 +43,19 @@ const FormasPagamento = ({ reservationId, onPaymentSuccess }) => {
     try {
       const response = await capturePayPalOrder(data.orderID);
       console.log("Pagamento capturado com sucesso:", response);
-      alert("Pagamento realizado com sucesso!"); // Idealmente, substitua por um modal mais elegante.
+      showSuccess("Pagamento realizado com sucesso! Sua reserva foi confirmada.", "Pagamento Aprovado");
       
       if (onPaymentSuccess) {
         onPaymentSuccess();
       }
       
-      navigate('/minhas-reservas'); // Redireciona o usuário para a página de reservas.
+      // Aguarda um pouco para mostrar a notificação antes de navegar
+      setTimeout(() => {
+        navigate('/minhas-reservas'); // Redireciona o usuário para a página de reservas.
+      }, 2000);
     } catch (err) {
       setError("Ocorreu um erro ao finalizar seu pagamento. Por favor, entre em contato com o suporte.");
+      showError("Falha no pagamento", "Ocorreu um erro ao finalizar seu pagamento. Por favor, entre em contato com o suporte.");
       setIsProcessing(false);
     }
   };
@@ -65,6 +71,7 @@ const FormasPagamento = ({ reservationId, onPaymentSuccess }) => {
   const handleOnCancel = (data) => {
     console.log("Pagamento cancelado pelo usuário.", data);
     setError("O pagamento foi cancelado. Você pode tentar novamente a qualquer momento.");
+    showWarning("Pagamento cancelado", "O pagamento foi cancelado. Você pode tentar novamente a qualquer momento.");
     setIsProcessing(false);
   };
 

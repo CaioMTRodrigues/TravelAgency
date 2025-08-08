@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { loginUsuario } from "../services/authService";
 import { setToken } from "../utils/tokenUtils";
-
-import { toast } from "react-toastify";
-
+import { useNotification } from "../contexts/NotificationContext";
 
 const Login = ({ onClose }) => {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
+  const { showSuccess, showError } = useNotification();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,17 +25,20 @@ const Login = ({ onClose }) => {
       const result = await loginUsuario({ email, password: senha });
       setToken(result.token); // salva o token JWT
       setErro("");
-      
-toast.success("Login realizado com sucesso!");
-
+      showSuccess("Login realizado com sucesso! Você será redirecionado.");
       onClose(); // Fecha o modal após o login
-      window.location.reload(); // Recarrega a página para refletir o estado de login
+      
+      // Aguarda um pouco para mostrar a notificação antes de recarregar
+      setTimeout(() => {
+        window.location.reload(); // Recarrega a página para refletir o estado de login
+      }, 1500);
     } catch (err) {
       const mensagem =
         typeof err === "string"
           ? err
           : err?.response?.data?.message || "Erro ao fazer login.";
       setErro(mensagem);
+      showError("Falha no login", mensagem);
     }
   };
 

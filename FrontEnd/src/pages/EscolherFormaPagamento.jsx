@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { cadastrarReserva } from '../services/reservaService';
 import { vincularViajanteReserva } from '../services/viajanteService';
 import { createStripeOrder, captureStripeOrder, listarFormasPagamento } from '../services/paymentService';
+import { useNotification } from '../contexts/NotificationContext';
 import './EscolherFormaPagamento.css';
 
 // Importando os ícones
@@ -21,6 +22,7 @@ const EscolherFormaPagamento = ({ onFechar }) => {
   const [formasPagamento, setFormasPagamento] = useState([]);
   const [erro, setErro] = useState('');
   const [processando, setProcessando] = useState(false); // Estado para evitar cliques duplos
+  const { showSuccess, showError } = useNotification();
 
   useEffect(() => {
     const fetchFormas = async () => {
@@ -64,11 +66,16 @@ const EscolherFormaPagamento = ({ onFechar }) => {
       await captureStripeOrder(paymentIntentId);
 
       localStorage.removeItem("reservaTemp");
-      alert("Pagamento realizado com sucesso!");
-      onFechar();
+      showSuccess("Pagamento realizado com sucesso! Sua reserva foi confirmada.", "Pagamento Aprovado");
+      
+      // Aguarda um pouco para mostrar a notificação antes de fechar
+      setTimeout(() => {
+        onFechar();
+      }, 2000);
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
       setErro("Erro ao processar pagamento. Tente novamente.");
+      showError("Falha no pagamento", "Erro ao processar pagamento. Tente novamente.");
     } finally {
         setProcessando(false); // Libera o botão para novas tentativas
     }

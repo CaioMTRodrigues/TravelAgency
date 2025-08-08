@@ -5,6 +5,7 @@ import { InputMask } from '@react-input/mask';
 
 import { getPacoteById } from '../services/pacoteService';
 import { listarViajantesDoUsuario, cadastrarViajante } from "../services/viajanteService";
+import { getUserId } from "../utils/tokenUtils";
 
 import ModalViajante from "../components/ModalViajante";
 import EscolherFormaPagamento from "./EscolherFormaPagamento";
@@ -14,9 +15,10 @@ import './CadastroReserva.css';
 
 const CadastroReserva = () => {
     const { id } = useParams();
-    const idUsuario = localStorage.getItem("idUsuario");
+    const idUsuario = getUserId();
 
     const [pacote, setPacote] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [dadosComprador, setDadosComprador] = useState({ nomeCompleto: '', telefone: '' });
     const [formErrors, setFormErrors] = useState({});
@@ -35,6 +37,7 @@ const CadastroReserva = () => {
         const fetchData = async () => {
             if (!id || !idUsuario) {
                 setError('Informações de pacote ou usuário ausentes.');
+                setLoading(false);
                 return;
             }
             try {
@@ -42,10 +45,14 @@ const CadastroReserva = () => {
                     getPacoteById(id),
                     listarViajantesDoUsuario(idUsuario)
                 ]);
+                
                 setPacote(pacoteData);
                 setViajantesDisponiveis(viajantesData);
             } catch (err) {
+                console.error("Erro ao buscar dados:", err);
                 setError('Não foi possível carregar os dados. Tente novamente.');
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
@@ -133,7 +140,9 @@ const CadastroReserva = () => {
         setMostrarPagamento(true);
     };
 
-    if (!pacote) return <div>Carregando pacote...</div>;
+    if (loading) return <div style={{textAlign: 'center', padding: '50px'}}>Carregando pacote...</div>;
+    if (error) return <div style={{textAlign: 'center', padding: '50px', color: 'red'}}>Erro: {error}</div>;
+    if (!pacote) return <div style={{textAlign: 'center', padding: '50px'}}>Pacote não encontrado.</div>;
 
     return (
         <div className="cadastro-reserva-container">
